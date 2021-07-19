@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-from Api import Api
+from scraper import Scraper
 import pandas as pd
 from utils import get_oecd_df
 import os
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     else:
         df = get_oecd_df()
         df.to_csv("oecd.csv")
-    api = Api(headless=True)
+    api = Scraper(headless=True)
 
     for index, row in df.iterrows():
         filename = OUT_DOCS_PATH + "/%s.html" % index

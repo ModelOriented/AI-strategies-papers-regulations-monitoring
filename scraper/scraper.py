@@ -3,7 +3,7 @@ import os
 from selenium import webdriver
 
 
-class Api:
+class Scraper:
     """
     Wrapper
     """

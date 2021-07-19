@@ -1,5 +1,5 @@
 import pandas as pd
-import newspaper, requests, ssl, json  # , dragnet
+import newspaper, requests, ssl, json, dragnet
 from bs4 import BeautifulSoup
 
 
