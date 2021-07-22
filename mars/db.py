@@ -30,9 +30,11 @@ def is_document_present(url: str) -> bool:
     return len(documentSources.fetchFirstExample({URL: url})) == 1
 
 
-def save_doc(url: str, file, file_type: FileType, source: SourceWebsite) -> None:
+def save_doc(
+    url: str, raw_file_content, file_type: FileType, source: SourceWebsite
+) -> None:
     """Saves new source document to database"""
-    file_name = _new_file(file_type, file)
+    file_name = _new_file(file_type, raw_file_content)
     doc = documentSources.createDocument()
 
     doc[URL] = url
@@ -42,7 +44,8 @@ def save_doc(url: str, file, file_type: FileType, source: SourceWebsite) -> None
     doc.save()
 
 
-def _new_file(file, file_type: str):
+def _new_file(file_content, file_type: str):
     filename = str(uuid.uuid4()) + file_type
-    copyfile(file, filename)
+    with open(filename, "w") as file:
+        file.write(file_content)
     return filename
