@@ -1,6 +1,6 @@
+import os
 import uuid
 from enum import Enum
-from shutil import copyfile
 
 from pyArango.connection import Connection
 
@@ -8,6 +8,8 @@ URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
 SOURCE = "source_website"
+
+FILES_DIR = "raw_data"
 
 
 class SourceWebsite(str, Enum):
@@ -46,6 +48,6 @@ def save_doc(
 
 def _new_file(file_content, file_type: str):
     filename = str(uuid.uuid4()) + file_type
-    with open(filename, "w") as file:
+    with open(os.path.join(FILES_DIR, filename), "w") as file:
         file.write(file_content)
     return filename
