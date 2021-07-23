@@ -36,7 +36,9 @@ def get_collection_or_create(db, collection_name: str):
         return db.createCollection(name=collection_name)
 
 
-conn = Connection(username="root", password="rootpassword")
+conn = Connection(
+    username="root", password="rootpassword", arangoURL="http://127.0.0.1:8080"
+)
 try:
     db = conn.databases["mars"]
 except KeyError:
