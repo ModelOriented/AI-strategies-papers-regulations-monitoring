@@ -57,7 +57,7 @@ def save_doc(
     url: str, raw_file_content, file_type: FileType, source: SourceWebsite
 ) -> None:
     """Saves new source document to database"""
-    file_name = _new_file(file_type, raw_file_content)
+    file_name = _new_file(raw_file_content, file_type)
     doc = documentSources.createDocument()
 
     doc[URL] = url
@@ -84,7 +84,7 @@ def save_extracted_content(
 
 
 def _new_file(file_content, file_type: str):
-    filename = str(uuid.uuid4()) + file_type
+    filename = str(uuid.uuid4()) + "." + file_type
     with open(os.path.join(FILES_DIR, filename), "w") as file:
         file.write(file_content)
     return filename

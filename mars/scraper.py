@@ -1,6 +1,12 @@
 import datetime
 import os
+
+import dragnet
+import newspaper
 from selenium import webdriver
+
+from mars import db
+from bs4 import BeautifulSoup
 
 
 class Scraper:
@@ -18,7 +24,7 @@ class Scraper:
         self.verbose = verbose
         self.print_log("Setting up driver")
         self.log_dir = "./logs"
-        if not os.path.isfile(self.log_dir):
+        if not os.path.isdir(self.log_dir):
             os.mkdir(self.log_dir)
 
         profile = webdriver.FirefoxProfile()
@@ -26,7 +32,6 @@ class Scraper:
         profile.set_preference("browser.download.manager.useWindow", False)
         profile.set_preference("browser.download.dir", download_dir)
 
-        # tutaj dodac pdf
         mimetypes = ["application/pdf", "application/x-pdf"]
         profile.set_preference(
             "browser.helperApps.neverAsk.saveToDisk", ",".join(mimetypes)
@@ -38,28 +43,62 @@ class Scraper:
             options.add_argument("--headless")
 
         self.driver = driver = webdriver.Firefox(
-            executable_path="./scraper/geckodriver",
+            executable_path="./geckodriver",
             firefox_profile=profile,
             options=options,
         )
 
-    def save_article(self, url: str, filename: str):
+    def save_article(self, url: str, filename: str, source: db.SourceWebsite):
         """
         save html source to filename
         """
         try:
-            self.driver.get(url)
-            raw_html = self.driver.page_source
+            present = db.is_document_present(url)
+            if not present:
+                if self.verbose:
+                    print("Scraping %s" % url)
 
-            with open(filename, "w") as text_file:
-                text_file.write(raw_html)
+                self.driver.get(url)
+                raw_html = self.driver.page_source
 
-            if self.verbose:
-                print("Scraping %s" % url)
+                with open(filename, "w") as text_file:
+                    text_file.write(raw_html)
 
+                db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
+
+            else:
+                print("Omitting %s - url already in database" % url)
         except:
             self.save_snapshot()
             raise
+
+    """
+    Parsing content
+    """
+
+    @staticmethod
+    def parse_content(source_url: str, method: db.ExtractionMetod.newspaper):
+        """
+        Parses html file using newspaper3k
+        """
+
+        # get file from database
+        # @TODO czy to poprawnie
+        filename = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+
+        # read file
+        with open(filename, "r") as f:
+            raw_html = f.read()
+
+        if method == db.ExtractionMetod.dragnet:
+            content = dragnet.extract_content(raw_html)
+        elif method == db.ExtractionMetod.newspaper:
+            article = newspaper.Article(url=" ", language="en", keep_article_html=True)
+            article.set_html(raw_html)
+            article.parse()
+            content = article.text
+
+        db.save_extracted_content(source_url, content=content, extraction_method=method)
 
     """
     Logging

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # coding: utf-8
-from scraper import Scraper
+from mars.scraper import Scraper
 import pandas as pd
-from utils import get_oecd_df
+from mars.utils import get_oecd_df
 import os
+from mars import db
 
 
-OUT_DOCS_PATH = "data/oecd_html/"
+OUT_DOCS_PATH = "../data/oecd_html/"
 
 if __name__ == "__main__":
     if os.path.isfile("oecd.csv"):
@@ -17,12 +18,13 @@ if __name__ == "__main__":
     api = Scraper(headless=True)
 
     for index, row in df.iterrows():
-        filename = OUT_DOCS_PATH + "/%s.html" % index
+        filename = OUT_DOCS_PATH + "%s.html" % index
         if "pdf" in row["documentUrl"]:
             continue
         if os.path.isfile(filename):
             continue
         try:
-            api.save_article(row["documentUrl"], filename)
+            api.save_article(row["documentUrl"], filename,  source=db.SourceWebsite.oecd)
         except:
+            raise
             continue
