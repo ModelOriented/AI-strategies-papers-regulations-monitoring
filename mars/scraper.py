@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 import logging
 
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 load_dotenv()
 
 

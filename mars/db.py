@@ -15,6 +15,7 @@ DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
 
+
 class SourceWebsite(str, Enum):
     oecd = "oecd"
 
@@ -37,7 +38,9 @@ def get_collection_or_create(db, collection_name: str):
 
 
 conn = Connection(
-    username=os.getenv("ARANGODB_USERNAME"), password=os.getenv("ARANGODB_PASSWORD"), arangoURL=os.getenv("ARANGODB_URL")
+    username=os.getenv("ARANGODB_USERNAME"),
+    password=os.getenv("ARANGODB_PASSWORD"),
+    arangoURL=os.getenv("ARANGODB_URL"),
 )
 try:
     db = conn.databases["mars"]

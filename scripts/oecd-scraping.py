@@ -9,7 +9,7 @@ import logging
 import dotenv
 
 dotenv.load_dotenv()
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 logging.getLogger(__name__).setLevel(os.getenv("LOGGING_LEVEL"))
 
 if __name__ == "__main__":
@@ -21,6 +21,6 @@ if __name__ == "__main__":
         if "pdf" in row["documentUrl"]:
             continue
         try:
-            api.save_article(row["documentUrl"],  source=db.SourceWebsite.oecd)
+            api.save_article(row["documentUrl"], source=db.SourceWebsite.oecd)
         except:
             continue
