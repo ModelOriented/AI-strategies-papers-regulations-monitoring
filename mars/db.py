@@ -3,6 +3,9 @@ import uuid
 from enum import Enum
 
 from pyArango.connection import Connection
+from dotenv import load_dotenv
+
+load_dotenv()
 
 URL = "url"
 FILENAME = "filename"
@@ -11,9 +14,6 @@ SOURCE = "source_website"
 DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
-
-FILES_DIR = "raw_data"
-
 
 class SourceWebsite(str, Enum):
     oecd = "oecd"
@@ -37,7 +37,7 @@ def get_collection_or_create(db, collection_name: str):
 
 
 conn = Connection(
-    username="root", password="rootpassword", arangoURL="http://127.0.0.1:8080"
+    username=os.getenv("ARANGODB_USERNAME"), password=os.getenv("ARANGODB_PASSWORD"), arangoURL=os.getenv("ARANGODB_URL")
 )
 try:
     db = conn.databases["mars"]
@@ -85,6 +85,6 @@ def save_extracted_content(
 
 def _new_file(file_content, file_type: str):
     filename = str(uuid.uuid4()) + "." + file_type
-    with open(os.path.join(FILES_DIR, filename), "w") as file:
+    with open(os.path.join(os.getenv("RAW_FILES_DIR"), filename), "w") as file:
         file.write(file_content)
     return filename

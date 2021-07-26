@@ -1,12 +1,15 @@
 import datetime
-import os
-
 import dragnet
 import newspaper
 from selenium import webdriver
 
 from mars import db
-from bs4 import BeautifulSoup
+import os
+from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+load_dotenv()
 
 
 class Scraper:
@@ -14,23 +17,21 @@ class Scraper:
     Wrapper
     """
 
-    def __init__(self, download_dir=".", headless=True, verbose=True):
+    def __init__(self, headless=True, verbose=True):
         """
         Initializes firefox driver
-        @param download_dir - path to directory where downloaded files will be saved
         @param headless - if driver should start without graphical interface
-        @verbose
+        @param verbose
         """
         self.verbose = verbose
         self.print_log("Setting up driver")
-        self.log_dir = "./logs"
-        if not os.path.isdir(self.log_dir):
-            os.mkdir(self.log_dir)
+        self.log_dir = os.getenv("SCRAPER_LOGS_DIR")
+        os.makedirs(self.log_dir, exist_ok=True)
 
         profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.download.manager.useWindow", False)
-        profile.set_preference("browser.download.dir", download_dir)
+        profile.set_preference("browser.download.dir", os.getenv("RAW_FILES_DIR"))
 
         mimetypes = ["application/pdf", "application/x-pdf"]
         profile.set_preference(
@@ -42,13 +43,13 @@ class Scraper:
         if headless:
             options.add_argument("--headless")
 
-        self.driver = driver = webdriver.Firefox(
-            executable_path="./geckodriver",
+        self.driver = webdriver.Firefox(
+            executable_path=os.getenv("GECKODRIVER_PATH"),
             firefox_profile=profile,
             options=options,
         )
 
-    def save_article(self, url: str, filename: str, source: db.SourceWebsite):
+    def save_article(self, url: str, source: db.SourceWebsite):
         """
         save html source to filename
         """
@@ -56,18 +57,15 @@ class Scraper:
             present = db.is_document_present(url)
             if not present:
                 if self.verbose:
-                    print("Scraping %s" % url)
+                    logging.info("Scraping %s" % url)
 
                 self.driver.get(url)
                 raw_html = self.driver.page_source
 
-                with open(filename, "w") as text_file:
-                    text_file.write(raw_html)
-
                 db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
 
             else:
-                print("Omitting %s - url already in database" % url)
+                logging.info("Omitting %s - url already in database" % url)
         except:
             self.save_snapshot()
             raise
@@ -83,7 +81,6 @@ class Scraper:
         """
 
         # get file from database
-        # @TODO czy to poprawnie
         filename = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
 
         # read file
