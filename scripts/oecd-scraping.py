@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # coding: utf-8
+import os
+
 from mars.scraper import Scraper
 from mars.utils import get_oecd_df
 from mars import db
 import logging
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+import dotenv
 
-OUT_DOCS_PATH = "../data/oecd_html/"
+dotenv.load_dotenv()
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.getLogger(__name__).setLevel(os.getenv("LOGGING_LEVEL"))
 
 if __name__ == "__main__":
+    logging.info("Fetching oecd urls")
     df = get_oecd_df()
     api = Scraper(headless=True)
 
