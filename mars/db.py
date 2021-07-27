@@ -11,6 +11,8 @@ URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
 SOURCE = "source_website"
+document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
+
 DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
@@ -64,16 +66,20 @@ def is_content_present(url: str, method: ExtractionMetod) -> bool:
 
 
 def save_doc(
-    url: str, raw_file_content, file_type: FileType, source: SourceWebsite
+    url: str, raw_file_content, file_type: FileType, source: SourceWebsite, additional_data: dict = dict()
 ) -> None:
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
     doc = documentSources.createDocument()
-
+    for key in additional_data:
+        if key in document_source_field_keys:
+            raise ValueError('Keys from additional_data colide with standard keys')
     doc[URL] = url
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
     doc[SOURCE] = source
+    for key, value in additional_data:
+        doc[key]=value
     doc.save()
 
 
