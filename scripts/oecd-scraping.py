@@ -9,13 +9,15 @@ import logging
 import dotenv
 
 dotenv.load_dotenv()
+logger = logging.getLogger(__name__)
+level = logging.getLevelName(os.getenv("LOGGING_LEVEL"))
+logger.setLevel(level)
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
-logging.getLogger(__name__).setLevel(os.getenv("LOGGING_LEVEL"))
 
 if __name__ == "__main__":
-    logging.info("Fetching oecd urls")
+    logger.info("Fetching oecd urls")
     df = get_oecd_df()
-    api = Scraper(headless=True)
+    api = Scraper(headless=False)
 
     for index, row in df.iterrows():
         if "pdf" in row["documentUrl"]:

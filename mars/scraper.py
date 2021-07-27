@@ -8,8 +8,15 @@ import os
 from dotenv import load_dotenv
 import logging
 
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
+
 load_dotenv()
+
+# level = logging.getLevelName(os.getenv("LOGGING_LEVEL"))
+
+# logger = logging.Logger(__name__)
+
+# logger.setLevel(level)
+# logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 
 
 class Scraper:
@@ -26,6 +33,13 @@ class Scraper:
         self.verbose = verbose
         self.print_log("Setting up driver")
         self.log_dir = os.getenv("SCRAPER_LOGS_DIR")
+        self.logger = logging.getLogger(__name__)
+
+        self.logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+        logging.basicConfig(
+            format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p"
+        )
+
         os.makedirs(self.log_dir, exist_ok=True)
 
         profile = webdriver.FirefoxProfile()
@@ -57,7 +71,7 @@ class Scraper:
             present = db.is_document_present(url)
             if not present:
                 if self.verbose:
-                    logging.info("Scraping %s" % url)
+                    self.logger.info("Scraping %s" % url)
 
                 self.driver.get(url)
                 raw_html = self.driver.page_source
@@ -65,7 +79,7 @@ class Scraper:
                 db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
 
             else:
-                logging.info("Omitting %s - url already in database" % url)
+                self.logger.info("Omitting %s - url already in database" % url)
         except:
             self.save_snapshot()
             raise
