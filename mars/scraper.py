@@ -68,7 +68,7 @@ class Scraper:
                 self.driver.implicitly_wait(15)
                 raw_html = self.driver.page_source
 
-                db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
+                db.save_doc(url, raw_html, file_type=db.FileType.html, source=source, additional_data=meta)
 
             else:
                 self.logger.info("Omitting - url already in database")
