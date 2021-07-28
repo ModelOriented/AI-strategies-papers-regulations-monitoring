@@ -1,6 +1,6 @@
 import pandas as pd
-import newspaper, requests, ssl, json, dragnet
-from bs4 import BeautifulSoup
+import requests, ssl, json
+import os
 
 
 URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
@@ -49,3 +49,16 @@ def get_oecd_df():
     dff = df[~df["documentUrl"].isna()]
 
     return dff
+
+
+def get_number_of_files(dir: str):
+    """
+    Returns number of files in dir
+    Excludes .part files
+    """
+    if os.path.exists(dir):
+        files = [f for f in os.listdir(dir) if ".part" not in f]
+        n_files = len(files)
+    else:
+        n_files = 0
+    return n_files
