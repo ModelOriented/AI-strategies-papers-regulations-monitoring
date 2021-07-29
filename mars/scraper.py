@@ -1,29 +1,21 @@
 import datetime
+import urllib
+
 import dragnet
 import newspaper
+import requests
 from selenium import webdriver
 
 from mars import db
 import os
 from dotenv import load_dotenv
 import logging
-
+import magic
 
 load_dotenv()
 
-# level = logging.getLevelName(os.getenv("LOGGING_LEVEL"))
-
-# logger = logging.Logger(__name__)
-
-# logger.setLevel(level)
-# logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
-
 
 class Scraper:
-    """
-    Wrapper
-    """
-
     def __init__(self, headless=True, verbose=True):
         """
         Initializes firefox driver
@@ -37,16 +29,15 @@ class Scraper:
 
         self.logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
         logging.basicConfig(
-            format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p"
+            format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S"
         )
 
         os.makedirs(self.log_dir, exist_ok=True)
+        os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
 
         profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
-        profile.set_preference("browser.download.manager.useWindow", False)
         profile.set_preference("browser.download.dir", os.getenv("RAW_FILES_DIR"))
-
         mimetypes = ["application/pdf", "application/x-pdf"]
         profile.set_preference(
             "browser.helperApps.neverAsk.saveToDisk", ",".join(mimetypes)
@@ -63,7 +54,7 @@ class Scraper:
             options=options,
         )
 
-    def save_article(self, url: str, source: db.SourceWebsite):
+    def _save_html(self, url: str, source: db.SourceWebsite):
         """
         save html source to filename
         """
@@ -74,14 +65,65 @@ class Scraper:
                     self.logger.info("Scraping %s" % url)
 
                 self.driver.get(url)
+                self.driver.implicitly_wait(15)
                 raw_html = self.driver.page_source
 
                 db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
 
             else:
-                self.logger.info("Omitting %s - url already in database" % url)
+                self.logger.info("Omitting - url already in database")
         except:
             self.save_snapshot()
+            raise
+
+    def _save_pdf(self, url: str, source: db.SourceWebsite):
+        """
+        save pdf
+        """
+        try:
+            present = db.is_document_present(url)
+            if not present:
+                self.logger.info("Scraping %s" % url)
+                r = requests.get(url)
+                content_type = r.headers["content-type"]
+
+                if "application/pdf" in content_type:
+
+                    file_tmp_name = os.path.join(
+                        os.getenv("RAW_FILES_DIR"), "./tmp.pdf"
+                    )
+                    urllib.request.urlretrieve(url, file_tmp_name)
+
+                    mime = magic.Magic(mime=True)
+                    if mime.from_file(file_tmp_name) != "application/pdf":
+                        raise TypeError("Not pdf")
+
+                    db.save_doc(url, file_tmp_name, db.FileType.pdf, source)
+                else:
+                    raise TypeError("Not pdf")
+            else:
+                self.logger.info("Omitting - url already in database")
+        except:
+            self.save_snapshot()
+            raise
+
+    def save_content(self, url: str, source: db.SourceWebsite):
+        """
+
+        """
+        try:
+            if "pdf" in url:
+                try:
+                    self._save_pdf(url, source=source)
+                    return
+                except:
+                    self.logger.info("Failed to save pdf, trying html")
+                    pass
+            self._save_html(url, source=source)
+
+        except:
+            self.save_snapshot()
+            self.logger.info("Failed scraping")
             raise
 
     """

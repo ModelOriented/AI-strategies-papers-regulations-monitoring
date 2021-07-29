@@ -27,6 +27,9 @@ ipykernel = "^6.0.2"
 selenium = "^3.141.0"
 pyArango = "^1.3.5"
 python-dotenv = "^0.19.0"
+python-magic = "^0.4.24"
+pdfminer = "^20191125"
+timeunit = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"
