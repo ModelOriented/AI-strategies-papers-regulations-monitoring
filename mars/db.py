@@ -18,6 +18,7 @@ EXTRACTION_METHOD = "extraction_method"
 
 class SourceWebsite(str, Enum):
     oecd = "oecd"
+    localhost = "localhost"
 
 
 class FileType(str, Enum):
@@ -28,6 +29,7 @@ class FileType(str, Enum):
 class ExtractionMetod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
+    pdfminer = "pdfminer"
 
 
 def get_collection_or_create(db, collection_name: str):
@@ -54,6 +56,11 @@ contents = get_collection_or_create(db, "Texts")
 def is_document_present(url: str) -> bool:
     """Checks if documents from given url is downloaded"""
     return len(documentSources.fetchFirstExample({URL: url})) == 1
+
+
+def is_content_present(url: str) -> bool:
+    """Checks if documents from given url is downloaded"""
+    return len(contents.fetchFirstExample({URL: url})) == 1
 
 
 def save_doc(

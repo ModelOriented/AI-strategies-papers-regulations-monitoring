@@ -127,33 +127,6 @@ class Scraper:
             raise
 
     """
-    Parsing content
-    """
-
-    @staticmethod
-    def parse_content(source_url: str, method: db.ExtractionMetod.newspaper):
-        """
-        Parses html file using newspaper3k
-        """
-
-        # get file from database
-        filename = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
-
-        # read file
-        with open(filename, "r") as f:
-            raw_html = f.read()
-
-        if method == db.ExtractionMetod.dragnet:
-            content = dragnet.extract_content(raw_html)
-        elif method == db.ExtractionMetod.newspaper:
-            article = newspaper.Article(url=" ", language="en", keep_article_html=True)
-            article.set_html(raw_html)
-            article.parse()
-            content = article.text
-
-        db.save_extracted_content(source_url, content=content, extraction_method=method)
-
-    """
     Logging
     """
 
