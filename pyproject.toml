@@ -30,6 +30,7 @@ python-dotenv = "^0.19.0"
 python-magic = "^0.4.24"
 pdfminer = "^20191125"
 timeunit = "^1.1.0"
+cached-property = "^1.5.2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"
