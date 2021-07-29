@@ -116,7 +116,7 @@ class Scraper:
                 except:
                     self.logger.info("Failed to save pdf, trying html")
                     pass
-            # self._save_article(url, source=source)
+            self._save_article(url, source=source)
 
         except:
             self.save_snapshot()
