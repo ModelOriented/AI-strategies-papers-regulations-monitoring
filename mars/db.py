@@ -91,9 +91,10 @@ def _new_file(file_content, file_type: str):
     for pdfs file_content is current filename
     @TODO rename
     """
-    filename = os.getenv("RAW_FILES_DIR") + "/" + str(uuid.uuid4()) + "." + file_type
+    filename = os.path.join(
+        os.getenv("RAW_FILES_DIR"), str(uuid.uuid4()) + "." + file_type
+    )
     if file_type == FileType.pdf:
-        print("copy")
         os.rename(file_content, filename)
     else:
         with open(filename, "w") as file:

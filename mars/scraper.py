@@ -54,7 +54,7 @@ class Scraper:
             options=options,
         )
 
-    def _save_article(self, url: str, source: db.SourceWebsite):
+    def _save_html(self, url: str, source: db.SourceWebsite):
         """
         save html source to filename
         """
@@ -65,12 +65,13 @@ class Scraper:
                     self.logger.info("Scraping %s" % url)
 
                 self.driver.get(url)
+                self.driver.implicitly_wait(15)
                 raw_html = self.driver.page_source
 
                 db.save_doc(url, raw_html, file_type=db.FileType.html, source=source)
 
             else:
-                self.logger.info("Omitting - url already in database" % url)
+                self.logger.info("Omitting - url already in database")
         except:
             self.save_snapshot()
             raise
@@ -86,9 +87,11 @@ class Scraper:
                 r = requests.get(url)
                 content_type = r.headers["content-type"]
 
-                if content_type == "application/pdf":
+                if "application/pdf" in content_type:
 
-                    file_tmp_name = os.getenv("RAW_FILES_DIR") + "/tmp.pdf"
+                    file_tmp_name = os.path.join(
+                        os.getenv("RAW_FILES_DIR"), "./tmp.pdf"
+                    )
                     urllib.request.urlretrieve(url, file_tmp_name)
 
                     mime = magic.Magic(mime=True)
@@ -99,7 +102,7 @@ class Scraper:
                 else:
                     raise TypeError("Not pdf")
             else:
-                self.logger.info("Omitting - url already in database" % url)
+                self.logger.info("Omitting - url already in database")
         except:
             self.save_snapshot()
             raise
@@ -116,7 +119,7 @@ class Scraper:
                 except:
                     self.logger.info("Failed to save pdf, trying html")
                     pass
-            self._save_article(url, source=source)
+            self._save_html(url, source=source)
 
         except:
             self.save_snapshot()
