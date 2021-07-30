@@ -106,7 +106,7 @@ def add_missing_files_to_db(path: str):
                     filename,
                     fileContent,
                     db.FileType.pdf,
-                    source=db.SourceWebsite.localhost,
+                    source=db.SourceWebsite.manual,
                 )
 
                 # pass filename as source
@@ -123,7 +123,7 @@ def add_missing_files_to_db(path: str):
                     filename,
                     filename,
                     db.FileType.html,
-                    source=db.SourceWebsite.localhost,
+                    source=db.SourceWebsite.manual,
                 )
 
                 # pass filename as source

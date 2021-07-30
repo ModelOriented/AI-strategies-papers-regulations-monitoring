@@ -18,7 +18,7 @@ EXTRACTION_METHOD = "extraction_method"
 
 class SourceWebsite(str, Enum):
     oecd = "oecd"
-    localhost = "localhost"
+    manual = "manually_added"
 
 
 class FileType(str, Enum):
