@@ -52,15 +52,13 @@ def save_doc(
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
     doc = documentSources.createDocument()
-    for key in additional_data:
-        if key in document_source_field_keys:
-            raise ValueError("Keys from additional_data colide with standard keys")
     doc[URL] = url
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
     doc[SOURCE] = source
-    for key, value in additional_data:
-        doc[key] = value
+    for key, value in additional_data.items():
+        if key not in document_source_field_keys:
+            doc[key] = value
     doc.save()
 
 

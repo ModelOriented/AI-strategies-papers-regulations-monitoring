@@ -11,7 +11,7 @@ import mars.parser as parser
 from mars import db, db_fields
 from mars.scraper import Scraper
 from mars.utils import get_oecd_parsing_results
-
+import mars.logging
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 level = logging.getLevelName(os.getenv("LOGGING_LEVEL"))
@@ -26,10 +26,9 @@ def main(headless: bool = True):
 
     for result in parsing_results:
         try:
-            api.save_content(result[db_fields.URL], source=db.SourceWebsite.oecd)
+            api.save_document(result[db_fields.URL], source=db.SourceWebsite.oecd, metadata = result)
         except Exception as e:
-            logging.info("Exception ocured:", e, "passing...")
-            logging.debug()
+            mars.logging.log_exception("Exception ocured:",e,logger)
 
     logger.info("Scrapped all! Proceding to parse contents...")
     parser.parse_source(db.SourceWebsite.oecd, 1000)

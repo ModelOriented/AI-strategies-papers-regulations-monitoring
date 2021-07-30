@@ -118,17 +118,17 @@ class Scraper:
             self.save_snapshot()
             raise
 
-    def save_content(self, url: str, source: db.SourceWebsite):
+    def save_document(self, url: str, source: db.SourceWebsite, metadata=dict()):
         """ """
         try:
             if "pdf" in url:
                 try:
-                    self._save_pdf(url, source=source)
+                    self._save_pdf(url, source=source, meta=metadata)
                     return
                 except:
                     self.logger.info("Failed to save pdf, trying html")
                     pass
-            self._save_html(url, source=source)
+            self._save_html(url, source=source, meta=metadata)
 
         except:
             self.save_snapshot()
