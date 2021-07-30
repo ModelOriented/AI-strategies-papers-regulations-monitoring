@@ -4,6 +4,7 @@
 import os
 from mars.scraper import Scraper
 from mars.utils import get_oecd_df
+import mars.parser as parser
 from mars import db
 import logging
 import dotenv
@@ -22,5 +23,7 @@ if __name__ == "__main__":
     for index, row in df.iterrows():
         try:
             api.save_content(row["documentUrl"], source=db.SourceWebsite.oecd)
+
         except:
             continue
+    parser.parse_source(db.SourceWebsite.oecd, 1000)
