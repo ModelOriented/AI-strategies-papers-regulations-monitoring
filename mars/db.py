@@ -1,35 +1,14 @@
 import os
 import uuid
-from enum import Enum
 
-from pyArango.connection import Connection
 from dotenv import load_dotenv
+from pyArango.connection import Connection
+
+from .db_fields import *
 
 load_dotenv()
 os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
-URL = "url"
-FILENAME = "filename"
-FILE_TYPE = "file_type"
-SOURCE = "source_website"
-DOC_ID = "source_doc_id"
-CONTENT = "content"
-EXTRACTION_METHOD = "extraction_method"
-
-
-class SourceWebsite(str, Enum):
-    oecd = "oecd"
-    manual = "manually_added"
-
-
-class FileType(str, Enum):
-    pdf = "pdf"
-    html = "html"
-
-
-class ExtractionMetod(str, Enum):
-    newspaper = "newspaper3k"
-    dragnet = "dragnet"
-    pdfminer = "pdfminer"
+document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
 
 def get_collection_or_create(db, collection_name: str):
@@ -64,16 +43,22 @@ def is_content_present(url: str, method: ExtractionMetod) -> bool:
 
 
 def save_doc(
-    url: str, raw_file_content, file_type: FileType, source: SourceWebsite
+    url: str,
+    raw_file_content,
+    file_type: FileType,
+    source: SourceWebsite,
+    additional_data: dict = dict(),
 ) -> None:
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
     doc = documentSources.createDocument()
-
     doc[URL] = url
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
     doc[SOURCE] = source
+    for key, value in additional_data.items():
+        if key not in document_source_field_keys:
+            doc[key] = value
     doc.save()
 
 

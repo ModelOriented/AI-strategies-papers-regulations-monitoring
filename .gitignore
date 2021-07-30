@@ -133,3 +133,4 @@ dmypy.json
 .vscode
 notebooks/dirty
 raw_data
+log_dir
