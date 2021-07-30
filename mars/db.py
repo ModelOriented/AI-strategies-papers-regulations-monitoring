@@ -6,7 +6,7 @@ from pyArango.connection import Connection
 from dotenv import load_dotenv
 
 load_dotenv()
-
+os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
@@ -18,6 +18,7 @@ EXTRACTION_METHOD = "extraction_method"
 
 class SourceWebsite(str, Enum):
     oecd = "oecd"
+    manual = "manually_added"
 
 
 class FileType(str, Enum):
@@ -28,6 +29,7 @@ class FileType(str, Enum):
 class ExtractionMetod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
+    pdfminer = "pdfminer"
 
 
 def get_collection_or_create(db, collection_name: str):
@@ -56,6 +58,11 @@ def is_document_present(url: str) -> bool:
     return len(documentSources.fetchFirstExample({URL: url})) == 1
 
 
+def is_content_present(url: str, method: ExtractionMetod) -> bool:
+    """Checks if documents from given url is downloaded"""
+    return len(contents.fetchFirstExample({URL: url, EXTRACTION_METHOD: method})) == 1
+
+
 def save_doc(
     url: str, raw_file_content, file_type: FileType, source: SourceWebsite
 ) -> None:
@@ -64,9 +71,9 @@ def save_doc(
     doc = documentSources.createDocument()
 
     doc[URL] = url
-    doc[FILE_TYPE] = str(file_type)
+    doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
-    doc[SOURCE] = str(source)
+    doc[SOURCE] = source
     doc.save()
 
 
@@ -82,7 +89,8 @@ def save_extracted_content(
 
     doc[DOC_ID] = id
     doc[CONTENT] = content
-    doc[EXTRACTION_METHOD] = str(extraction_method)
+    doc[EXTRACTION_METHOD] = extraction_method
+    doc[URL] = source_url
     doc.save()
 
 
@@ -95,7 +103,8 @@ def _new_file(file_content, file_type: str):
         os.getenv("RAW_FILES_DIR"), str(uuid.uuid4()) + "." + file_type
     )
     if file_type == FileType.pdf:
-        os.rename(file_content, filename)
+        with open(filename, "wb") as file:
+            file.write(file_content)
     else:
         with open(filename, "w") as file:
             file.write(file_content)
