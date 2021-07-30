@@ -1,7 +1,11 @@
-import pandas as pd
-import requests, ssl, json
+import json
 import os
+import ssl
 
+import pandas as pd
+import requests
+
+from mars import db_fields
 
 URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
 
@@ -24,10 +28,9 @@ def parse_result_dict(result):
             end_date = value
 
     document_info = {
-        "title": name,
-        #   "description": description,
-        "country": country,
-        "documentUrl": document_url,
+        db_fields.TITLE: name,
+        db_fields.COUNTRY: country,
+        db_fields.URL: document_url,
         "startDate": start_date,
         "endDate": end_date,
         "oecdId": oecd_id,
@@ -35,9 +38,9 @@ def parse_result_dict(result):
     return document_info
 
 
-def get_oecd_df():
+def get_oecd_parsing_results():
     """
-    Returns json with oecd api results
+    Returns list of dicts with oecd api results
     """
 
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -45,10 +48,10 @@ def get_oecd_df():
 
     data = json.loads(res.text)
 
-    df = pd.DataFrame([parse_result_dict(result) for result in data["results"]])
-    dff = df[~df["documentUrl"].isna()]
+    parsing_results = [parse_result_dict(result) for result in data["results"]]
+    parsing_results = [p for p in parsing_results if p[db_fields.URL] is not None]
 
-    return dff
+    return parsing_results
 
 
 def get_number_of_files(dir: str):

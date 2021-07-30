@@ -1,16 +1,16 @@
 import datetime
+import logging
+import os
 import urllib
 
 import dragnet
+import magic
 import newspaper
 import requests
+from dotenv import load_dotenv
 from selenium import webdriver
 
 from mars import db
-import os
-from dotenv import load_dotenv
-import logging
-import magic
 
 load_dotenv()
 
@@ -54,7 +54,7 @@ class Scraper:
             options=options,
         )
 
-    def _save_html(self, url: str, source: db.SourceWebsite):
+    def _save_html(self, url: str, source: db.SourceWebsite, meta=dict()):
         """
         save html source to filename
         """
@@ -68,7 +68,13 @@ class Scraper:
                 self.driver.implicitly_wait(15)
                 raw_html = self.driver.page_source
 
-                db.save_doc(url, raw_html, file_type=db.FileType.html, source=source, additional_data=meta)
+                db.save_doc(
+                    url,
+                    raw_html,
+                    file_type=db.FileType.html,
+                    source=source,
+                    additional_data=meta,
+                )
 
             else:
                 self.logger.info("Omitting - url already in database")
@@ -76,7 +82,7 @@ class Scraper:
             self.save_snapshot()
             raise
 
-    def _save_pdf(self, url: str, source: db.SourceWebsite):
+    def _save_pdf(self, url: str, source: db.SourceWebsite, meta=dict()):
         """
         save pdf
         """
@@ -101,7 +107,9 @@ class Scraper:
                     with open(file_tmp_name, mode="rb") as file:
                         fileContent = file.read()
 
-                    db.save_doc(url, fileContent, db.FileType.pdf, source)
+                    db.save_doc(
+                        url, fileContent, db.FileType.pdf, source, additional_data=meta
+                    )
                 else:
                     raise TypeError("Not pdf")
             else:
@@ -111,9 +119,7 @@ class Scraper:
             raise
 
     def save_content(self, url: str, source: db.SourceWebsite):
-        """
-
-        """
+        """ """
         try:
             if "pdf" in url:
                 try:

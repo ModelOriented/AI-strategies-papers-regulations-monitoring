@@ -1,18 +1,19 @@
 import glob
+import logging
 import os
+import traceback
 from dataclasses import dataclass
 from typing import List
-import traceback
 
+import dragnet
+import newspaper
 import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
 import pdfminer.pdfpage
 
 import mars.db as db
-import dragnet
-import newspaper
-import logging
+import mars.logging
 
 logger = logging.getLogger(__name__)
 
@@ -113,8 +114,9 @@ def add_missing_files_to_db(path: str):
                 # pass filename as source
                 parse_pdf(filename, db.ExtractionMetod.pdfminer)
         except Exception as e:
-            logger.info("Fail to parse %s, error: %s" % (filename, e))
-            logger.debug(traceback.format_exc())
+            mars.logging.log_exception(
+                "Fail to parse %s, error: % (filename)", e, logger
+            )
             continue
 
     for filename in glob.glob(os.path.join(path, "*.html")):
@@ -132,8 +134,9 @@ def add_missing_files_to_db(path: str):
                 parse_html(filename, db.ExtractionMetod.dragnet)
                 parse_html(filename, db.ExtractionMetod.newspaper)
         except Exception as e:
-            logger.info("Fail to parse %s, error: %s" % (filename, e))
-            logger.debug(traceback.format_exc())
+            mars.logging.log_exception(
+                "Fail to parse %s, error: % (filename)", e, logger
+            )
             continue
 
 
