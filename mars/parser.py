@@ -11,11 +11,17 @@ import pdfminer.pdfpage
 import mars.db as db
 import dragnet
 import newspaper
+import logging
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 
 def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     """
-    Parses html file using newspaper3k
+    Parses html file using extraction method
     """
 
     if db.is_content_present(source_url):
@@ -48,12 +54,14 @@ def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
     if db.is_content_present(source_url):
         return
 
-    file_name = os.path.splitext(os.path.basename(method))[0]
+    doc = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+    file_name = doc[db.FILENAME]
+
     empty_pages = []
     separated_text = []
     all_text = ""
     page_no = 0
-    document = open(method, "rb")
+    document = open(file_name, "rb")
     rsrcmgr = pdfminer.pdfinterp.PDFResourceManager()
     laparams = pdfminer.layout.LAParams()
     device = pdfminer.converter.PDFPageAggregator(rsrcmgr, laparams=laparams)
@@ -118,4 +126,20 @@ def add_missing_files_to_db(path: str):
                 parse_html(filename, db.ExtractionMetod.newspaper)
         except Exception as e:
             print("Fail to parse %s, error: %s" % (filename, e))
+            continue
+
+
+def parse_source(source: str, batch_size: int):
+    for doc in db.documentSources.fetchByExample(
+        {db.SOURCE: source}, batchSize=batch_size
+    ):
+        logger.info("Parsing %s" % doc[db.URL])
+        if doc[db.FILE_TYPE] == "FileType.pdf":
+            parse_pdf(doc[db.URL], db.ExtractionMetod.pdfminer)
+
+        elif doc[db.FILE_TYPE] == "FileType.html":
+            parse_html(doc[db.URL], db.ExtractionMetod.dragnet)
+            parse_html(doc[db.URL], db.ExtractionMetod.newspaper)
+
+        else:
             continue
