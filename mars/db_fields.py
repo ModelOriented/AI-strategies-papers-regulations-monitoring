@@ -16,6 +16,7 @@ TITLE = "title"
 class SourceWebsite(str, Enum):
     oecd = "oecd"
     manual = "manually_added"
+    eurlex = "eurlex"
 
 
 class FileType(str, Enum):
