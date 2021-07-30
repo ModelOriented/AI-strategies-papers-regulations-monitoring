@@ -90,6 +90,7 @@ def save_extracted_content(
     doc[DOC_ID] = id
     doc[CONTENT] = content
     doc[EXTRACTION_METHOD] = str(extraction_method)
+    doc[URL] = source_url
     doc.save()
 
 
@@ -102,7 +103,8 @@ def _new_file(file_content, file_type: str):
         os.getenv("RAW_FILES_DIR"), str(uuid.uuid4()) + "." + file_type
     )
     if file_type == FileType.pdf:
-        os.rename(file_content, filename)
+        with open(filename, "wb") as file:
+            file.write(file_content)
     else:
         with open(filename, "w") as file:
             file.write(file_content)
