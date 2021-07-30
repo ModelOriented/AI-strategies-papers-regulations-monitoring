@@ -1,11 +1,14 @@
-import os
-
 import mars.parser as parser
 import dotenv
 import mars.db as db
-import pyArango
+import typer
 
 dotenv.load_dotenv()
 
-parser.add_missing_files_to_db("data/ethics-ai-table")
-parser.parse_source(db.SourceWebsite.manual, 100)
+def main(dir_path:str):
+    parser.add_missing_files_to_db(dir_path)
+    parser.parse_source(db.SourceWebsite.manual, 100)
+
+
+if __name__=='__main__':
+    typer.run(main)

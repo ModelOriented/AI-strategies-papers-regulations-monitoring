@@ -6,7 +6,7 @@ from pyArango.connection import Connection
 from dotenv import load_dotenv
 
 load_dotenv()
-
+os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"

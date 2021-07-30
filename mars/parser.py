@@ -2,6 +2,7 @@ import glob
 import os
 from dataclasses import dataclass
 from typing import List
+import traceback
 
 import pdfminer.converter
 import pdfminer.layout
@@ -113,6 +114,7 @@ def add_missing_files_to_db(path: str):
                 parse_pdf(filename, db.ExtractionMetod.pdfminer)
         except Exception as e:
             logger.info("Fail to parse %s, error: %s" % (filename, e))
+            logger.debug(traceback.format_exc())
             continue
 
     for filename in glob.glob(os.path.join(path, "*.html")):
@@ -131,6 +133,7 @@ def add_missing_files_to_db(path: str):
                 parse_html(filename, db.ExtractionMetod.newspaper)
         except Exception as e:
             logger.info("Fail to parse %s, error: %s" % (filename, e))
+            logger.debug(traceback.format_exc())
             continue
 
 
