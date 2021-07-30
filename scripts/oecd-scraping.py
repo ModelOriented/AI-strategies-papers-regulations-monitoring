@@ -26,5 +26,4 @@ if __name__ == "__main__":
 
         except:
             continue
-
-    parser.parse_source("SourceWebsite.oecd", 1000)
+    parser.parse_source(db.SourceWebsite.oecd, 1000)

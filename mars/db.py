@@ -58,9 +58,9 @@ def is_document_present(url: str) -> bool:
     return len(documentSources.fetchFirstExample({URL: url})) == 1
 
 
-def is_content_present(url: str) -> bool:
+def is_content_present(url: str, method: ExtractionMetod) -> bool:
     """Checks if documents from given url is downloaded"""
-    return len(contents.fetchFirstExample({URL: url})) == 1
+    return len(contents.fetchFirstExample({URL: url, EXTRACTION_METHOD: method})) == 1
 
 
 def save_doc(
@@ -71,9 +71,9 @@ def save_doc(
     doc = documentSources.createDocument()
 
     doc[URL] = url
-    doc[FILE_TYPE] = str(file_type)
+    doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
-    doc[SOURCE] = str(source)
+    doc[SOURCE] = source
     doc.save()
 
 
@@ -89,7 +89,7 @@ def save_extracted_content(
 
     doc[DOC_ID] = id
     doc[CONTENT] = content
-    doc[EXTRACTION_METHOD] = str(extraction_method)
+    doc[EXTRACTION_METHOD] = extraction_method
     doc[URL] = source_url
     doc.save()
 

@@ -98,7 +98,10 @@ class Scraper:
                     if mime.from_file(file_tmp_name) != "application/pdf":
                         raise TypeError("Not pdf")
 
-                    db.save_doc(url, file_tmp_name, db.FileType.pdf, source)
+                    with open(file_tmp_name, mode="rb") as file:
+                        fileContent = file.read()
+
+                    db.save_doc(url, fileContent, db.FileType.pdf, source)
                 else:
                     raise TypeError("Not pdf")
             else:

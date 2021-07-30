@@ -24,7 +24,8 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     Parses html file using extraction method
     """
 
-    if db.is_content_present(source_url):
+    if db.is_content_present(source_url, method):
+        logger.info("Skipping %s - already parsed via %s" % (source_url, method))
         return
 
     # get file from database
@@ -51,7 +52,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
 def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
     """Extracts text and metadata from *.pdf file"""
 
-    if db.is_content_present(source_url):
+    if db.is_content_present(source_url, method):
         return
 
     doc = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
@@ -96,10 +97,14 @@ def add_missing_files_to_db(path: str):
     for filename in glob.glob(os.path.join(path, "*.pdf")):
         try:
             if not db.is_document_present(filename):
+
+                with open(filename, mode="rb") as file:
+                    fileContent = file.read()
+
                 # add raw file to db
                 db.save_doc(
                     filename,
-                    filename,
+                    fileContent,
                     db.FileType.pdf,
                     source=db.SourceWebsite.localhost,
                 )
@@ -107,7 +112,7 @@ def add_missing_files_to_db(path: str):
                 # pass filename as source
                 parse_pdf(filename, db.ExtractionMetod.pdfminer)
         except Exception as e:
-            print("Fail to parse %s, error: %s" % (filename, e))
+            logger.info("Fail to parse %s, error: %s" % (filename, e))
             continue
 
     for filename in glob.glob(os.path.join(path, "*.html")):
@@ -125,7 +130,7 @@ def add_missing_files_to_db(path: str):
                 parse_html(filename, db.ExtractionMetod.dragnet)
                 parse_html(filename, db.ExtractionMetod.newspaper)
         except Exception as e:
-            print("Fail to parse %s, error: %s" % (filename, e))
+            logger.info("Fail to parse %s, error: %s" % (filename, e))
             continue
 
 
@@ -134,10 +139,10 @@ def parse_source(source: str, batch_size: int):
         {db.SOURCE: source}, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])
-        if doc[db.FILE_TYPE] == "FileType.pdf":
+        if doc[db.FILE_TYPE] == db.FileType.pdf:
             parse_pdf(doc[db.URL], db.ExtractionMetod.pdfminer)
 
-        elif doc[db.FILE_TYPE] == "FileType.html":
+        elif doc[db.FILE_TYPE] == db.FileType.html:
             parse_html(doc[db.URL], db.ExtractionMetod.dragnet)
             parse_html(doc[db.URL], db.ExtractionMetod.newspaper)
 
