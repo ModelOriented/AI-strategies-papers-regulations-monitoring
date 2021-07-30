@@ -7,11 +7,12 @@ import os
 import dotenv
 import typer
 
+import mars.logging
 import mars.parser as parser
 from mars import db, db_fields
 from mars.scraper import Scraper
 from mars.utils import get_oecd_parsing_results
-import mars.logging
+
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 level = logging.getLevelName(os.getenv("LOGGING_LEVEL"))

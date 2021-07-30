@@ -1,4 +1,5 @@
 import traceback
+from logging import *
 
 
 def log_exception(text, exception, logger):
