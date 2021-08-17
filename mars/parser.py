@@ -31,7 +31,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         return
 
     # get file from database
-    filename = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+    filename = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
 
     # read file
     with open(filename, "r") as f:
@@ -57,7 +57,7 @@ def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
     if db.is_content_present(source_url, method):
         return
 
-    doc = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
     file_name = doc[db.FILENAME]
 
     empty_pages = []
@@ -141,7 +141,7 @@ def add_missing_files_to_db(path: str):
 
 
 def parse_source(source: str, batch_size: int):
-    for doc in db.documentSources.fetchByExample(
+    for doc in db.document_sources.fetchByExample(
         {db.SOURCE: source}, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])
