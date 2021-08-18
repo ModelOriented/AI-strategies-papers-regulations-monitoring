@@ -24,15 +24,19 @@ def main(headless: bool = True):
     logger.info("Fetching oecd urls")
     parsing_results = get_oecd_parsing_results()
     api = Scraper(headless=True)
+    counter = 0
 
     for result in parsing_results:
         try:
-            api.save_document(result[db_fields.URL], source=db.SourceWebsite.oecd, metadata = result)
+            api.save_document(
+                result[db_fields.URL], source=db.SourceWebsite.oecd, metadata=result
+            )
+            counter += 1
         except Exception as e:
-            mars.logging.log_exception("Exception ocured:",e,logger)
+            mars.logging.log_exception("Exception ocured:", e, logger)
 
-    logger.info("Scrapped all! Proceding to parse contents...")
-    parser.parse_source(db.SourceWebsite.oecd, 1000)
+    logger.info("Scrapped all! Proceeding to parse contents...")
+    parser.parse_source(db.SourceWebsite.oecd, counter)
 
 
 if __name__ == "__main__":

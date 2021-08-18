@@ -2,11 +2,13 @@ import glob
 import logging
 import os
 import traceback
+from abc import ABC
 from dataclasses import dataclass
 from typing import List
 
 import dragnet
 import newspaper
+from html.parser import HTMLParser
 import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
@@ -21,6 +23,13 @@ logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 
+class HTMLFilter(HTMLParser, ABC):
+    text = ""
+
+    def handle_data(self, data):
+        self.text += data
+
+
 def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     """
     Parses html file using extraction method
@@ -31,8 +40,9 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         return
 
     # get file from database
-    filename = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
 
+    filename = doc[db.FILENAME]
     # read file
     with open(filename, "r") as f:
         raw_html = f.read()
@@ -44,6 +54,11 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         article.set_html(raw_html)
         article.parse()
         content = article.text
+
+    elif method == db.ExtractionMetod.simple_html:
+        f = HTMLFilter()
+        f.feed(raw_html)
+        content = f.text
 
     db.save_extracted_content(source_url, content=content, extraction_method=method)
 
@@ -99,7 +114,6 @@ def add_missing_files_to_db(path: str):
     for filename in glob.glob(os.path.join(path, "*.pdf")):
         try:
             if not db.is_document_present(filename):
-
                 with open(filename, mode="rb") as file:
                     fileContent = file.read()
 
@@ -124,10 +138,7 @@ def add_missing_files_to_db(path: str):
             if not db.is_document_present(filename):
                 # add raw file to db
                 db.save_doc(
-                    filename,
-                    filename,
-                    db.FileType.html,
-                    source=db.SourceWebsite.manual,
+                    filename, filename, db.FileType.html, source=db.SourceWebsite.manual
                 )
 
                 # pass filename as source

@@ -1,7 +1,7 @@
 from mars.scraper import Scraper
 from mars import db
 import urllib
-import requests
+from mars import parser
 import dotenv
 import logging
 import os
@@ -25,21 +25,26 @@ def get_eurlex_search_link(keyword: str, lang: str):
     return url
 
 
-def scrap_eurlex_single_page(s: Scraper):
+def scrap_eurlex_single_page(s: Scraper, metadata: dict):
     celexes = s.driver.find_elements_by_xpath(
         "//*[contains(text(), 'CELEX')]/following-sibling::dd"
     )
     celexes = [x.text for x in celexes]
 
     for x in celexes:
+
+        # check if CELEX number is correct
         if 5 < len(x) < 16:
             try:
                 url_ = URL_POINT + urllib.parse.quote(x)
                 logger.info("Scraping %s" % url_)
-                s.save_content(url_, db.SourceWebsite.eurlex)
+
+                metadata["celex"] = x
+                s.save_document(url_, db.SourceWebsite.eurlex, metadata=metadata)
 
                 # extract content
                 # @TODO extracting simple content
+                parser.parse_html(url_, db.ExtractionMetod.simple_html)
 
             except Exception as e:
                 print("Failed, err: %s" % e)
@@ -71,8 +76,12 @@ for lang in langs:
             .split("page=")[-1]
         )
 
-        scrap_eurlex_single_page(s)
+        metadata = {"lang": lang, "keyword": keyword}
+
+        # scrap fist page from default link
+        scrap_eurlex_single_page(s, metadata)
 
         for i in range(2, int(last_page), 1):
+            # scrap rest of pages by adding &page=i
             go_to_eurlex_page(s, i, based)
-            scrap_eurlex_single_page(s)
+            scrap_eurlex_single_page(s, metadata)

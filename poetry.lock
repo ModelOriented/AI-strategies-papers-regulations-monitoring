@@ -734,6 +734,17 @@ pyparsing = "*"
 full = ["numpy", "ply"]
 
 [[package]]
+name = "html-parser"
+version = "0.2"
+description = "UNKNOWN"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ply = "*"
+
+[[package]]
 name = "html5lib"
 version = "1.1"
 description = "HTML parser based on the WHATWG HTML specification"
@@ -2518,7 +2529,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.7.1"
-content-hash = "cd53430dbbe4285221469be07a1f21e551d736c720eb8fa20b06e8e3cb932789"
+content-hash = "e02af44d2c3502f124de7b78afbf9aa5ef2f1ad0fc43a804821fb13577d4420e"
 
 [metadata.files]
 aiohttp = [
@@ -3034,6 +3045,9 @@ grandalf = [
     {file = "grandalf-0.6-py3-none-any.whl", hash = "sha256:357946e2fd35fc92c327cf3c091acc5aef93e0c74c60fed0a727d827ab3b1272"},
     {file = "grandalf-0.6-py3.5.egg", hash = "sha256:aa985ba9992aba30e9c09d3cd9574054268b74ff2d34ced68aa9e7ca698724b0"},
     {file = "grandalf-0.6.tar.gz", hash = "sha256:7471db231bd7338bc0035b16edf0dc0c900c82d23060f4b4d0c4304caedda6e4"},
+]
+html-parser = [
+    {file = "html-parser-0.2.tar.gz", hash = "sha256:8c61bde2c4e558daf790cd95daf7aa06d2a07699caaa6ec3f34b76966e2332f8"},
 ]
 html5lib = [
     {file = "html5lib-1.1-py2.py3-none-any.whl", hash = "sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d"},
