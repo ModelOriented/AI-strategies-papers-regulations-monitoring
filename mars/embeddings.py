@@ -18,7 +18,7 @@ def normalization(embeds):
 
 
 def embedd_sents_labse(sents):
-    return normalization(encoder(preprocessor(tf.constant(sents)))["default"])
+    return normalization(encoder(preprocessor(tf.constant(sents)))["default"]).numpy()
 
 
 def embedd_sents_laser(sents):
