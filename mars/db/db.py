@@ -1,5 +1,6 @@
 import os
 import uuid
+from enum import Enum
 
 from dotenv import load_dotenv
 from mars.db import collections
@@ -17,6 +18,7 @@ CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
 
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
+
 
 class SourceWebsite(str, Enum):
     oecd = "oecd"
