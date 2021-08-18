@@ -43,7 +43,6 @@ def scrap_eurlex_single_page(s: Scraper, metadata: dict):
                 s.save_document(url_, db.SourceWebsite.eurlex, metadata=metadata)
 
                 # extract content
-                # @TODO extracting simple content
                 parser.parse_html(url_, db.ExtractionMetod.simple_html)
 
             except Exception as e:
