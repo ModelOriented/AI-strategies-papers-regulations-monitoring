@@ -16,6 +16,7 @@ TITLE = "title"
 class SourceWebsite(str, Enum):
     oecd = "oecd"
     manual = "manually_added"
+    eurlex = "eurlex"
 
 
 class FileType(str, Enum):
@@ -27,3 +28,4 @@ class ExtractionMetod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
     pdfminer = "pdfminer"
+    simple_html = "simple_html"

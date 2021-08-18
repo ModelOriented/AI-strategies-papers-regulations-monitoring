@@ -32,6 +32,7 @@ pdfminer = "^20191125"
 timeunit = "^1.1.0"
 cached-property = "^1.5.2"
 isort = "^5.9.3"
+html-parser = "^0.2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"
