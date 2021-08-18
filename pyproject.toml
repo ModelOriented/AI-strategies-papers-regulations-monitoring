@@ -33,6 +33,10 @@ timeunit = "^1.1.0"
 cached-property = "^1.5.2"
 isort = "^5.9.3"
 html-parser = "^0.2"
+tensorflow-hub = "^0.12.0"
+tensorflow = "^2.5.0"
+tensorflow-text = "^2.5.0"
+laserembeddings = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"
