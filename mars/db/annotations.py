@@ -10,7 +10,7 @@ class ScoreingStrategy(str,Enum):
 
 def prepare_annotation_data():
     """Loads collection with annotation data"""
-    for doc in collections.processed_texts.fetchAll():
+    for doc in collections.processed_texts.fetchAll(batchSize=1):
         print("Processing", doc['_id'], '...')
         processed_text_id = doc["_id"]
         text_id = doc[db_fields.TEXT_ID]
