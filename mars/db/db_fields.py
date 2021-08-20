@@ -12,7 +12,16 @@ EXTRACTION_METHOD = "extraction_method"
 COUNTRY = "country"
 TITLE = "title"
 
+# Processed texts
+TEXT_ID = "textId"
+SENTENCES = "sentences"
 
+
+# Annotation
+PROCESSED_TEXT_ID = "processedTextId"
+SENTENCE ="sentence"
+EMBEDDINGS="embeddings"
+SENTENCE_SAMPLING_SCORE = 'score'
 class SourceWebsite(str, Enum):
     oecd = "oecd"
     manual = "manually_added"

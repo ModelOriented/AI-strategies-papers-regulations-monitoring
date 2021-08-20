@@ -1,7 +1,7 @@
 """Splits all text to sentences and saves them to db"""
 import dotenv
 import spacy
-from mars import db
+from mars import db, db_fields
 
 dotenv.load_dotenv()
 
@@ -22,7 +22,7 @@ for content in db.collections.contents.fetchAll():
         text = content["content"]
         sents = [str(s) for s in list(en(text).sents)]
         doc = db.collections.processed_texts.createDocument()
-        doc["textId"] = content["_id"]
+        doc[db_fields.TEXT_ID] = content["_id"]
         doc["sentences"] = sents
         doc.save()
     else:
