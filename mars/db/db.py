@@ -16,6 +16,9 @@ SOURCE = "source_website"
 DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
+USER = "user"
+
+env_user = os.getenv("USER")
 
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
@@ -23,6 +26,7 @@ document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 class SourceWebsite(str, Enum):
     oecd = "oecd"
     manual = "manually_added"
+    eurlex = "eurlex"
 
 
 class FileType(str, Enum):
@@ -34,6 +38,7 @@ class ExtractionMetod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
     pdfminer = "pdfminer"
+    simple_html = "simple_html"
 
 
 def is_document_present(url: str) -> bool:
@@ -68,6 +73,7 @@ def save_doc(
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
     doc[SOURCE] = source
+    doc[USER] = env_user
     for key, value in additional_data.items():
         if key not in document_source_field_keys:
             doc[key] = value
@@ -88,6 +94,7 @@ def save_extracted_content(
     doc[CONTENT] = content
     doc[EXTRACTION_METHOD] = extraction_method
     doc[URL] = source_url
+    doc[USER] = env_user
     doc.save()
 
 
