@@ -7,6 +7,7 @@ SOURCE = "source_website"
 DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
+USER = "user"
 
 
 COUNTRY = "country"
