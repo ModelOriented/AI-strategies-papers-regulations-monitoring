@@ -1,5 +1,6 @@
 import os
 
+import pyArango.collection
 from dotenv import load_dotenv
 from pyArango.connection import Connection
 
@@ -16,7 +17,9 @@ except KeyError:
     database = conn.createDatabase("mars")
 
 
-def get_collection_or_create(collection_name: str, database=database):
+def get_collection_or_create(
+    collection_name: str, database=database
+) -> pyArango.collection.Collection:
     try:
         return database[collection_name]
     except KeyError:
