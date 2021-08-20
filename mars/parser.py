@@ -40,7 +40,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         return
 
     # get file from database
-    doc = db.documentSources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
 
     filename = doc[db.FILENAME]
     # read file
