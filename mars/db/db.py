@@ -4,41 +4,16 @@ from enum import Enum
 
 from dotenv import load_dotenv
 from mars.db import collections
+from .db_fields import *
+
 
 load_dotenv()
 os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
 
 
-URL = "url"
-FILENAME = "filename"
-FILE_TYPE = "file_type"
-SOURCE = "source_website"
-DOC_ID = "source_doc_id"
-CONTENT = "content"
-EXTRACTION_METHOD = "extraction_method"
-USER = "user"
-
 env_user = os.getenv("USER")
 
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
-
-
-class SourceWebsite(str, Enum):
-    oecd = "oecd"
-    manual = "manually_added"
-    eurlex = "eurlex"
-
-
-class FileType(str, Enum):
-    pdf = "pdf"
-    html = "html"
-
-
-class ExtractionMetod(str, Enum):
-    newspaper = "newspaper3k"
-    dragnet = "dragnet"
-    pdfminer = "pdfminer"
-    simple_html = "simple_html"
 
 
 def is_document_present(url: str) -> bool:
