@@ -1,11 +1,22 @@
 import os
 import uuid
-from enum import Enum
 
 from dotenv import load_dotenv
 from mars.db import collections
-from .db_fields import *
-
+from mars.db._connection import database
+from mars.db.db_fields import (
+    CONTENT,
+    DOC_ID,
+    EXTRACTION_METHOD,
+    FILE_TYPE,
+    FILENAME,
+    SOURCE,
+    URL,
+    USER,
+    ExtractionMetod,
+    FileType,
+    SourceWebsite,
+)
 
 load_dotenv()
 os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)

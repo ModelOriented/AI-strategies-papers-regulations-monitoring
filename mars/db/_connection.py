@@ -3,6 +3,7 @@ import os
 import pyArango.collection
 from dotenv import load_dotenv
 from pyArango.connection import Connection
+from pyArango.database import Database
 
 load_dotenv()
 
@@ -12,9 +13,9 @@ conn = Connection(
     arangoURL=os.getenv("ARANGODB_URL"),
 )
 try:
-    database = conn.databases["mars"]
+    database = conn.databases["mars"]  # type: Database
 except KeyError:
-    database = conn.createDatabase("mars")
+    database = conn.createDatabase("mars")  # type: Database
 
 
 def get_collection_or_create(

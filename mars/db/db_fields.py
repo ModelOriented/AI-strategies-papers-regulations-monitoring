@@ -1,5 +1,9 @@
 from enum import Enum
 
+# All:
+ID = "_id"
+
+# Source document:
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
@@ -7,23 +11,23 @@ SOURCE = "source_website"
 DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
-
-
 COUNTRY = "country"
 TITLE = "title"
+USER = "user"
 
-# Processed texts
+# Processed texts:
 TEXT_ID = "textId"
 SENTENCES = "sentences"
+EMBEDDINGS = "embeddings"
 
 
-# Annotation
+# Annotation:
 PROCESSED_TEXT_ID = "processedTextId"
 SENTENCE = "sentence"
-EMBEDDINGS = "embeddings"
 SENTENCE_SAMPLING_SCORE = "score"
 SENT_NUM = "sentNum"
 QUERY_TARGET = "queryTarget"
+# EMBEDDINGS
 
 
 class SourceWebsite(str, Enum):

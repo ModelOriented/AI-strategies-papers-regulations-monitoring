@@ -1,4 +1,7 @@
+"""Adds embeddings to all processed texts"""
+
 import typer
+from mars.db.db_fields import EMBEDDINGS
 
 BATCH_SIZE = 1000
 
@@ -14,7 +17,9 @@ def main(embedding_type: str) -> None:
         raise ValueError(f"Unknown embedding type: {embedding_type}")
     for doc in db.collections.processed_texts.fetchAll():
         full_embbedings = list()
-        if not doc[embedding_type]:
+        if not doc[EMBEDDINGS]:
+            doc[EMBEDDINGS] = dict()
+        if not doc[EMBEDDINGS][embedding_type]:
             print("Processing", doc["_id"], "...")
             try:
                 if len(doc.sentences) == 0:
@@ -28,7 +33,7 @@ def main(embedding_type: str) -> None:
                 print("Exception occured in processing", doc["_id"])
                 print(e)
         else:
-            print("Skipping", doc["_id"])
+            print("Skipping", doc["_id"], embedding_type)
 
 
 if __name__ == "__main__":
