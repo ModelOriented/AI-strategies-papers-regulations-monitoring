@@ -1,14 +1,19 @@
 from enum import Enum
 
 # All:
-ID = "_id"
+ID = "_id"  # id is unique accross the whole database
+KEY = "_key"  # key is unique accross the collection
+
+
+def id_to_key(id: str):
+    return id.split("/")[-1]
+
 
 # Source document:
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
 SOURCE = "source_website"
-DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
 COUNTRY = "country"
@@ -19,6 +24,7 @@ USER = "user"
 TEXT_ID = "textId"
 SENTENCES = "sentences"
 EMBEDDINGS = "embeddings"
+DOC_ID = "source_doc_id"
 
 
 # Annotation:
