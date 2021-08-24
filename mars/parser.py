@@ -4,11 +4,11 @@ import os
 import traceback
 from abc import ABC
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import List
 
 import dragnet
 import newspaper
-from html.parser import HTMLParser
 import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
@@ -16,10 +16,11 @@ import pdfminer.pdfpage
 
 import mars.db as db
 import mars.logging
+from mars import config
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+logger.setLevel(logging.getLevelName(config.logging_level))
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 

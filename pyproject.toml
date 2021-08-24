@@ -38,6 +38,7 @@ tensorflow = "^2.5.0"
 tensorflow-text = "^2.5.0"
 laserembeddings = "^1.1.1"
 seaborn = "^0.11.2"
+python-arango = "^7.2.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"

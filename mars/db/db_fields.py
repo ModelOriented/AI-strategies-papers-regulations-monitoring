@@ -33,6 +33,7 @@ SENTENCE = "sentence"
 SENTENCE_SAMPLING_SCORE = "score"
 SENT_NUM = "sentNum"
 QUERY_TARGET = "queryTarget"
+ANNOTATION_RESULT = "annotation_result"
 # EMBEDDINGS
 
 
