@@ -1,12 +1,11 @@
 import json
 import os
 import ssl
+
 import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
 import pdfminer.pdfpage
-
-import pandas as pd
 import requests
 
 from mars import db_fields
@@ -71,10 +70,9 @@ def get_number_of_files(dir: str):
     return n_files
 
 
-
 # extract text from PDF
 
-def extract_text_from_pdf(file_name):
+def extract_text_from_pdf(file_name: str) -> dict:
     """Extract text and other attributes from pdf in form od dict"""
     empty_pages = []
     separated_text = []

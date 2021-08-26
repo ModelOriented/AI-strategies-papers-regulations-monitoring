@@ -9,7 +9,7 @@ from typing import List
 import dragnet
 import newspaper
 from html.parser import HTMLParser
-from utils import extract_text_from_pdf
+from mars.utils import extract_text_from_pdf
 
 import mars.db as db
 import mars.logging
