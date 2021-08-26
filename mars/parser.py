@@ -9,10 +9,7 @@ from typing import List
 import dragnet
 import newspaper
 from html.parser import HTMLParser
-import pdfminer.converter
-import pdfminer.layout
-import pdfminer.pdfinterp
-import pdfminer.pdfpage
+from mars.utils import extract_text_from_pdf
 
 import mars.db as db
 import mars.logging
@@ -75,32 +72,11 @@ def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
     doc = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
     file_name = doc[db.FILENAME]
 
-    empty_pages = []
-    separated_text = []
-    all_text = ""
-    page_no = 0
-    document = open(file_name, "rb")
-    rsrcmgr = pdfminer.pdfinterp.PDFResourceManager()
-    laparams = pdfminer.layout.LAParams()
-    device = pdfminer.converter.PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = pdfminer.pdfinterp.PDFPageInterpreter(rsrcmgr, device)
-    for page in pdfminer.pdfpage.PDFPage.get_pages(document):
-        text_on_page = []
-        interpreter.process_page(page)
-        layout = device.get_result()
-        for element in layout:
-            if isinstance(element, pdfminer.layout.LTTextBoxHorizontal):
-                text_on_page.append(element.get_text())
-                all_text += element.get_text()
-        if len(text_on_page) == 0:
-            empty_pages.append(page_no)
-        separated_text.append(text_on_page)
-        page_no += 1
-    document.close()
+    document_dict = extract_text_from_pdf(file_name)
 
     # leave for future meta
     # return Pdf(separated_text, empty_pages, all_text)
-    db.save_extracted_content(source_url, content=all_text, extraction_method=method)
+    db.save_extracted_content(source_url, content=document_dict['all_text'], extraction_method=method)
 
 
 @dataclass
