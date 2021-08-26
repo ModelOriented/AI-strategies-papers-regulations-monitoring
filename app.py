@@ -4,11 +4,11 @@ from mars.db import collections
 from mars.db.db_fields import ANNOTATION_RESULT, QUERY_TARGET, SENTENCE
 from mars.db.new_api import database
 
-"""## Issue"""
+"""### Issue"""
 issue = st.empty()
-"""## Sentence"""
+"""### Sentence"""
 sentence_text = st.empty()
-"""Does issue appear in sentence?"""
+"""#### Does issue appear in sentence?"""
 
 annotations = database[collections.ANNOTATIONS]
 
@@ -22,8 +22,8 @@ q = f"""FOR d IN Annotations
 def get_new_item():
     print("Getting new item")
     doc = database.aql.execute(q).next()
-    sentence_text.write(doc[SENTENCE])
-    issue.write(doc[QUERY_TARGET])
+    sentence_text.write("'" + doc[SENTENCE] + "'")
+    issue.write("'" + doc[QUERY_TARGET] + "'")
     return doc
 
 
