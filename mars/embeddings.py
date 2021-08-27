@@ -23,3 +23,7 @@ def embedd_sents_labse(sents):
 
 def embedd_sents_laser(sents):
     return normalization(laser.embed_sentences(sents, lang="en"))
+
+
+def similarity(sent_embedding, query_embedding) -> float:
+    return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))

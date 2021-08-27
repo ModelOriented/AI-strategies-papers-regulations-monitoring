@@ -35,6 +35,8 @@ SENT_NUM = "sentNum"
 QUERY_TARGET = "queryTarget"
 ANNOTATION_RESULT = "annotation_result"
 # EMBEDDINGS
+LASER = "laser"
+LABSE = "labse"
 
 
 class SourceWebsite(str, Enum):
