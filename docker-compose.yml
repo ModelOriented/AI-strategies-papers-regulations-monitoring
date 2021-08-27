@@ -9,6 +9,9 @@ services:
     volumes:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
+  annotation:
+    build: .
+    command: streamlit run app.py
 
 volumes:
   arangodb_data_container:
