@@ -12,6 +12,8 @@ services:
   annotation:
     build: .
     command: streamlit run app.py
+    ports:
+     - 8081:8501
 
 volumes:
   arangodb_data_container:
