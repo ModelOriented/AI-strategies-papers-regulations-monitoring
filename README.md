@@ -1,6 +1,7 @@
 # AI-stretegies-papers-regulations-monitoring
 Monitoring of AI strategies, papers, and regulations
-https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring
+
+Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring
 
 ### Project structure
 * **mars** contains modules with code
@@ -20,3 +21,13 @@ https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring
   * **oecd-scraping.py** - code for scrapping documents from oecd
 * **docker-compose.yml** - definition of services
 * **app.py** - applitacion for annotation
+
+# Usage
+## Pre-requirements
+* docker
+* docker-compose
+## Installation
+`docker-compose build`
+## Running
+### Inside docker
+`docker-compose up`
