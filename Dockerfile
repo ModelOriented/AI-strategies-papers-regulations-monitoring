@@ -45,4 +45,4 @@ RUN poetry install --no-interaction --no-ansi -vvv
 
 COPY ./app.py .
 EXPOSE 8080
-ENTRYPOINT ["poetry run"]
+CMD ["poetry", "run", "streamlit", "app.py"]
