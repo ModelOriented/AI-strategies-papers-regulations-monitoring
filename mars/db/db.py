@@ -5,9 +5,19 @@ from dotenv import load_dotenv
 
 from mars import config
 from mars.db import collections
-from mars.db.db_fields import (CONTENT, DOC_ID, EXTRACTION_METHOD, FILE_TYPE,
-                               FILENAME, SOURCE, URL, USER, ExtractionMetod,
-                               FileType, SourceWebsite)
+from mars.db.db_fields import (
+    CONTENT,
+    DOC_ID,
+    EXTRACTION_METHOD,
+    FILE_TYPE,
+    FILENAME,
+    SOURCE,
+    URL,
+    USER,
+    ExtractionMetod,
+    FileType,
+    SourceWebsite,
+)
 
 load_dotenv()
 os.makedirs(config.raw_files_dir, exist_ok=True)

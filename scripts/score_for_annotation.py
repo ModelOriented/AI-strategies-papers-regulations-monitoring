@@ -5,8 +5,7 @@ import typer
 from tqdm import tqdm
 
 from mars.db import collections
-from mars.db.db_fields import (EMBEDDINGS, LASER, QUERY_TARGET,
-                               SENTENCE_SAMPLING_SCORE)
+from mars.db.db_fields import EMBEDDINGS, LASER, QUERY_TARGET, SENTENCE_SAMPLING_SCORE
 from mars.db.new_api import database
 
 

@@ -7,8 +7,17 @@ import typer
 
 import mars.db
 from mars.db import collections
-from mars.db.db_fields import (CONTENT, DOC_ID, FILENAME, ID, SENTENCES,
-                               SOURCE, TEXT_ID, URL, id_to_key)
+from mars.db.db_fields import (
+    CONTENT,
+    DOC_ID,
+    FILENAME,
+    ID,
+    SENTENCES,
+    SOURCE,
+    TEXT_ID,
+    URL,
+    id_to_key,
+)
 
 BATCH_SIZE = 100
 dotenv.load_dotenv()

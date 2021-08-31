@@ -3,8 +3,16 @@ import typer
 from tqdm import tqdm
 
 from mars.db import collections
-from mars.db.db_fields import (EMBEDDINGS, ID, PROCESSED_TEXT_ID, QUERY_TARGET,
-                               SENT_NUM, SENTENCE, SENTENCES, TEXT_ID)
+from mars.db.db_fields import (
+    EMBEDDINGS,
+    ID,
+    PROCESSED_TEXT_ID,
+    QUERY_TARGET,
+    SENT_NUM,
+    SENTENCE,
+    SENTENCES,
+    TEXT_ID,
+)
 from mars.db.new_api import database
 
 EMBEDDING_TYPES = ["labse", "laser"]
