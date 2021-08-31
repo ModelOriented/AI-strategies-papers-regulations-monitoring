@@ -1,5 +1,7 @@
 """Loads data for annotation to database"""
 import typer
+from tqdm import tqdm
+
 from mars.db import collections
 from mars.db.db_fields import (
     EMBEDDINGS,
@@ -12,7 +14,6 @@ from mars.db.db_fields import (
     TEXT_ID,
 )
 from mars.db.new_api import database
-from tqdm import tqdm
 
 EMBEDDING_TYPES = ["labse", "laser"]
 

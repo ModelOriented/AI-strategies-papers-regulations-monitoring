@@ -26,7 +26,7 @@ RUN apt-get update \
     && poetry --version \
     && pip install --upgrade pip \
     # configure poetry & make a virtualenv ahead of time since we only need one
-    && python -m venv $VENV_PATH 
+    && python -m venv $VENV_PATH
 
 RUN poetry config virtualenvs.create false \
     # cleanup
@@ -36,7 +36,7 @@ RUN pip install --upgrade pip
 WORKDIR /src
 COPY poetry.lock pyproject.toml ./
 # RUN poetry init
-RUN poetry run pip install --upgrade pip 
+RUN poetry run pip install --upgrade pip
 RUN poetry run pip install --upgrade setuptools
 RUN poetry install --no-interaction --no-ansi -vvv
 

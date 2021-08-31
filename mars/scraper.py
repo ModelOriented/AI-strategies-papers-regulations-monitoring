@@ -3,16 +3,11 @@ import logging
 import os
 import urllib
 
-import dragnet
 import magic
-import newspaper
 import requests
-from dotenv import load_dotenv
 from selenium import webdriver
 
-from mars import db
-
-load_dotenv()
+from mars import config, db
 
 
 class Scraper:
@@ -24,20 +19,20 @@ class Scraper:
         """
         self.verbose = verbose
         self.print_log("Setting up driver")
-        self.log_dir = os.getenv("SCRAPER_LOGS_DIR")
+        self.log_dir = config.scrapper_logs_dir
         self.logger = logging.getLogger(__name__)
 
-        self.logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+        self.logger.setLevel(logging.getLevelName(config.logging_level))
         logging.basicConfig(
             format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S"
         )
 
         os.makedirs(self.log_dir, exist_ok=True)
-        os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
+        os.makedirs(config.raw_files_dir, exist_ok=True)
 
         profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
-        profile.set_preference("browser.download.dir", os.getenv("RAW_FILES_DIR"))
+        profile.set_preference("browser.download.dir", config.raw_files_dir)
         mimetypes = ["application/pdf", "application/x-pdf"]
         profile.set_preference(
             "browser.helperApps.neverAsk.saveToDisk", ",".join(mimetypes)
@@ -49,7 +44,7 @@ class Scraper:
             options.add_argument("--headless")
 
         self.driver = webdriver.Firefox(
-            executable_path=os.getenv("GECKODRIVER_PATH"),
+            executable_path=config.geckodriver_path,
             firefox_profile=profile,
             options=options,
         )
@@ -95,9 +90,7 @@ class Scraper:
 
                 if "application/pdf" in content_type:
 
-                    file_tmp_name = os.path.join(
-                        os.getenv("RAW_FILES_DIR"), "./tmp.pdf"
-                    )
+                    file_tmp_name = os.path.join(config.raw_files_dir, "./tmp.pdf")
                     urllib.request.urlretrieve(url, file_tmp_name)
 
                     mime = magic.Magic(mime=True)

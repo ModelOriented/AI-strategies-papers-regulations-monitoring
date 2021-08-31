@@ -2,8 +2,9 @@ import os
 import uuid
 
 from dotenv import load_dotenv
+
+from mars import config
 from mars.db import collections
-from mars.db._connection import database
 from mars.db.db_fields import (
     CONTENT,
     DOC_ID,
@@ -19,10 +20,10 @@ from mars.db.db_fields import (
 )
 
 load_dotenv()
-os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
+os.makedirs(config.raw_files_dir, exist_ok=True)
 
 
-env_user = os.getenv("USER")
+env_user = config.user
 
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
@@ -89,9 +90,7 @@ def _new_file(file_content, file_type: str):
     for pdfs file_content is current filename
     @TODO rename
     """
-    filename = os.path.join(
-        os.getenv("RAW_FILES_DIR"), str(uuid.uuid4()) + "." + file_type
-    )
+    filename = os.path.join(config.raw_files_dir, str(uuid.uuid4()) + "." + file_type)
     if file_type == FileType.pdf:
         with open(filename, "wb") as file:
             file.write(file_content)

@@ -16,8 +16,8 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
   * **split_to_sentences.py**
   * **score_for_annotation.py** - code for setting scores to sentences accordingly to their annotation value
   * **split_to_sentences.py**
-  * **parse-dir.py** 
-  * **eurlex-scraping.py** - code for scrapping documents from eurlex 
+  * **parse-dir.py**
+  * **eurlex-scraping.py** - code for scrapping documents from eurlex
   * **oecd-scraping.py** - code for scrapping documents from oecd
 * **docker-compose.yml** - definition of services
 * **app.py** - applitacion for annotation
