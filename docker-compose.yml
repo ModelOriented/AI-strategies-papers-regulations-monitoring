@@ -11,7 +11,7 @@ services:
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
   annotation:
     build: .
-    #command: streamlit run app.py
+    command: "streamlit run app.py --server.enableCORS false --server.enableXsrfProtection false --server.headless true --server.enableWebsocketCompression false"
     ports:
      - 8081:8501
 

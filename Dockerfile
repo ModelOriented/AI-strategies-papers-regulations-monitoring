@@ -44,5 +44,6 @@ COPY ./mars /src/mars
 RUN poetry install --no-interaction --no-ansi -vvv
 
 COPY ./app.py .
+COPY ./.env .
 EXPOSE 8080
-CMD ["poetry", "run", "streamlit", "app.py"]
+ENTRYPOINT ["poetry", "run"]
