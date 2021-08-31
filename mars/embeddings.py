@@ -25,5 +25,5 @@ def embedd_sents_laser(sents):
     return normalization(laser.embed_sentences(sents, lang="en"))
 
 
-def similarity(sent_embedding, query_embedding) -> float:
+def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float:
     return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
