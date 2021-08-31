@@ -23,3 +23,16 @@ def embedd_sents_labse(sents):
 
 def embedd_sents_laser(sents):
     return normalization(laser.embed_sentences(sents, lang="en"))
+
+
+def get_sentence_to_embedding_mapping(sentences: list, emb_type: str = "labse") -> dict:
+    if emb_type == "labse":
+        embds = embedd_sents_labse(sentences)
+    elif emb_type == "laser":
+        embds = embedd_sents_laser(sentences)
+    else:
+        raise ValueError("Unknown embedding type")
+    target_embeddings = dict()
+    for emb, targ in zip(embds, sentences):
+        target_embeddings[targ] = emb.numpy()
+    return target_embeddings
