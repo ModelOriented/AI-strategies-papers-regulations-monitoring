@@ -23,7 +23,7 @@ dotenv.load_dotenv()
 
 en = spacy.load("en_core_web_sm")
 
-query = f"""FOR x IN {collections.DOCUMENTS} FILTER x.{SOURCE} == @source 
+query = f"""FOR x IN {collections.DOCUMENTS} FILTER x.{SOURCE} == @source
 FOR y IN {collections.CONTENTS} FILTER x._id == y.{DOC_ID} RETURN y"""
 
 
