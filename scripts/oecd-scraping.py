@@ -5,9 +5,10 @@ import logging
 import os
 
 import dotenv
+import typer
+
 import mars.logging
 import mars.parser as parser
-import typer
 from mars import config, db, db_fields
 from mars.scraper import Scraper
 from mars.utils import get_oecd_parsing_results

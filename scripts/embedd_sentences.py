@@ -1,6 +1,7 @@
 """Adds embeddings to all processed texts"""
 
 import typer
+
 from mars import db
 from mars.db.db_fields import EMBEDDINGS, ID
 from mars.embedding_types import EmbeddingType
@@ -9,9 +10,8 @@ BATCH_SIZE = 1000
 
 
 def embedd_sentences(embedding_type: EmbeddingType) -> None:
-    from mars import (
-        embeddings,
-    )  # we import here to avoid huge model loading, before checking if parameters are valid
+    from mars import \
+        embeddings  # we import here to avoid huge model loading, before checking if parameters are valid
 
     if embedding_type == EmbeddingType.labse:
         embedd = embeddings.embedd_sents_labse

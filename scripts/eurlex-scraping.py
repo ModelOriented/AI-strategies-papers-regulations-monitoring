@@ -4,6 +4,7 @@ import traceback
 import urllib
 
 import dotenv
+
 from mars import config, db, parser
 from mars.scraper import Scraper
 
