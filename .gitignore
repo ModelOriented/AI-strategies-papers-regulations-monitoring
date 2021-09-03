@@ -134,3 +134,4 @@ dmypy.json
 notebooks/dirty
 raw_data
 log_dir
+notebooks/sg/similarities.csv

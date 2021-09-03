@@ -25,6 +25,10 @@ def embedd_sents_laser(sents):
     return normalization(laser.embed_sentences(sents, lang="en"))
 
 
+def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float:
+    return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
+
+
 def get_sentence_to_embedding_mapping(sentences: list, emb_type: str = "labse") -> dict:
     if emb_type == "labse":
         embds = embedd_sents_labse(sentences)

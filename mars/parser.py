@@ -4,19 +4,24 @@ import os
 import traceback
 from abc import ABC
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import List
 
 import dragnet
 import newspaper
-from html.parser import HTMLParser
-from mars.utils import extract_text_from_pdf
+import pdfminer.converter
+import pdfminer.layout
+import pdfminer.pdfinterp
+import pdfminer.pdfpage
 
 import mars.db as db
 import mars.logging
+from mars import config
+from mars.utils import extract_text_from_pdf
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+logger.setLevel(logging.getLevelName(config.logging_level))
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 
@@ -76,7 +81,9 @@ def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
 
     # leave for future meta
     # return Pdf(separated_text, empty_pages, all_text)
-    db.save_extracted_content(source_url, content=document_dict['all_text'], extraction_method=method)
+    db.save_extracted_content(
+        source_url, content=document_dict["all_text"], extraction_method=method
+    )
 
 
 @dataclass
