@@ -1721,6 +1721,14 @@ docs = ["Sphinx (>=4)", "furo (>=2021.7.5b38)", "proselint (>=0.10.2)", "sphinx-
 test = ["appdirs (==1.4.4)", "pytest (>=6)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)"]
 
 [[package]]
+name = "plot-metric"
+version = "0.0.4"
+description = "A package with tools for plotting metrics"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pluggy"
 version = "0.13.1"
 description = "plugin and hook calling mechanisms for python"
@@ -4323,6 +4331,9 @@ pillow = [
 platformdirs = [
     {file = "platformdirs-2.2.0-py3-none-any.whl", hash = "sha256:4666d822218db6a262bdfdc9c39d21f23b4cfdb08af331a81e92751daf6c866c"},
     {file = "platformdirs-2.2.0.tar.gz", hash = "sha256:632daad3ab546bd8e6af0537d09805cec458dce201bccfe23012df73332e181e"},
+]
+plot-metric = [
+    {file = "plot_metric-0.0.4-py3-none-any.whl", hash = "sha256:b3507c12b704ea9b229e6afcab87e5073da47c5b28762ec3d051ae94e3113911"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
