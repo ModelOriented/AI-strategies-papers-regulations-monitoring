@@ -1,15 +1,12 @@
 import glob
 import logging
 import os
-import traceback
 from abc import ABC
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import List
 
-import dragnet
 import newspaper
-import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
 import pdfminer.pdfpage
@@ -50,6 +47,8 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         raw_html = f.read()
 
     if method == db.ExtractionMetod.dragnet:
+        import dragnet
+
         content = dragnet.extract_content(raw_html)
     elif method == db.ExtractionMetod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
@@ -74,7 +73,7 @@ def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
     if db.is_content_present(source_url, method):
         return
 
-    doc = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
     file_name = doc[db.FILENAME]
 
     document_dict = extract_text_from_pdf(file_name)
@@ -135,7 +134,7 @@ def add_missing_files_to_db(path: str):
 
 
 def parse_source(source: str, batch_size: int):
-    for doc in db.document_sources.fetchByExample(
+    for doc in db.collections.document_sources.fetchByExample(
         {db.SOURCE: source}, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])

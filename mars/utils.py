@@ -8,7 +8,7 @@ import pdfminer.pdfinterp
 import pdfminer.pdfpage
 import requests
 
-from mars import db_fields
+from mars.db import db_fields
 
 URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
 
@@ -72,6 +72,7 @@ def get_number_of_files(dir: str):
 
 # extract text from PDF
 
+
 def extract_text_from_pdf(file_name: str) -> dict:
     """Extract text and other attributes from pdf in form od dict"""
     empty_pages = []
@@ -98,10 +99,10 @@ def extract_text_from_pdf(file_name: str) -> dict:
     document.close()
 
     document_dict = {
-        'all_text': all_text,
-        'text_on_page': text_on_page,
-        'empty_pages': empty_pages,
-        'page_no': page_no,
-        'separated_text': separated_text
+        "all_text": all_text,
+        "text_on_page": text_on_page,
+        "empty_pages": empty_pages,
+        "page_no": page_no,
+        "separated_text": separated_text,
     }
     return document_dict

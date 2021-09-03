@@ -37,6 +37,11 @@ QUERY_TARGET = "queryTarget"
 ANNOTATION_RESULT = "annotation_result"
 
 
+# Segmented texts:
+HTML_TAG = "html_tag"
+IS_HEADER = "is_header"
+
+
 class EmbeddingType(str, Enum):
     LASER = "laser"
     LABSE = "labse"
