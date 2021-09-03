@@ -1,10 +1,10 @@
 from collections import defaultdict
 from enum import Enum
-from typing import Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
-from mars import db, embeddings
+from mars import db, embeddings, logging
 from tqdm import tqdm
 
 
@@ -40,8 +40,8 @@ targets = {
 }
 
 
-def load_targets(dataset: DocumenLevelDataset, emb_type: str) -> dict:
-    """Load targets for specific dataset, along with their embeddings"""
+def load_targets(dataset: DocumenLevelDataset, emb_type: str) -> Dict[str, np.ndarray]:
+    """Load targets for specific dataset, along with their embeddings."""
     tar = targets[dataset]
     target_embeddings = embeddings.get_sentence_to_embedding_mapping(tar, emb_type)
     return target_embeddings
@@ -50,25 +50,40 @@ def load_targets(dataset: DocumenLevelDataset, emb_type: str) -> dict:
 def load_document_level_issues_dataset(
     dataset: DocumenLevelDataset, emb_type: str
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """Load documents, targets and labels from given dataset, along with embeddings"""
-    all_similarities = defaultdict(dict)
-    target_embeddings = load_targets(dataset, emb_type)
-    for text in tqdm(db.collections.processed_texts.fetchAll()):
-        for (target_sentence, target_embedding) in target_embeddings.items():
-            try:
-                scores = list(
-                    np.matmul(
-                        np.array(text["sentencesEmbeddings"]),
-                        np.transpose(target_embedding),
-                    )
-                )
+    """Load cartesian of documents and targets (in form of similarities) and labels from given dataset.
+    X - numpy array of lists of similarities of every sentence in document to given issue
+    y - numpy array of 1/0 label indicating if issue is present in document"""
+    # TODO: test
+    logging.debug(f"Loading {dataset.value} dataset...")
+    df_labels = pd.read_csv("data/labels.csv", index_col=0)
 
-                all_similarities[text["filename"]][target_sentence] = scores
-            except Exception as e:
-                print(e)
+    all_similarities = defaultdict(dict)
+    logging.debug("Loading targets similarities...")
+    target_embeddings = load_targets(dataset, emb_type)
+    for processed_text in tqdm(db.collections.processed_texts.fetchAll()):
+        if (
+            processed_text["embeddings"] is None
+            or processed_text["embeddings"][emb_type] is None
+        ):
+            logging.error(
+                f"Missing sentences embedding ({emb_type}) in {processed_text['_id']}"
+            )
+        else:
+            for (target_sentence, target_embedding) in target_embeddings.items():
+                try:
+                    scores = list(
+                        np.matmul(
+                            np.array(processed_text["embeddings"][emb_type]),
+                            np.transpose(target_embedding),
+                        )
+                    )
+                    all_similarities[processed_text["filename"]][
+                        target_sentence
+                    ] = scores
+                except Exception as e:
+                    logging.exception(e)
     all_similarities = dict(all_similarities)
     df = pd.DataFrame(dict(all_similarities))
-    df_labels = pd.read_csv("data/labels.csv", index_col=0)
     df_labels = df_labels[df.columns]
     document_names = df_labels.columns
     X = df[document_names].values.flatten()

@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -29,7 +31,10 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
     return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
 
 
-def get_sentence_to_embedding_mapping(sentences: list, emb_type: str = "labse") -> dict:
+def get_sentence_to_embedding_mapping(
+    sentences: List[str], emb_type: str = "labse"
+) -> Dict[str, np.ndarray]:
+    # TODO: tests, also for types
     if emb_type == "labse":
         embds = embedd_sents_labse(sentences)
     elif emb_type == "laser":
@@ -38,5 +43,5 @@ def get_sentence_to_embedding_mapping(sentences: list, emb_type: str = "labse") 
         raise ValueError("Unknown embedding type")
     target_embeddings = dict()
     for emb, targ in zip(embds, sentences):
-        target_embeddings[targ] = emb.numpy()
+        target_embeddings[targ] = emb
     return target_embeddings
