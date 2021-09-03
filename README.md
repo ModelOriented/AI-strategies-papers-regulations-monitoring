@@ -1,12 +1,12 @@
 # AI-stretegies-papers-regulations-monitoring
 Monitoring of AI strategies, papers, and regulations
 
-Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring
+Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring (to access please contact [Stanisław Giziński](https://github.com/Gizzio) or [Hanna Zdulska](https://github.com/HaZdula))
 
 ### Project structure
 * **mars** contains modules with code
   * **db** contains database connection abstraction layer
-  * **config.py** contains configuratoin utils
+  * **config.py** contains configuration utils
   * **embeddings.py** contains code for generating embedding of sentences
   * **parser.py** contains code for extracting text from htmls and pdfs
   * **scraper.py** contains code for downloading documents from various source websites
@@ -20,7 +20,7 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
   * **eurlex-scraping.py** - code for scrapping documents from eurlex
   * **oecd-scraping.py** - code for scrapping documents from oecd
 * **docker-compose.yml** - definition of services
-* **app.py** - applitacion for annotation
+* **app.py** - application for annotation
 
 # Usage
 ## Pre-requirements
