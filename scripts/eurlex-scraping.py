@@ -1,14 +1,8 @@
-import logging
-import os
-import traceback
 import urllib
 
-import dotenv
-
-from mars import config, db, parser
+from mars import config, db, logging, parser
 from mars.scraper import Scraper
 
-dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 level = logging.getLevelName(config.logging_level)
 logger.setLevel(level)
@@ -47,8 +41,7 @@ def scrap_eurlex_single_page(s: Scraper, metadata: dict):
                 parser.parse_html(url_, db.ExtractionMetod.simple_html)
 
             except Exception as e:
-                print("Failed, err: %s" % e)
-                traceback.print_exc()
+                logging.log_excption("Failed, err:", e, logger)
         else:
             logger.debug("Invalid CELEX number")
 

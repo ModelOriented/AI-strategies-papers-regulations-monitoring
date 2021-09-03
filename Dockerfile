@@ -20,7 +20,6 @@ RUN apt-get update \
     curl \
     # deps for building python deps
     build-essential \
-    \
     # install poetry - uses $POETRY_VERSION internally
     && curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python \
     && poetry --version \

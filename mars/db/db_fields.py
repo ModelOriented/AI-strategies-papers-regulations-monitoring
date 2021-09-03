@@ -5,7 +5,8 @@ ID = "_id"  # id is unique accross the whole database
 KEY = "_key"  # key is unique accross the collection
 
 
-def id_to_key(id: str):
+def id_to_key(id: str) -> str:
+    """Function convert database-unique document id to collection-unique document key"""
     return id.split("/")[-1]
 
 

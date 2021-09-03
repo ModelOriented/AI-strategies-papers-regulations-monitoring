@@ -1,11 +1,8 @@
 import pyArango.collection
 from dotenv import load_dotenv
+from mars import config
 from pyArango.connection import Connection
 from pyArango.database import Database
-
-from mars import config
-
-load_dotenv()
 
 conn = Connection(
     username=config.arango_username,

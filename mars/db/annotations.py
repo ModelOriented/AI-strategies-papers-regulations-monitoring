@@ -13,5 +13,5 @@ def score_all(strategy: ScoringStrategy) -> None:
         for doc in collections.annotations.fetchAll():
             doc[db_fields.SENTENCE_SAMPLING_SCORE] = random.random()
     else:
-        raise ValueError("Unknown scoreing strategy: {}".format(strategy))
+        raise ValueError("Unknown scoring strategy: {}".format(strategy))
     doc.patch()
