@@ -271,6 +271,17 @@ python-versions = "*"
 numpy = ">=1.15.0"
 
 [[package]]
+name = "bs4"
+version = "0.0.1"
+description = "Dummy package for Beautiful Soup"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+beautifulsoup4 = "*"
+
+[[package]]
 name = "cached-property"
 version = "1.5.2"
 description = "A decorator for caching properties in classes."
@@ -1721,14 +1732,6 @@ docs = ["Sphinx (>=4)", "furo (>=2021.7.5b38)", "proselint (>=0.10.2)", "sphinx-
 test = ["appdirs (==1.4.4)", "pytest (>=6)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)"]
 
 [[package]]
-name = "plot-metric"
-version = "0.0.4"
-description = "A package with tools for plotting metrics"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "pluggy"
 version = "0.13.1"
 description = "plugin and hook calling mechanisms for python"
@@ -2427,14 +2430,18 @@ win32 = ["pywin32"]
 
 [[package]]
 name = "setuptools-scm"
-version = "6.2.0"
+version = "6.3.0"
 description = "the blessed package to manage your versions by scm tags"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-tomli = ">=1.0"
+packaging = ">=20.0"
+tomli = {version = ">=1.0.0", optional = true, markers = "extra == \"toml\""}
+
+[package.extras]
+toml = ["setuptools (>=42)", "tomli (>=1.0.0)"]
 
 [[package]]
 name = "sgmllib3k"
@@ -3170,7 +3177,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "==3.7.1"
-content-hash = "9ffaeec0e0d34f450694a1f7e413d110f8c1f5d8b9305e7303773d747531b4a7"
+content-hash = "89436cf8a1c3d7d127b3c415cb02de87ff6b84d77f62b67823169d1feaf8254b"
 
 [metadata.files]
 absl-py = [
@@ -3339,6 +3346,9 @@ blis = [
     {file = "blis-0.7.4-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:5c1a2023f7d8431daa8d87d32f539bb23e1a009500c37f9eba0ac7b3f20f73eb"},
     {file = "blis-0.7.4-cp39-cp39-win_amd64.whl", hash = "sha256:78a8e0ee72a42c3b2f5b9114500a781119995f76fa6c21d4b02c6fb9c21df2cc"},
     {file = "blis-0.7.4.tar.gz", hash = "sha256:7daa615a97d4f28db0f332b710bfe1900b15d0c25841c6d727965e4fd91e09cf"},
+]
+bs4 = [
+    {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
 ]
 cached-property = [
     {file = "cached-property-1.5.2.tar.gz", hash = "sha256:9fa5755838eecbb2d234c3aa390bd80fbd3ac6b6869109bfc1b499f7bd89a130"},
@@ -4332,9 +4342,6 @@ platformdirs = [
     {file = "platformdirs-2.2.0-py3-none-any.whl", hash = "sha256:4666d822218db6a262bdfdc9c39d21f23b4cfdb08af331a81e92751daf6c866c"},
     {file = "platformdirs-2.2.0.tar.gz", hash = "sha256:632daad3ab546bd8e6af0537d09805cec458dce201bccfe23012df73332e181e"},
 ]
-plot-metric = [
-    {file = "plot_metric-0.0.4-py3-none-any.whl", hash = "sha256:b3507c12b704ea9b229e6afcab87e5073da47c5b28762ec3d051ae94e3113911"},
-]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
@@ -4944,8 +4951,8 @@ send2trash = [
     {file = "Send2Trash-1.8.0.tar.gz", hash = "sha256:d2c24762fd3759860a0aff155e45871447ea58d2be6bdd39b5c8f966a0c99c2d"},
 ]
 setuptools-scm = [
-    {file = "setuptools_scm-6.2.0-py3-none-any.whl", hash = "sha256:3ff3c48a44fcd16b4354a1f82db64daff7434240fe913c51537dca016af466a7"},
-    {file = "setuptools_scm-6.2.0.tar.gz", hash = "sha256:19e2cc7768b8cd7d0efd69e264ffcb8e7191cf9b5c69a0e60139c45f1980ca64"},
+    {file = "setuptools_scm-6.3.0-py3-none-any.whl", hash = "sha256:d1ec2050b7c243bfa28de99ec715b4b416f89a061f68db391df9cd43f22e2760"},
+    {file = "setuptools_scm-6.3.0.tar.gz", hash = "sha256:3ca93a9d0b466ba27d8bfa26424d2c5f9f599f2ddd94bb6fcf779fb5262594d1"},
 ]
 sgmllib3k = [
     {file = "sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9"},

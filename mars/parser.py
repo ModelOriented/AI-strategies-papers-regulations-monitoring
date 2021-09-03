@@ -50,6 +50,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
         import dragnet
 
         content = dragnet.extract_content(raw_html)
+
     elif method == db.ExtractionMetod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
         article.set_html(raw_html)

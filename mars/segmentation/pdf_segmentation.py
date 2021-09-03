@@ -144,8 +144,11 @@ def merge_spans(header_para):
 
     closed = []
 
+    # fix to avoid errors out of range
     last_tag = re.findall(string=not_empty[0], pattern="<(.|..)>")[0]
     string_builder = re.sub("\<(.|..)>", " ", string=not_empty[0])
+
+    counter = 0
 
     for h in not_empty[1:]:
         match = re.findall(pattern="\<(.|..)>", string=h)
@@ -162,7 +165,14 @@ def merge_spans(header_para):
         if current_tag == last_tag:
             string_builder += re.sub("\<(.|..)>", " ", string=h)
         else:
-            closed.append({"html_tag": last_tag, "content": string_builder})
+            closed.append(
+                {
+                    "html_tag": last_tag,
+                    "content": string_builder,
+                    "sequence_number": counter,
+                }
+            )
+            counter += 1
             string_builder = re.sub("\<(.|..)>", " ", string=h)
 
         last_tag = current_tag
