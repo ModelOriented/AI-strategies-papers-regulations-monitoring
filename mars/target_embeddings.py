@@ -1,4 +1,5 @@
-from mars import db, embeddings
+from mars import embeddings
+from mars.db import db_fields
 
 targets = [
     "privacy protection",
@@ -26,13 +27,10 @@ targets = [
 ]
 
 
-def get_sentence_to_embedding_mapping(targets: list, emb_type: str = "labse") -> dict:
-    if emb_type == "labse":
-        embds = embeddings.embedd_sents_labse(targets)
-    elif emb_type == "laser":
-        embds = embeddings.embedd_sents_laser(targets)
-    else:
-        raise ValueError("Unknown embedding type")
+def get_sentence_to_embedding_mapping(
+    targets: list, emb_type: db_fields.EmbeddingType = db_fields.EmbeddingType.LABSE
+) -> dict:
+    embds = embeddings.embedd_sentences(emb_type)
     target_embeddings = dict()
     for emb, targ in zip(embds, targets):
         target_embeddings[targ] = emb.numpy()
