@@ -1,17 +1,42 @@
 from enum import Enum
 
+# All:
+ID = "_id"  # id is unique accross the whole database
+KEY = "_key"  # key is unique accross the collection
+
+
+def id_to_key(id: str):
+    return id.split("/")[-1]
+
+
+# Source document:
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
 SOURCE = "source_website"
-DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
-USER = "user"
-
-
 COUNTRY = "country"
 TITLE = "title"
+USER = "user"
+
+# Processed texts:
+TEXT_ID = "textId"
+SENTENCES = "sentences"
+EMBEDDINGS = "embeddings"
+DOC_ID = "source_doc_id"
+
+
+# Annotation:
+PROCESSED_TEXT_ID = "processedTextId"
+SENTENCE = "sentence"
+SENTENCE_SAMPLING_SCORE = "score"
+SENT_NUM = "sentNum"
+QUERY_TARGET = "queryTarget"
+ANNOTATION_RESULT = "annotation_result"
+# EMBEDDINGS
+LASER = "laser"
+LABSE = "labse"
 
 
 class SourceWebsite(str, Enum):

@@ -9,6 +9,12 @@ services:
     volumes:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
+  annotation:
+    hostname: "annotation.mair.poz.wektor.xyz"
+    build: .
+    command: "streamlit run app.py logger.level debug --server.enableCORS false --server.enableXsrfProtection false --server.headless true --server.enableWebsocketCompression false --server.address annotation.mair.poz.wektor.xyz"
+    ports:
+     - 8081:8501
 
 volumes:
   arangodb_data_container:
