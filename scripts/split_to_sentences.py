@@ -1,11 +1,9 @@
 """Splits all text to sentences and saves them to db"""
 from typing import List
 
-import dotenv
+import mars.db
 import spacy
 import typer
-
-import mars.db
 from mars.db import collections
 from mars.db.db_fields import (
     CONTENT,
@@ -20,7 +18,6 @@ from mars.db.db_fields import (
 )
 
 BATCH_SIZE = 100
-dotenv.load_dotenv()
 
 en = spacy.load("en_core_web_sm")
 

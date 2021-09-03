@@ -14,7 +14,7 @@ def embedd_sentences(embedding_type: EmbeddingType) -> None:
 
     if embedding_type == EmbeddingType.LABSE:
         embedd = embeddings.embedd_sents_labse
-    elif embedding_type == EmbeddingType.LASERE:
+    elif embedding_type == EmbeddingType.LASER:
         embedd = embeddings.embedd_sents_laser
     for doc in db.collections.processed_texts.fetchAll():
         full_embbedings = list()

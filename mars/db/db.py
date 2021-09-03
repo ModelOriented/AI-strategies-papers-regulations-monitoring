@@ -1,8 +1,6 @@
 import os
 import uuid
 
-from dotenv import load_dotenv
-
 from mars import config
 from mars.db import collections
 from mars.db.db_fields import (
@@ -19,7 +17,6 @@ from mars.db.db_fields import (
     SourceWebsite,
 )
 
-load_dotenv()
 os.makedirs(config.raw_files_dir, exist_ok=True)
 
 

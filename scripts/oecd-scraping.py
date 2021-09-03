@@ -2,18 +2,14 @@
 
 # coding: utf-8
 import logging
-import os
-
-import dotenv
-import typer
 
 import mars.logging
-import mars.parser as parser
+import mars.parser
+import typer
 from mars import config, db, db_fields
 from mars.scraper import Scraper
 from mars.utils import get_oecd_parsing_results
 
-dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 level = logging.getLevelName(config.logging_level)
 logger.setLevel(level)
@@ -36,7 +32,7 @@ def main(headless: bool = True):
             mars.logging.log_exception("Exception ocured:", e, logger)
 
     logger.info("Scrapped all! Proceeding to parse contents...")
-    parser.parse_source(db.SourceWebsite.oecd, counter)
+    mars.parser.parse_source(db.SourceWebsite.oecd, counter)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
 def embedd_sentences(sents: List[str], embedding_type: db_fields.EmbeddingType):
     if embedding_type == db_fields.EmbeddingType.LABSE:
         embds = embedd_sents_labse(sents)
-    elif embedding_type == db_fields.EmbeddingType.LABSE:
+    elif embedding_type == db_fields.EmbeddingType.LASER:
         embds = embedd_sents_laser(sents)
     else:
         raise ValueError("Unknown embedding type")
