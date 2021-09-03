@@ -5,6 +5,7 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 from mars import db, embeddings, logging
+from mars.db import db_fields
 from tqdm import tqdm
 
 
@@ -62,8 +63,8 @@ def load_document_level_issues_dataset(
     target_embeddings = load_targets(dataset, emb_type)
     for processed_text in tqdm(db.collections.processed_texts.fetchAll()):
         if (
-            processed_text["embeddings"] is None
-            or processed_text["embeddings"][emb_type] is None
+            processed_text[db_fields.EMBEDDINGS] is None
+            or processed_text[db_fields.EMBEDDINGS][emb_type] is None
         ):
             logging.error(
                 f"Missing sentences embedding ({emb_type}) in {processed_text['_id']}"
@@ -73,7 +74,7 @@ def load_document_level_issues_dataset(
                 try:
                     scores = list(
                         np.matmul(
-                            np.array(processed_text["embeddings"][emb_type]),
+                            np.array(processed_text[db_fields.EMBEDDINGS][emb_type]),
                             np.transpose(target_embedding),
                         )
                     )

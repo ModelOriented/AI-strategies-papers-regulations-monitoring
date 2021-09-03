@@ -6,6 +6,8 @@ import tensorflow_hub as hub
 import tensorflow_text as text  # Needed for loading universal-sentence-encoder-cmlm/multilingual-preprocess
 from laserembeddings import Laser
 
+from mars.db import db_fields
+
 laser = Laser()
 
 preprocessor = hub.KerasLayer(
@@ -31,16 +33,22 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
     return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
 
 
-def get_sentence_to_embedding_mapping(
-    sentences: List[str], emb_type: str = "labse"
-) -> Dict[str, np.ndarray]:
-    # TODO: tests, also for types
-    if emb_type == "labse":
-        embds = embedd_sents_labse(sentences)
-    elif emb_type == "laser":
-        embds = embedd_sents_laser(sentences)
+def embedd_sentences(sents: List[str], embedding_type: db_fields.EmbeddingType):
+    if embedding_type == db_fields.EmbeddingType.LABSE:
+        embds = embedd_sents_labse(sents)
+    elif embedding_type == db_fields.EmbeddingType.LABSE:
+        embds = embedd_sents_laser(sents)
     else:
         raise ValueError("Unknown embedding type")
+    return embds
+
+
+def get_sentence_to_embedding_mapping(
+    sentences: List[str],
+    emb_type: db_fields.EmbeddingType = db_fields.EmbeddingType.LABSE,
+) -> Dict[str, np.ndarray]:
+    # TODO: tests, also for types
+    embds = embedd_sentences(sentences, emb_type)
     target_embeddings = dict()
     for emb, targ in zip(embds, sentences):
         target_embeddings[targ] = emb
