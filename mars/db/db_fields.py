@@ -36,6 +36,9 @@ SENT_NUM = "sentNum"
 QUERY_TARGET = "queryTarget"
 ANNOTATION_RESULT = "annotation_result"
 
+SIMILARITIES = "similarities"
+SIMILARITY_SCORE = "similarity_score"
+
 
 class EmbeddingType(str, Enum):
     LASER = "laser"

@@ -15,8 +15,6 @@ from mars.db.db_fields import (
 from mars.db.new_api import database
 from tqdm import tqdm
 
-EMBEDDING_TYPES = ["labse", "laser"]
-
 
 def prepare_annotation_data(query_sentence: str):
     """Loads collection with annotation data"""
@@ -26,12 +24,13 @@ def prepare_annotation_data(query_sentence: str):
         text_id = doc[TEXT_ID]
         with database.begin_batch_execution() as batch_db:
             for sent_num, sentence in tqdm(enumerate(doc[SENTENCES])):
-                new_doc = dict()
-                new_doc[PROCESSED_TEXT_ID] = processed_text_id
-                new_doc[TEXT_ID] = text_id
-                new_doc[SENTENCE] = sentence
-                new_doc[SENT_NUM] = sent_num
-                new_doc[QUERY_TARGET] = query_sentence
+                new_doc = {
+                    TEXT_ID: text_id,
+                    PROCESSED_TEXT_ID: processed_text_id,
+                    SENTENCE: sentence,
+                    SENT_NUM: sent_num,
+                    QUERY_TARGET: query_sentence,
+                }
                 embeddings = dict()
                 for emb_type in EmbeddingType:
                     try:

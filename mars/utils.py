@@ -42,6 +42,7 @@ def parse_result_dict(result):
 
 
 def get_oecd_parsing_results():
+    # TODO: move to oecd-scraping, or scraper.py
     """
     Returns list of dicts with oecd api results
     """
@@ -72,8 +73,10 @@ def get_number_of_files(dir: str):
 
 # extract text from PDF
 
+
 def extract_text_from_pdf(file_name: str) -> dict:
     """Extract text and other attributes from pdf in form od dict"""
+    # TODO: Move to parser.py
     empty_pages = []
     separated_text = []
     all_text = ""
@@ -98,10 +101,10 @@ def extract_text_from_pdf(file_name: str) -> dict:
     document.close()
 
     document_dict = {
-        'all_text': all_text,
-        'text_on_page': text_on_page,
-        'empty_pages': empty_pages,
-        'page_no': page_no,
-        'separated_text': separated_text
+        "all_text": all_text,
+        "text_on_page": text_on_page,
+        "empty_pages": empty_pages,
+        "page_no": page_no,
+        "separated_text": separated_text,
     }
     return document_dict

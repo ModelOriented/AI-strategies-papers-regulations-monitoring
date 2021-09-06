@@ -12,3 +12,7 @@ repos:
     rev: 19.3b0
     hooks:
       - id: black
+  - repo: https://github.com/roy-ht/pre-commit-jupyter
+    rev: v1.2.1
+    hooks:
+      - id: jupyter-notebook-cleanup

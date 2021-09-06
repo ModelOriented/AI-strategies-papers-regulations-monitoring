@@ -2,11 +2,10 @@ import random
 from enum import Enum
 
 import typer
-from tqdm import tqdm
-
 from mars.db import collections
 from mars.db.db_fields import EMBEDDINGS, LASER, QUERY_TARGET, SENTENCE_SAMPLING_SCORE
 from mars.db.new_api import database
+from tqdm import tqdm
 
 
 class Strategy(str, Enum):
