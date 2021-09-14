@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import List
 
-import dragnet
 import newspaper
 import pdfminer.converter
 import pdfminer.layout
@@ -49,9 +48,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     with open(filename, "r") as f:
         raw_html = f.read()
 
-    if method == db.ExtractionMetod.dragnet:
-        content = dragnet.extract_content(raw_html)
-    elif method == db.ExtractionMetod.newspaper:
+    if method == db.ExtractionMetod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
         article.set_html(raw_html)
         article.parse()
@@ -143,7 +140,6 @@ def parse_source(source: str, batch_size: int):
             parse_pdf(doc[db.URL], db.ExtractionMetod.pdfminer)
 
         elif doc[db.FILE_TYPE] == db.FileType.html:
-            parse_html(doc[db.URL], db.ExtractionMetod.dragnet)
             parse_html(doc[db.URL], db.ExtractionMetod.newspaper)
 
         else:
