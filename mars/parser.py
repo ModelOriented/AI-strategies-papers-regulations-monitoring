@@ -1,17 +1,12 @@
 import glob
 import logging
 import os
-import traceback
 from abc import ABC
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import List
 
 import newspaper
-import pdfminer.converter
-import pdfminer.layout
-import pdfminer.pdfinterp
-import pdfminer.pdfpage
 
 import mars.db as db
 import mars.logging
@@ -31,7 +26,7 @@ class HTMLFilter(HTMLParser, ABC):
         self.text += data
 
 
-def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
+def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
     """
     Parses html file using extraction method
     """
@@ -48,13 +43,13 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     with open(filename, "r") as f:
         raw_html = f.read()
 
-    if method == db.ExtractionMetod.newspaper:
+    if method == db.ExtractionMethod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
         article.set_html(raw_html)
         article.parse()
         content = article.text
 
-    elif method == db.ExtractionMetod.simple_html:
+    elif method == db.ExtractionMethod.simple_html:
         f = HTMLFilter()
         f.feed(raw_html)
         content = f.text
@@ -62,10 +57,7 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     db.save_extracted_content(source_url, content=content, extraction_method=method)
 
 
-# PDF parsing imported from MAIR project
-
-
-def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
+def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
     """Extracts text and metadata from *.pdf file"""
 
     if db.is_content_present(source_url, method):
@@ -106,7 +98,7 @@ def add_missing_files_to_db(path: str):
                 )
 
                 # pass filename as source
-                parse_pdf(filename, db.ExtractionMetod.pdfminer)
+                parse_pdf(filename, db.ExtractionMethod.pdfminer)
         except Exception as e:
             mars.logging.log_exception(
                 "Fail to parse %s, error: % (filename)", e, logger
@@ -122,8 +114,8 @@ def add_missing_files_to_db(path: str):
                 )
 
                 # pass filename as source
-                parse_html(filename, db.ExtractionMetod.dragnet)
-                parse_html(filename, db.ExtractionMetod.newspaper)
+                parse_html(filename, db.ExtractionMethod.dragnet)
+                parse_html(filename, db.ExtractionMethod.newspaper)
         except Exception as e:
             mars.logging.log_exception(
                 "Fail to parse %s, error: % (filename)", e, logger
@@ -137,10 +129,10 @@ def parse_source(source: str, batch_size: int):
     ):
         logger.info("Parsing %s" % doc[db.URL])
         if doc[db.FILE_TYPE] == db.FileType.pdf:
-            parse_pdf(doc[db.URL], db.ExtractionMetod.pdfminer)
+            parse_pdf(doc[db.URL], db.ExtractionMethod.pdfminer)
 
         elif doc[db.FILE_TYPE] == db.FileType.html:
-            parse_html(doc[db.URL], db.ExtractionMetod.newspaper)
+            parse_html(doc[db.URL], db.ExtractionMethod.newspaper)
 
         else:
             continue
