@@ -31,3 +31,6 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
 ## Running
 ### Inside docker
 `docker-compose up`
+
+## Testing
+`poetry run python -m unittest discover`
