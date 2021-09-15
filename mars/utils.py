@@ -8,7 +8,7 @@ import pdfminer.pdfinterp
 import pdfminer.pdfpage
 import requests
 
-from mars import db_fields
+# from mars import db_fields
 
 URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
 
