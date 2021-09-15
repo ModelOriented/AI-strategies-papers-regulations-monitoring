@@ -1,8 +1,8 @@
 from enum import Enum
 
 # All:
-ID = "_id"  # id is unique accross the whole database
-KEY = "_key"  # key is unique accross the collection
+ID = "_id"  # id is unique across the whole database
+KEY = "_key"  # key is unique across the collection
 
 
 def id_to_key(id: str) -> str:
@@ -59,7 +59,7 @@ class FileType(str, Enum):
     html = "html"
 
 
-class ExtractionMetod(str, Enum):
+class ExtractionMethod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
     pdfminer = "pdfminer"

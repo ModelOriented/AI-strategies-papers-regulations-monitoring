@@ -38,7 +38,7 @@ def scrap_eurlex_single_page(s: Scraper, metadata: dict):
                 s.save_document(url_, db.SourceWebsite.eurlex, metadata=metadata)
 
                 # extract content
-                parser.parse_html(url_, db.ExtractionMetod.simple_html)
+                parser.parse_html(url_, db.ExtractionMethod.simple_html)
 
             except Exception as e:
                 logging.log_excption("Failed, err:", e, logger)
