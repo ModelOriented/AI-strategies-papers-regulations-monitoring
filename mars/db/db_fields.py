@@ -40,6 +40,12 @@ SIMILARITIES = "similarities"
 SIMILARITY_SCORE = "similarity_score"
 
 
+# Segmented texts:
+HTML_TAG = "html_tag"
+IS_HEADER = "is_header"
+SEQUENCE_NUMBER = "sequence_number"
+
+
 class EmbeddingType(str, Enum):
     LASER = "laser"
     LABSE = "labse"
