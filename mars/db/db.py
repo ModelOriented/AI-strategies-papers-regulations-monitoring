@@ -12,7 +12,7 @@ from mars.db.db_fields import (
     SOURCE,
     URL,
     USER,
-    ExtractionMetod,
+    ExtractionMethod,
     FileType,
     SourceWebsite,
 )
@@ -30,7 +30,7 @@ def is_document_present(url: str) -> bool:
     return len(collections.document_sources.fetchFirstExample({URL: url})) == 1
 
 
-def is_content_present(url: str, method: ExtractionMetod) -> bool:
+def is_content_present(url: str, method: ExtractionMethod) -> bool:
     """Checks if documents from given url is downloaded"""
     return (
         len(
@@ -65,7 +65,7 @@ def save_doc(
 
 
 def save_extracted_content(
-    source_url: str, content: str, extraction_method: ExtractionMetod
+    source_url: str, content: str, extraction_method: ExtractionMethod
 ) -> None:
     """Saves extracted content to database"""
     doc = collections.contents.createDocument()

@@ -7,7 +7,7 @@ import mars.logging
 import mars.parser
 import typer
 from mars import config, db
-from mars.db import db_fields
+from mars.db import db_fields as db_fields
 from mars.scraper import Scraper
 from mars.utils import get_oecd_parsing_results
 
