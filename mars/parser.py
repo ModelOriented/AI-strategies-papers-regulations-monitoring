@@ -63,7 +63,7 @@ def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
     if db.is_content_present(source_url, method):
         return
 
-    doc = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
     file_name = doc[db.FILENAME]
 
     document_dict = extract_text_from_pdf(file_name)
@@ -124,7 +124,7 @@ def add_missing_files_to_db(path: str):
 
 
 def parse_source(source: str, batch_size: int):
-    for doc in db.document_sources.fetchByExample(
+    for doc in db.collections.document_sources.fetchByExample(
         {db.SOURCE: source}, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])
