@@ -1,5 +1,13 @@
 version: "3.7"
 services:
+  # base image, just built it and tag
+  common:
+    build:
+      context: .
+      dockerfile: Dockerfile_common
+    image: piotrp/mair_common
+    profiles:
+      - donotstart
   arangodb_db_container:
     image: arangodb:latest
     environment:
