@@ -18,11 +18,17 @@ services:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
   annotation:
-    hostname: "annotation.mair.poz.wektor.xyz"
-    build: .
-    command: "streamlit run app.py logger.level debug --server.enableCORS false --server.enableXsrfProtection false --server.headless true --server.enableWebsocketCompression false --server.address annotation.mair.poz.wektor.xyz"
+    build:
+      context: .
+      dockerfile: annotation/Dockerfile
     ports:
-     - 8081:8501
+      - 8081:8501
+    depends_on:
+      - arangodb_db_container
+    secrets:
+      - arango_secrets
+    environment:
+      ARANGODB_URL: http://arangodb_db_container:8529
   airflow_db:
     image: mysql:5.7
     volumes:
@@ -62,6 +68,7 @@ services:
       USER: poznan
       ARANGODB_URL: http://arangodb_db_container:8529
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
+
 
 volumes:
   arangodb_data_container:
