@@ -1,4 +1,6 @@
 FROM python:3.7.12
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /mair
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -31,18 +33,8 @@ RUN poetry config virtualenvs.create false \
     # cleanup
     && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip
-# copy project requirement files here to ensure they will be cached.
-WORKDIR /src
-COPY poetry.lock pyproject.toml ./
-# RUN poetry init
-RUN poetry run pip install --upgrade pip
-RUN poetry run pip install --upgrade setuptools
-RUN poetry install --no-interaction --no-ansi -vvv
 
-COPY ./mars /src/mars
+COPY pyproject.toml .
 RUN poetry install --no-interaction --no-ansi -vvv
-
-COPY ./app.py .
-COPY ./.env .
-EXPOSE 8080
-ENTRYPOINT ["poetry", "run"]
+COPY ./mars ./mars
+RUN poetry install --no-interaction --no-ansi -vvv

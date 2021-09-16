@@ -4,7 +4,7 @@ services:
   common:
     build:
       context: .
-      dockerfile: Dockerfile_common
+      dockerfile: Dockerfile
     image: piotrp/mair_common
     profiles:
       - donotstart
