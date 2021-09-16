@@ -1,17 +1,51 @@
 from enum import Enum
 
+# All:
+ID = "_id"  # id is unique across the whole database
+KEY = "_key"  # key is unique across the collection
+
+
+def id_to_key(id: str) -> str:
+    """Function convert database-unique document id to collection-unique document key"""
+    return id.split("/")[-1]
+
+
+# Source document:
 URL = "url"
 FILENAME = "filename"
 FILE_TYPE = "file_type"
 SOURCE = "source_website"
-DOC_ID = "source_doc_id"
 CONTENT = "content"
 EXTRACTION_METHOD = "extraction_method"
-USER = "user"
-
-
 COUNTRY = "country"
 TITLE = "title"
+USER = "user"
+
+# Processed texts:
+TEXT_ID = "textId"
+SENTENCES = "sentences"
+EMBEDDINGS = "embeddings"
+DOC_ID = "source_doc_id"
+
+
+# Annotation:
+PROCESSED_TEXT_ID = "processedTextId"
+SENTENCE = "sentence"
+SENTENCE_SAMPLING_SCORE = "score"
+SENT_NUM = "sentNum"
+QUERY_TARGET = "queryTarget"
+ANNOTATION_RESULT = "annotation_result"
+
+
+# Segmented texts:
+HTML_TAG = "html_tag"
+IS_HEADER = "is_header"
+SEQUENCE_NUMBER = "sequence_number"
+
+
+class EmbeddingType(str, Enum):
+    LASER = "laser"
+    LABSE = "labse"
 
 
 class SourceWebsite(str, Enum):
@@ -25,7 +59,7 @@ class FileType(str, Enum):
     html = "html"
 
 
-class ExtractionMetod(str, Enum):
+class ExtractionMethod(str, Enum):
     newspaper = "newspaper3k"
     dragnet = "dragnet"
     pdfminer = "pdfminer"

@@ -1,17 +1,26 @@
 import os
 import uuid
-from enum import Enum
 
-from dotenv import load_dotenv
+from mars import config
 from mars.db import collections
-from .db_fields import *
+from mars.db.db_fields import (
+    CONTENT,
+    DOC_ID,
+    EXTRACTION_METHOD,
+    FILE_TYPE,
+    FILENAME,
+    SOURCE,
+    URL,
+    USER,
+    ExtractionMethod,
+    FileType,
+    SourceWebsite,
+)
+
+os.makedirs(config.raw_files_dir, exist_ok=True)
 
 
-load_dotenv()
-os.makedirs(os.getenv("RAW_FILES_DIR"), exist_ok=True)
-
-
-env_user = os.getenv("USER")
+env_user = config.user
 
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
@@ -21,7 +30,7 @@ def is_document_present(url: str) -> bool:
     return len(collections.document_sources.fetchFirstExample({URL: url})) == 1
 
 
-def is_content_present(url: str, method: ExtractionMetod) -> bool:
+def is_content_present(url: str, method: ExtractionMethod) -> bool:
     """Checks if documents from given url is downloaded"""
     return (
         len(
@@ -56,7 +65,7 @@ def save_doc(
 
 
 def save_extracted_content(
-    source_url: str, content: str, extraction_method: ExtractionMetod
+    source_url: str, content: str, extraction_method: ExtractionMethod
 ) -> None:
     """Saves extracted content to database"""
     doc = collections.contents.createDocument()
@@ -78,9 +87,7 @@ def _new_file(file_content, file_type: str):
     for pdfs file_content is current filename
     @TODO rename
     """
-    filename = os.path.join(
-        os.getenv("RAW_FILES_DIR"), str(uuid.uuid4()) + "." + file_type
-    )
+    filename = os.path.join(config.raw_files_dir, str(uuid.uuid4()) + "." + file_type)
     if file_type == FileType.pdf:
         with open(filename, "wb") as file:
             file.write(file_content)

@@ -1,22 +1,21 @@
 import glob
 import logging
 import os
-import traceback
 from abc import ABC
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import List
 
-import dragnet
 import newspaper
-from html.parser import HTMLParser
-from mars.utils import extract_text_from_pdf
 
 import mars.db as db
 import mars.logging
+from mars import config
+from mars.utils import extract_text_from_pdf
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel(logging.getLevelName(os.getenv("LOGGING_LEVEL")))
+logger.setLevel(logging.getLevelName(config.logging_level))
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
 
 
@@ -27,7 +26,7 @@ class HTMLFilter(HTMLParser, ABC):
         self.text += data
 
 
-def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
+def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
     """
     Parses html file using extraction method
     """
@@ -44,15 +43,13 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     with open(filename, "r") as f:
         raw_html = f.read()
 
-    if method == db.ExtractionMetod.dragnet:
-        content = dragnet.extract_content(raw_html)
-    elif method == db.ExtractionMetod.newspaper:
+    if method == db.ExtractionMethod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
         article.set_html(raw_html)
         article.parse()
         content = article.text
 
-    elif method == db.ExtractionMetod.simple_html:
+    elif method == db.ExtractionMethod.simple_html:
         f = HTMLFilter()
         f.feed(raw_html)
         content = f.text
@@ -60,23 +57,22 @@ def parse_html(source_url: str, method: db.ExtractionMetod) -> None:
     db.save_extracted_content(source_url, content=content, extraction_method=method)
 
 
-# PDF parsing imported from MAIR project
-
-
-def parse_pdf(source_url: str, method: db.ExtractionMetod) -> None:
+def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
     """Extracts text and metadata from *.pdf file"""
 
     if db.is_content_present(source_url, method):
         return
 
-    doc = db.document_sources.fetchFirstExample({db.URL: source_url})[0]
+    doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
     file_name = doc[db.FILENAME]
 
     document_dict = extract_text_from_pdf(file_name)
 
     # leave for future meta
     # return Pdf(separated_text, empty_pages, all_text)
-    db.save_extracted_content(source_url, content=document_dict['all_text'], extraction_method=method)
+    db.save_extracted_content(
+        source_url, content=document_dict["all_text"], extraction_method=method
+    )
 
 
 @dataclass
@@ -102,7 +98,7 @@ def add_missing_files_to_db(path: str):
                 )
 
                 # pass filename as source
-                parse_pdf(filename, db.ExtractionMetod.pdfminer)
+                parse_pdf(filename, db.ExtractionMethod.pdfminer)
         except Exception as e:
             mars.logging.log_exception(
                 "Fail to parse %s, error: % (filename)", e, logger
@@ -118,8 +114,8 @@ def add_missing_files_to_db(path: str):
                 )
 
                 # pass filename as source
-                parse_html(filename, db.ExtractionMetod.dragnet)
-                parse_html(filename, db.ExtractionMetod.newspaper)
+                parse_html(filename, db.ExtractionMethod.dragnet)
+                parse_html(filename, db.ExtractionMethod.newspaper)
         except Exception as e:
             mars.logging.log_exception(
                 "Fail to parse %s, error: % (filename)", e, logger
@@ -128,16 +124,15 @@ def add_missing_files_to_db(path: str):
 
 
 def parse_source(source: str, batch_size: int):
-    for doc in db.document_sources.fetchByExample(
+    for doc in db.collections.document_sources.fetchByExample(
         {db.SOURCE: source}, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])
         if doc[db.FILE_TYPE] == db.FileType.pdf:
-            parse_pdf(doc[db.URL], db.ExtractionMetod.pdfminer)
+            parse_pdf(doc[db.URL], db.ExtractionMethod.pdfminer)
 
         elif doc[db.FILE_TYPE] == db.FileType.html:
-            parse_html(doc[db.URL], db.ExtractionMetod.dragnet)
-            parse_html(doc[db.URL], db.ExtractionMetod.newspaper)
+            parse_html(doc[db.URL], db.ExtractionMethod.newspaper)
 
         else:
             continue
