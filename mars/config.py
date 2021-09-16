@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Docker environment
+load_dotenv('/run/secrets/arango_secrets')
+
 logging_level = os.getenv("LOGGING_LEVEL")
 scrapper_logs_dir = os.getenv("SCRAPER_LOGS_DIR")
 arango_username = os.getenv("ARANGODB_USERNAME")
