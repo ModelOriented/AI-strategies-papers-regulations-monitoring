@@ -6,6 +6,7 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
 ### Project structure
 * **airflow_secrets.env[.example]** - configuration file for credentials of airflow database
 * **arango_secrets.env[.example]** - configuration file for credentials of arango database
+* **webdav_secrets.env[.example]** - configuration file for credentials of webdav
 * **mars** contains modules with code
   * **db** contains database connection abstraction layer
   * **config.py** contains configuration utils

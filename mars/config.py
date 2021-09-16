@@ -6,6 +6,7 @@ load_dotenv()
 
 # Docker environment
 load_dotenv('/run/secrets/arango_secrets')
+load_dotenv('/run/secrets/webdav_secrets')
 
 logging_level = os.getenv("LOGGING_LEVEL")
 scrapper_logs_dir = os.getenv("SCRAPER_LOGS_DIR")

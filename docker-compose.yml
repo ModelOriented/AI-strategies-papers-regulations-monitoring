@@ -58,6 +58,7 @@ services:
     secrets:
       - airflow_secrets
       - arango_secrets
+      - webdav_secrets
     volumes:
       - ./raw_data:/mair/raw_data
       - ./log_dir:/mair/log_dir
@@ -68,7 +69,14 @@ services:
       USER: poznan
       ARANGODB_URL: http://arangodb_db_container:8529
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
-
+  webdav:
+    build: webdav
+    secrets:
+      - webdav_secrets
+    volumes:
+      - ./raw_data:/storage
+    ports:
+      - 8082:8080
 
 volumes:
   arangodb_data_container:
@@ -79,3 +87,5 @@ secrets:
     file: ./airflow_secrets.env
   arango_secrets:
     file: ./arango_secrets.env
+  webdav_secrets:
+    file: ./webdav_secrets.env
