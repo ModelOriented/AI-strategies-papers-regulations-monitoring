@@ -9,11 +9,11 @@ services:
     profiles:
       - donotstart
   arangodb_db_container:
-    image: arangodb:latest
-    environment:
-      ARANGO_ROOT_PASSWORD: rootpassword
+    build: arango
     ports:
       - 8080:8529
+    secrets:
+      - arango_secrets
     volumes:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
