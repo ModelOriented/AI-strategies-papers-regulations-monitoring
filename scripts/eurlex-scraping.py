@@ -41,7 +41,7 @@ def scrap_eurlex_single_page(s: Scraper, metadata: dict):
                 parser.parse_html(url_, db.ExtractionMetod.simple_html)
 
             except Exception as e:
-                logging.log_excption("Failed, err:", e, logger)
+                logging.log_exception("Failed, err:", e, logger)
         else:
             logger.debug("Invalid CELEX number")
 
