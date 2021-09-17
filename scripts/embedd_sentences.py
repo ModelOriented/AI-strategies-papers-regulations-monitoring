@@ -31,7 +31,7 @@ def embedd_sentences(embedding_type: EmbeddingType) -> None:
                 doc[EMBEDDINGS][embedding_type] = full_embbedings
                 doc.save()
             except Exception as e:
-                print("Exception occured in processing", doc[ID])
+                print("Exception occurred in processing", doc[ID])
                 print(e)
         else:
             print("Skipping", doc[ID], embedding_type)

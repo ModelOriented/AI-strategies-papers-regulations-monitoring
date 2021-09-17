@@ -1,18 +1,16 @@
-from collections import defaultdict
-from typing import Dict, Tuple
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
-from mars import db, embeddings, logging
-from mars.db import db_fields
+from mars import logging
 from mars.models_training import datasets
-from mars.models_training.datasets import DocumenLevelDataset
+from mars.models_training.datasets import DocumentLevelDataset
 from mars.similarity_calculation import calculate_similarities_to_targets
 
 
 # TODO: @Wisnia tutaj dodaj ten nowy dataset
 def load_document_level_issues_dataset(
-    dataset: DocumenLevelDataset, emb_type: str
+    dataset: DocumentLevelDataset, emb_type: str
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Load cartesian of documents and targets (in form of similarities) and labels from given dataset.
     X - numpy array of lists of similarities of every sentence in document to given issue

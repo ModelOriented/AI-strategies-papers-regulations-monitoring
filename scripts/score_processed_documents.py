@@ -13,7 +13,7 @@ def predict_for_single_observation(observation):
     return model.predict_proba(np.array([observation]))[0][1]
 
 
-targets = datasets.targets[datasets.DocumenLevelDataset.ethics_ai_ethics]
+targets = datasets.targets[datasets.DocumentLevelDataset.ethics_ai_ethics]
 all_similarities = calculate_similarities_to_targets(
     targets, db_fields.EmbeddingType.LASER, key=db_fields.TEXT_ID
 )

@@ -14,7 +14,7 @@ def load_data():
 
 issue = st.sidebar.radio(
     "Choose the issue to explore",
-    datasets.targets[datasets.DocumenLevelDataset.ethics_ai_ethics],
+    datasets.targets[datasets.DocumentLevelDataset.ethics_ai_ethics],
 )
 
 

@@ -64,6 +64,5 @@ class FileType(str, Enum):
 
 class ExtractionMethod(str, Enum):
     newspaper = "newspaper3k"
-    dragnet = "dragnet"
     pdfminer = "pdfminer"
     simple_html = "simple_html"

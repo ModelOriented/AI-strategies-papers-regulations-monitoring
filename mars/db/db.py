@@ -18,10 +18,7 @@ from mars.db.db_fields import (
 )
 
 os.makedirs(config.raw_files_dir, exist_ok=True)
-
-
 env_user = config.user
-
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
 
