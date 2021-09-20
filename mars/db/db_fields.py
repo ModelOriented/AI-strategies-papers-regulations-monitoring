@@ -45,6 +45,9 @@ HTML_TAG = "html_tag"
 IS_HEADER = "is_header"
 SEQUENCE_NUMBER = "sequence_number"
 
+# Sentences:
+SENTENCE_NUMBER = "sentence_number"
+
 
 class EmbeddingType(str, Enum):
     LASER = "laser"
