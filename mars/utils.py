@@ -10,6 +10,7 @@ import pdfminer.layout
 import pdfminer.pdfinterp
 import pdfminer.pdfpage
 import requests
+import semanticscholar as sch
 import undetected_chromedriver as uc
 from googlesearch import search
 
@@ -73,6 +74,22 @@ def get_number_of_files(dir: str):
     else:
         n_files = 0
     return n_files
+
+
+def split_on_words(text, split_words):
+    """Splits text on certain words, essentially treats them like buckets"""
+
+    threads = dict.fromkeys(split_words)
+
+    for i in range(len(list(threads.keys())) - 1):
+        earlier_thread = list(threads.keys())[i]
+        split_thread = list(threads.keys())[i + 1]
+        splitted = text.split(split_thread, 1)
+        threads[earlier_thread] = splitted[0]
+
+        text = splitted[1]
+
+    return threads
 
 
 # extract text from PDF
@@ -175,6 +192,7 @@ def get_google_first_result_selenium(query):
 def get_duckduckgo_first_result(driver, query: str) -> str:
     """
     Gets url from the first (top) result of duckduckgo.
+
     @param driver: selenium driver, advised to use undetected-chromedriver
     @param query: some query to be searched, it might be plain text.
     @return: single url
@@ -191,6 +209,7 @@ def get_inteligent_first_search_results(queries: list) -> dict:
     BeautifulSoup (bs) + google, Selenium + google and Selenium + DuckDuckGo.
     If one component fails switches to the next one. So if both Selenium and BeautifulSoup
     fail with google, Selenium will continue with DuckDuckGo
+
     @param queries: list of queries
     @return: dict with matches and the search method
     """
@@ -232,10 +251,6 @@ def get_inteligent_first_search_results(queries: list) -> dict:
         results[query] = result
 
     return results
-
-
-import time
-import semanticscholar as sch
 
 
 def fetch_paper_information(arxiv_id: str):

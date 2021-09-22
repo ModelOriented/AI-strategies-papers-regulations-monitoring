@@ -10,6 +10,7 @@ from mars.utils import (
     extract_text_from_pdf,
     get_inteligent_first_search_results,
     fetch_paper_information,
+    split_on_words,
 )
 from mars.utils import search_for_url
 import typer
@@ -44,12 +45,15 @@ def extract_references_from_jobin2019(file_name):
 
 def match_references_substring(ref1: list, ref2: list) -> dict:
     """
-
     From two lists of references makes a dict with pairs of matching indices.
     The matching is done in
     """
     refs = {}
-    for i in range(1, len(ref1)):
+    if ref1[0] == "":
+        start = 1
+    else:
+        start = 0
+    for i in range(start, len(ref1)):
         r1 = ref1[i]
         refs[i] = None
         for j, r2 in enumerate(ref2):
@@ -72,21 +76,9 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
     # split words like buckets
     # everything above justice fairness and equity is Transparency
     # later it is excluded from text and everything above Non-maleficience is Justice, fairness, and equity, etc.
-    split_words = [
-        "Transparency",
-        "Justice, fairness, and equity",
-        "Non-maleficence",
-        "Responsibility and accountability",
-        "Privacy",
-        "Beneficence",
-        "Freedom and autonomy",
-        "Trust",
-        "Sustainability",
-        "Dignity",
-        "Solidarity",
-        "Discussion",
-    ]  # stopword - last one will be excluded
 
+    split_words = list(get_issue_mapping().values())
+    split_words.append("Discission")
     threads = dict.fromkeys(split_words)
 
     # clean
@@ -99,13 +91,7 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
 
     relevant_text = " ".join(text_on_pages[7:13])
 
-    for i in range(len(list(threads.keys())) - 1):
-        earlier_thread = list(threads.keys())[i]
-        split_thread = list(threads.keys())[i + 1]
-        splitted = relevant_text.split(split_thread, 1)
-        threads[earlier_thread] = splitted[0]
-
-        relevant_text = splitted[1]
+    threads = split_on_words(relevant_text, split_words)
 
     # pop empty one
     threads.pop("Discussion")
@@ -129,15 +115,14 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
     return all_citations
 
 
-def match_references_with_url(file_name: str, arxiv_id: str) -> dict:
+def match_references_with_url(references: list, arxiv_id: str) -> dict:
     """
     Matches references from jobin2019 and version from semantic scholar to obtain urls.
     If no url is found it searches google and duckduckgo using inteligent search.
-    @param file_name: string, filename of jobin2019
+    @param references: list of references from article in form of strings
     @param arxiv_id: string, arxiv id of jobin2018
     @return: returns dict with matches and information about where the match was found
     """
-    references = extract_references_from_jobin2019(file_name)
 
     for i, ref in enumerate(references):
         references[i] = ref.replace("\n", "")
@@ -148,7 +133,7 @@ def match_references_with_url(file_name: str, arxiv_id: str) -> dict:
     references_scholar_titles = [rs["title"] for rs in references_scholar]
 
     refs = match_references_substring(references, references_scholar_titles)
-
+    print(len(refs.values()))
     links = {}
 
     for i, j in refs.items():
@@ -181,6 +166,23 @@ def match_references_with_url(file_name: str, arxiv_id: str) -> dict:
     return links
 
 
+def get_issue_mapping():
+    mapping = {
+        0: "Transparency",
+        1: "Justice, fairness, and equity",
+        2: "Non-maleficence",
+        3: "Responsibility and accountability",
+        4: "Privacy",
+        5: "Beneficence",
+        6: "Freedom and autonomy",
+        7: "Trust",
+        8: "Sustainability",
+        9: "Dignity",
+        10: "Solidarity",
+    }
+    return mapping
+
+
 def extract_topics_from_jobin_citations(path_to_jobin_file: str) -> pd.DataFrame:
     """Extracts topics for each relevant citation in jobin2019 preprint version"""
     citations = extract_citations_from_jobin2019(path_to_jobin_file)
@@ -196,19 +198,7 @@ def extract_topics_from_jobin_citations(path_to_jobin_file: str) -> pd.DataFrame
     for k in citations_dict.keys():
         citations_dict[k] = np.zeros(11)
 
-    mapping = {
-        0: "Transparency",
-        1: "Justice, fairness, and equity",
-        2: "Non-maleficence",
-        3: "Responsibility and accountability",
-        4: "Privacy",
-        5: "Beneficence",
-        6: "Freedom and autonomy",
-        7: "Trust",
-        8: "Sustainability",
-        9: "Dignity",
-        10: "Solidarity",
-    }
+    mapping = get_issue_mapping()
 
     for key1, val1 in citations_dict.items():
         for key2, val2 in mapping.items():
@@ -223,5 +213,6 @@ def extract_topics_from_jobin_citations(path_to_jobin_file: str) -> pd.DataFrame
 
 if __name__ == "__main__":
     file_name = os.environ["JOBIN2019_LOCATION"]  # change to your location
+    references = extract_references_from_jobin2019(file_name)
     # ToDo make a script and upload to database
     # typer.run()
