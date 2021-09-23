@@ -4,7 +4,9 @@ from bs4 import BeautifulSoup
 import re
 
 
-def segment_html(filename, extraction_method=db_fields.ExtractionMetod.newspaper):
+def segment_html(
+    filename, extraction_method=db_fields.ExtractionMetod.newspaper
+) -> list:
 
     article = newspaper.Article(url=" ", language="en", keep_article_html=True)
     with open(filename, mode="r") as f:
