@@ -17,7 +17,6 @@ from mars.db.db_fields import (
     SourceWebsite,
 )
 
-os.makedirs(config.raw_files_dir, exist_ok=True)
 env_user = config.user
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
@@ -84,6 +83,7 @@ def _new_file(file_content, file_type: str):
     for pdfs file_content is current filename
     @TODO rename
     """
+    os.makedirs(config.raw_files_dir, exist_ok=True)
     filename = os.path.join(config.raw_files_dir, str(uuid.uuid4()) + "." + file_type)
     if file_type == FileType.pdf:
         with open(filename, "wb") as file:
