@@ -36,11 +36,17 @@ SENT_NUM = "sentNum"
 QUERY_TARGET = "queryTarget"
 ANNOTATION_RESULT = "annotation_result"
 
+SIMILARITIES = "similarities"
+SIMILARITY_SCORE = "similarity_score"
+
 
 # Segmented texts:
 HTML_TAG = "html_tag"
 IS_HEADER = "is_header"
 SEQUENCE_NUMBER = "sequence_number"
+
+# Sentences:
+SENTENCE_NUMBER = "sentence_number"
 
 
 class EmbeddingType(str, Enum):
@@ -61,6 +67,5 @@ class FileType(str, Enum):
 
 class ExtractionMethod(str, Enum):
     newspaper = "newspaper3k"
-    dragnet = "dragnet"
     pdfminer = "pdfminer"
     simple_html = "simple_html"

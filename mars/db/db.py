@@ -18,7 +18,6 @@ from mars.db.db_fields import (
 )
 
 env_user = config.user
-
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
 
 
