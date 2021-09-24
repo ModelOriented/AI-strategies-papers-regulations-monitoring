@@ -1,21 +1,89 @@
 version: "3.7"
 services:
+  # base image, just built it and tag
+  common:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: piotrp/mair_common
   arangodb_db_container:
-    image: arangodb:latest
-    environment:
-      ARANGO_ROOT_PASSWORD: rootpassword
+    build: arango
     ports:
       - 8080:8529
+    secrets:
+      - arango_secrets
     volumes:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
   annotation:
-    hostname: "annotation.mair.poz.wektor.xyz"
-    build: .
-    command: "streamlit run app.py logger.level debug --server.enableCORS false --server.enableXsrfProtection false --server.headless true --server.enableWebsocketCompression false --server.address annotation.mair.poz.wektor.xyz"
+    build:
+      context: .
+      dockerfile: annotation/Dockerfile
     ports:
-     - 8081:8501
+      - 8081:8501
+    depends_on:
+      - arangodb_db_container
+    secrets:
+      - arango_secrets
+    environment:
+      ARANGODB_URL: http://arangodb_db_container:8529
+  airflow_db:
+    image: mysql:5.7
+    volumes:
+      - airflow_db_data:/var/lib/mysql
+    restart: always
+    command: bash -c "source /run/secrets/airflow_secrets && /entrypoint.sh mysqld --explicit_defaults_for_timestamp=1"
+    secrets:
+      - airflow_secrets
+  scrapers_airflow_www:
+    image: piotrp/mair_common
+    depends_on:
+      - airflow_db
+    secrets:
+      - airflow_secrets
+    ports:
+      - 8083:8080
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    command: bash -c "source /run/secrets/airflow_secrets && airflow webserver"
+  scrapers_airflow_scheduler:
+    build:
+      context: .
+      dockerfile: scrapers/Dockerfile
+    depends_on:
+      - airflow_db
+      - arangodb_db_container
+    secrets:
+      - airflow_secrets
+      - arango_secrets
+      - webdav_secrets
+    volumes:
+      - ./raw_data:/mair/raw_data
+      - ./log_dir:/mair/log_dir
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 0
+      EXPLICIT_DEFAULTS_FOR_TIMESTAMP: 1
+      USER: poznan
+      ARANGODB_URL: http://arangodb_db_container:8529
+    command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
+  webdav:
+    build: webdav
+    secrets:
+      - webdav_secrets
+    volumes:
+      - ./raw_data:/storage
+    ports:
+      - 8082:8080
 
 volumes:
   arangodb_data_container:
   arangodb_apps_data_container:
+  airflow_db_data:
+secrets:
+  airflow_secrets:
+    file: ./airflow_secrets.env
+  arango_secrets:
+    file: ./arango_secrets.env
+  webdav_secrets:
+    file: ./webdav_secrets.env

@@ -1,0 +1,7 @@
+.venv
+.git
+raw_data
+log_dir
+notebooks
+geckodriver
+**Dockerfile
