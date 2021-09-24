@@ -6,8 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: piotrp/mair_common
-    profiles:
-      - donotstart
   arangodb_db_container:
     build: arango
     ports:

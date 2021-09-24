@@ -35,6 +35,7 @@ RUN poetry config virtualenvs.create false \
 RUN pip install --upgrade pip
 
 COPY pyproject.toml .
+COPY poetry.lock .
 RUN poetry install --no-interaction --no-ansi -vvv
 COPY ./mars ./mars
 RUN poetry install --no-interaction --no-ansi -vvv
