@@ -2,11 +2,15 @@ import random
 from enum import Enum
 
 import typer
-from tqdm import tqdm
-
 from mars.db import collections
-from mars.db.db_fields import EMBEDDINGS, LASER, QUERY_TARGET, SENTENCE_SAMPLING_SCORE
+from mars.db.db_fields import (
+    EMBEDDINGS,
+    EmbeddingType,
+    QUERY_TARGET,
+    SENTENCE_SAMPLING_SCORE,
+)
 from mars.db.new_api import database
+from tqdm import tqdm
 
 
 class Strategy(str, Enum):
@@ -32,7 +36,7 @@ def score_for_annotation(strategy: Strategy):
                     target_embedding = embedd_sents_laser([d[QUERY_TARGET]])[0]
                     target_embeddings[d[QUERY_TARGET]] = target_embedding
                 d[SENTENCE_SAMPLING_SCORE] = similarity(
-                    d[EMBEDDINGS][LASER], target_embedding
+                    d[EMBEDDINGS][EmbeddingType.LASER], target_embedding
                 )
 
             annotations_batch.update(d)

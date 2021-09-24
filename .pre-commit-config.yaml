@@ -14,12 +14,7 @@ repos:
     hooks:
       - id: black
 
-  - repo: local
+  - repo: https://github.com/roy-ht/pre-commit-jupyter
+    rev: v1.2.1
     hooks:
-      - id: unittest
-        name: unittest
-        entry: poetry run python -m unittest discover
-        language: python
-        'types': [ python ]
-        pass_filenames: false
-        stages: [ commit ]
+      - id: jupyter-notebook-cleanup

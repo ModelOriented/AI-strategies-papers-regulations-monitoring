@@ -136,3 +136,6 @@ raw_data
 log_dir
 main.py
 notebooks/sg/similarities.csv
+
+#Docker secrets
+*_secrets.env

@@ -48,6 +48,7 @@ def parse_result_dict(result):
 
 
 def get_oecd_parsing_results():
+    # TODO: move to oecd-scraping, or scraper.py
     """
     Returns list of dicts with oecd api results
     """
@@ -97,6 +98,7 @@ def split_on_words(text, split_words):
 
 def extract_text_from_pdf(file_name: str) -> dict:
     """Extract text and other attributes from pdf in form od dict"""
+    # TODO: Move to parser.py
     empty_pages = []
     separated_text = []
     all_text = ""
