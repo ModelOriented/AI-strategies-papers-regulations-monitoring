@@ -18,13 +18,3 @@ repos:
     rev: v1.2.1
     hooks:
       - id: jupyter-notebook-cleanup
-
-  - repo: local
-    hooks:
-      - id: unittest
-        name: unittest
-        entry: poetry run python -m unittest discover
-        language: python
-        'types': [ python ]
-        pass_filenames: false
-        stages: [ commit ]
