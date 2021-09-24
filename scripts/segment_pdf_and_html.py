@@ -27,7 +27,7 @@ logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S
 ROUND_DIGIT = 1
 
 
-def segment_and_upload():
+def segment_and_upload() -> None:
     for doc in collections.document_sources.fetchAll():
         try:
             if (

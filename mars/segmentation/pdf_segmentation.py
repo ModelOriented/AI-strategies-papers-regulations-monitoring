@@ -3,12 +3,10 @@ import re
 from operator import itemgetter
 
 
-def fonts(doc, round_digits=1):
+def fonts(doc, round_digits=1) -> tuple[dict, dict]:
     """Extracts fonts and their usage in PDF documents.
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
-    :param granularity: also use 'font', 'flags' and 'color' to discriminate text
-    :type granularity: bool
     :rtype: [(font_size, count), (font_size, count}], dict
     :return: most used fonts sorted by count, font style information
     """
@@ -39,7 +37,7 @@ def fonts(doc, round_digits=1):
     return font_counts, styles
 
 
-def font_tags(font_counts, styles, round_digits=1):
+def font_tags(font_counts, styles, round_digits=1) -> dict:
     """Returns dictionary with font sizes as keys and tags as value.
     :param font_counts: (font_size, count) for all fonts occuring in document
     :type font_counts: list
