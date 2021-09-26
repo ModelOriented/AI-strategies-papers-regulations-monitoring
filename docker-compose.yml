@@ -27,6 +27,20 @@ services:
       - arango_secrets
     environment:
       ARANGODB_URL: http://arangodb_db_container:8529
+  reporting_app:
+    build:
+      context: .
+      dockerfile: reporting_app/Dockerfile
+    ports:
+      - 8084:8501
+    depends_on:
+      - arangodb_db_container
+    secrets:
+      - arango_secrets
+    environment:
+      ARANGODB_URL: http://arangodb_db_container:8529
+    volumes:
+      - ./data:/mair/data
   airflow_db:
     image: mysql:5.7
     volumes:

@@ -1,4 +1,4 @@
-FROM python:3.7.12
+FROM python:3.7.11
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /mair
 
