@@ -1,3 +1,5 @@
+"""Extracting content from HTMLs and PDFs"""
+
 import glob
 import logging
 import os
@@ -28,7 +30,7 @@ class HTMLFilter(HTMLParser, ABC):
 
 def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
     """
-    Parses html file using extraction method
+    Parses html file using extraction method, saves result to db.
     """
 
     if db.is_content_present(source_url, method):
@@ -58,7 +60,7 @@ def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
 
 
 def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
-    """Extracts text and metadata from *.pdf file"""
+    """Extracts text and metadata from *.pdf file, saves results to dv."""
 
     if db.is_content_present(source_url, method):
         return
