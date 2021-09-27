@@ -4,8 +4,13 @@ from typing import Dict, List
 import numpy as np
 from tqdm import tqdm
 
-from mars import db, embeddings, logging
+from mars import db, logging, sentence_embeddings
 from mars.db import db_fields
+
+
+def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float:
+    """Calculates similarity between single sentence and query (both provided as embeddings)."""
+    return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
 
 
 def calculate_similarities_to_targets(
@@ -13,7 +18,9 @@ def calculate_similarities_to_targets(
 ) -> Dict[str, Dict[str, float]]:
     """Calculate similarities of all sentences from all processed texts to given targets.
     Returns mapping filename (or other choosen key) -> query -> list of similarities of all sentences in text."""
-    target_embeddings = embeddings.get_sentence_to_embedding_mapping(queries, emb_type)
+    target_embeddings = sentence_embeddings.get_sentence_to_embedding_mapping(
+        queries, emb_type
+    )
     all_similarities = defaultdict(dict)
     logging.debug("Loading targets similarities...")
     for processed_text in tqdm(db.collections.processed_texts.fetchAll()):
