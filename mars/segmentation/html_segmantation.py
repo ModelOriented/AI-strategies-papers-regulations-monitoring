@@ -7,6 +7,9 @@ import re
 def segment_html(
     filename: str, extraction_method=db_fields.ExtractionMethod.newspaper
 ) -> list:
+    """
+    Splits html file into list of html headers and paragraphs (h1-h6 and p tags)
+    """
     article = newspaper.Article(url=" ", language="en", keep_article_html=True)
     with open(filename, mode="r") as f:
         raw_html = f.read()
