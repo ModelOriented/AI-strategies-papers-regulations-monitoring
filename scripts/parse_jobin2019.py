@@ -6,15 +6,13 @@ import pdfminer.pdfinterp
 import pdfminer.pdfpage
 import re
 import pandas as pd
-from mars.utils import (
-    extract_text_from_pdf,
-    get_inteligent_first_search_results,
-    fetch_paper_information,
-    split_on_words,
-)
+from mars.utils import fetch_paper_information, split_on_words
+from mars.web_search import get_inteligent_first_search_results
+from mars.parser import extract_text_from_pdf
 from mars.utils import search_for_url
 import typer
 import os
+from dotenv import load_dotenv
 
 
 def get_longest(text_list: list) -> list:
@@ -78,8 +76,7 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
     # later it is excluded from text and everything above Non-maleficience is Justice, fairness, and equity, etc.
 
     split_words = list(get_issue_mapping().values())
-    split_words.append("Discission")
-    threads = dict.fromkeys(split_words)
+    split_words.append("Discussion")
 
     # clean
     for i, text in enumerate(text_on_pages):
@@ -90,7 +87,6 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
         text_on_pages[i] = text
 
     relevant_text = " ".join(text_on_pages[7:13])
-
     threads = split_on_words(relevant_text, split_words)
 
     # pop empty one
@@ -133,7 +129,6 @@ def match_references_with_url(references: list, arxiv_id: str) -> dict:
     references_scholar_titles = [rs["title"] for rs in references_scholar]
 
     refs = match_references_substring(references, references_scholar_titles)
-    print(len(refs.values()))
     links = {}
 
     for i, j in refs.items():
@@ -211,8 +206,26 @@ def extract_topics_from_jobin_citations(path_to_jobin_file: str) -> pd.DataFrame
     return data
 
 
-if __name__ == "__main__":
-    file_name = os.environ["JOBIN2019_LOCATION"]  # change to your location
+def parse_and_save():
+    """
+    Parses and saves data from jobin2019 extraction to csv in data folder
+    @return: csv file in mars/data
+    """
+    load_dotenv(".env")
+    file_name = os.environ["JOBIN2019_LOCATION"]
+    data = extract_topics_from_jobin_citations(file_name)
     references = extract_references_from_jobin2019(file_name)
-    # ToDo make a script and upload to database
-    # typer.run()
+    actual_references = list(np.array(references)[data.index])
+    # begin searching:
+    actual_link = match_references_with_url(actual_references, "1906.11668")
+    for key, ac in actual_link.items():
+        if type(ac) == str:
+            actual_link[key] = (ac, "semantic_scholar_api")
+    data["title"] = [ar for ar in actual_references]
+    data["link"] = [ac[0] for ac in actual_link.values()]
+    data["source"] = [ac[1] for ac in actual_link.values()]
+    data.to_csv("data/jobin2019.csv")
+
+
+if __name__ == "__main__":
+    typer.run(parse_and_save)

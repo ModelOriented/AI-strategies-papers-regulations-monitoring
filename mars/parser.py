@@ -13,7 +13,6 @@ import newspaper
 import mars.db as db
 import mars.logging
 from mars import config
-from mars.utils import extract_text_from_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -138,3 +137,38 @@ def parse_source(source: str, batch_size: int):
 
         else:
             continue
+
+
+def extract_text_from_pdf(file_name: str) -> dict:
+    """Extract text and other attributes from pdf in form od dict"""
+    empty_pages = []
+    separated_text = []
+    all_text = ""
+    page_no = 0
+    document = open(file_name, "rb")
+    rsrcmgr = pdfminer.pdfinterp.PDFResourceManager()
+    laparams = pdfminer.layout.LAParams()
+    device = pdfminer.converter.PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = pdfminer.pdfinterp.PDFPageInterpreter(rsrcmgr, device)
+    for page in pdfminer.pdfpage.PDFPage.get_pages(document):
+        text_on_page = []
+        interpreter.process_page(page)
+        layout = device.get_result()
+        for element in layout:
+            if isinstance(element, pdfminer.layout.LTTextBoxHorizontal):
+                text_on_page.append(element.get_text())
+                all_text += element.get_text()
+        if len(text_on_page) == 0:
+            empty_pages.append(page_no)
+        separated_text.append(text_on_page)
+        page_no += 1
+    document.close()
+
+    document_dict = {
+        "all_text": all_text,
+        "text_on_page": text_on_page,
+        "empty_pages": empty_pages,
+        "page_no": page_no,
+        "separated_text": separated_text,
+    }
+    return document_dict

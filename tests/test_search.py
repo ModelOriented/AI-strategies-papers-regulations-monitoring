@@ -1,9 +1,11 @@
 import unittest
-from mars.utils import *
+from mars.utils import search_for_url, fetch_paper_information
 import undetected_chromedriver as uc
 
+from mars.web_search import get_duckduckgo_first_result
 
-class ScraperMethods(unittest.TestCase):
+
+class SearchMethods(unittest.TestCase):
     def test_search_for_url(self):
         url = search_for_url(
             "Everybody loves good https://en.wikipedia.org/wiki/Jellyfish because why not"

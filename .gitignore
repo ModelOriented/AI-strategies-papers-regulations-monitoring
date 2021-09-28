@@ -134,7 +134,6 @@ dmypy.json
 notebooks/dirty
 raw_data
 log_dir
-main.py
 notebooks/sg/similarities.csv
 
 #Docker secrets
