@@ -7,7 +7,7 @@ import magic
 import requests
 from selenium import webdriver
 
-from mars import config, db
+from mars import config, db, logging
 
 
 class Scraper:
@@ -20,12 +20,7 @@ class Scraper:
         self.verbose = verbose
         self.print_log("Setting up driver")
         self.log_dir = config.scrapper_logs_dir
-        self.logger = logging.getLogger(__name__)
-
-        self.logger.setLevel(logging.getLevelName(config.logging_level))
-        logging.basicConfig(
-            format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S"
-        )
+        self.logger = logging.new_logger(__name__)
 
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(config.raw_files_dir, exist_ok=True)
