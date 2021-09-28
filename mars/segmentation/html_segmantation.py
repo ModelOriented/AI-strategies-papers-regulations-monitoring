@@ -5,9 +5,8 @@ import re
 
 
 def segment_html(
-    filename, extraction_method=db_fields.ExtractionMetod.newspaper
+    filename: str, extraction_method=db_fields.ExtractionMethod.newspaper
 ) -> list:
-
     article = newspaper.Article(url=" ", language="en", keep_article_html=True)
     with open(filename, mode="r") as f:
         raw_html = f.read()
