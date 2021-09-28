@@ -1,10 +1,3 @@
-md5: 819261bd6aee79961cd6697279da6ddf
-frozen: true
-deps:
-- path: data/oecd_docs/texts
-  repo:
-    url: https://github.com/ModelOriented/MAIR.git
-    rev_lock: 7a678b3a0589c22256a633e936307b6321e03f34
 outs:
 - md5: 5a5f576150194af1d1e5230ff632843e.dir
   size: 12574153

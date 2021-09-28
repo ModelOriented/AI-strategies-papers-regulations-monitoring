@@ -1,8 +1,7 @@
 """Adds embeddings to all processed texts"""
 
-import typer
-
 import mars
+import typer
 from mars import db
 from mars.db.db_fields import EMBEDDINGS, ID, EmbeddingType
 
@@ -13,15 +12,10 @@ unique_texts_query = f"""FOR doc IN {db.collections.SENTENCES} RETURN DISTINCT d
 
 def embedd_sentences(embedding_type: EmbeddingType) -> None:
     from mars import (
-        embeddings,
+        sentence_embeddings,
     )  # we import here to avoid huge model loading, before checking if parameters are valid
 
     unique_texts_id = mars.db.database.AQLQuery(unique_texts_query, BATCH_SIZE)
-
-    if embedding_type == EmbeddingType.LABSE:
-        embed_function = embeddings.embedd_sents_labse
-    elif embedding_type == EmbeddingType.LASER:
-        embed_function = embeddings.embedd_sents_laser
 
     for doc in db.collections.sentences.fetchAll():
         if not doc[EMBEDDINGS]:
@@ -29,7 +23,9 @@ def embedd_sentences(embedding_type: EmbeddingType) -> None:
         if not doc[EMBEDDINGS][embedding_type]:
             print("Processing", doc[ID], "...")
             try:
-                full_embeddings = embed_function(doc.sentence)
+                full_embeddings = sentence_embeddings.embedd_sentences(
+                    doc.sentence, embedding_type
+                )
                 doc[EMBEDDINGS][embedding_type] = full_embeddings
                 doc.save()
             except Exception as e:

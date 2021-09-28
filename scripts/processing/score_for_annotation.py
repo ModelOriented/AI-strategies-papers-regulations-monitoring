@@ -5,11 +5,12 @@ import typer
 from mars.db import collections
 from mars.db.db_fields import (
     EMBEDDINGS,
-    EmbeddingType,
     QUERY_TARGET,
     SENTENCE_SAMPLING_SCORE,
+    EmbeddingType,
 )
 from mars.db.new_api import database
+from mars.similarity_calculation import similarity
 from tqdm import tqdm
 
 
@@ -20,7 +21,7 @@ class Strategy(str, Enum):
 
 def score_for_annotation(strategy: Strategy):
     if strategy == Strategy.highest_similarity_laser:
-        from mars.embeddings import embedd_sents_laser, similarity
+        from mars.embeddings import embedd_sents_laser
 
     target_embeddings = dict()
     annotations = database[collections.ANNOTATIONS]

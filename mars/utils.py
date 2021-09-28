@@ -1,50 +1,12 @@
 import json
 import os
-import re
 import ssl
-import time
-import urllib
 
 import pdfminer.converter
 import pdfminer.layout
 import pdfminer.pdfinterp
 import pdfminer.pdfpage
-import requests
-import semanticscholar as sch
-import undetected_chromedriver as uc
-from googlesearch import search
 
-from mars.db import db_fields
-
-URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
-
-
-def parse_result_dict(result):
-    """ """
-    name = result["label"]
-    oecd_id = result["uri"].split("/")[-1]
-    # description = result["description"]
-    for field in result["fields"]:
-        key = field["key"]
-        value = field["value"]
-        if key == "Country":
-            country = value
-        elif key == "Public access URL":
-            document_url = value
-        elif key == "Cover start date":
-            start_date = value
-        elif key == "Cover end date":
-            end_date = value
-
-    document_info = {
-        db_fields.TITLE: name,
-        db_fields.COUNTRY: country,
-        db_fields.URL: document_url,
-        "startDate": start_date,
-        "endDate": end_date,
-        "oecdId": oecd_id,
-    }
-    return document_info
 
 
 def get_oecd_parsing_results():

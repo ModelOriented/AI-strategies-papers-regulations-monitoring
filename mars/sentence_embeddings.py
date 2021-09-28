@@ -1,4 +1,6 @@
-from typing import Dict, List
+"""Functions for embedding sentences with different methods."""
+
+from typing import Dict, List, Union
 
 import numpy as np
 import tensorflow as tf
@@ -7,40 +9,37 @@ import tensorflow_text as text  # Needed for loading universal-sentence-encoder-
 from laserembeddings import Laser
 
 from mars.db import db_fields
+from mars.db.db_fields import EmbeddingType
+
+LABSE_SIZE = 768
+LASER_SIZE = 1024
 
 laser = Laser()
 
-preprocessor = hub.KerasLayer(
+labse_preprocessor = hub.KerasLayer(
     "https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2"
 )
-encoder = hub.KerasLayer("https://tfhub.dev/google/LaBSE/2")
+labse_encoder = hub.KerasLayer("https://tfhub.dev/google/LaBSE/2")
 
 
-def normalization(embeds):
+def _normalization(embeds):
     norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
     return embeds / norms
 
 
-def embedd_sents_labse(sents):
-    return normalization(encoder(preprocessor(tf.constant(sents)))["default"]).numpy()
-
-
-def embedd_sents_laser(sents):
-    return normalization(laser.embed_sentences(sents, lang="en"))
-
-
-def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float:
-    return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
-
-
-def embedd_sentences(sents: List[str], embedding_type: db_fields.EmbeddingType):
-    if embedding_type == db_fields.EmbeddingType.LABSE:
-        embds = embedd_sents_labse(sents)
-    elif embedding_type == db_fields.EmbeddingType.LASER:
-        embds = embedd_sents_laser(sents)
+def embedd_sentences(
+    sents: Union[List[str], str], embedding_type: EmbeddingType
+) -> np.ndarray:
+    """Calculates embeddings for given sentence list, or single sentence."""
+    if embedding_type == EmbeddingType.LABSE:
+        if isinstance(sents, str):
+            sents = [sents]
+        embds = labse_encoder(labse_preprocessor(tf.constant(sents)))["default"]
+    elif embedding_type == EmbeddingType.LASER:
+        embds = laser.embed_sentences(sents, lang="en")
     else:
         raise ValueError("Unknown embedding type")
-    return embds
+    return _normalization(embds)
 
 
 def get_sentence_to_embedding_mapping(

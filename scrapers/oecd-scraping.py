@@ -6,10 +6,9 @@ import logging
 import mars.logging
 import mars.parser
 import typer
-from mars import config, db
+from mars import config, db, oecd_downloading
 from mars.db import db_fields
 from mars.scraper import Scraper
-from mars.utils import get_oecd_parsing_results
 
 logger = logging.getLogger(__name__)
 level = logging.getLevelName(config.logging_level)
@@ -19,7 +18,7 @@ logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S
 
 def main(headless: bool = True):
     logger.info("Fetching oecd urls")
-    parsing_results = get_oecd_parsing_results()
+    parsing_results = oecd_downloading.download()
     api = Scraper(headless=True)
     counter = 0
 
