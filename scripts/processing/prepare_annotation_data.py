@@ -16,6 +16,7 @@ from mars.db.new_api import database
 from tqdm import tqdm
 
 
+# TODO: @sgizinski: use collection sentences
 def prepare_annotation_data(query_sentence: str):
     """Loads collection with annotation data"""
     for doc in database[collections.PROCESSED_TEXTS]:
