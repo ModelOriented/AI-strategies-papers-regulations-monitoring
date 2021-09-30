@@ -1,11 +1,12 @@
-from mars.db import db_fields
+import re
+
 import newspaper
 from bs4 import BeautifulSoup
-import re
+from mars.db import db_fields
 
 
 def segment_html(
-    filename: str, extraction_method=db_fields.ExtractionMethod.newspaper
+    filename, extraction_method=db_fields.ExtractionMetod.newspaper
 ) -> list:
     """
     Splits html file into list of html headers and paragraphs (h1-h6 and p tags)

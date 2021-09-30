@@ -1,15 +1,13 @@
-import fitz
 import re
 from operator import itemgetter
-from typing import Tuple
+
+import fitz
 
 
 def count_fonts(doc: fitz.fitz.Document, round_digits: int = 1) -> Tuple[dict, dict]:
     """Extracts count_fonts and their usage in PDF documents.
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
-    :param round_digits: number of digits to round size of font
-    :type round_digits: int
     :rtype: [(font_size, count), (font_size, count}], dict
     :return: most used count_fonts sorted by count, font style information
     """
@@ -48,8 +46,6 @@ def translate_font_to_tags(
     :type font_counts: list
     :param styles: all styles found in the document
     :type styles: dict
-    :param round_digits: number of digits to round size of font
-    :type round_digits: int
     :rtype: dict
     :return: all element tags based on font-sizes
     """
@@ -86,8 +82,6 @@ def tag_headers(doc: fitz.fitz.Document, size_tag: dict, round_digits: int = 1):
     :type doc: <class 'fitz.fitz.Document'>
     :param size_tag: textual element tags for each size
     :type size_tag: dict
-    :param round_digits: number of digits to round size of font
-    :type round_digits: int
     :rtype: list
     :return: texts with pre-prended element tags
     """
@@ -145,7 +139,8 @@ def tag_headers(doc: fitz.fitz.Document, size_tag: dict, round_digits: int = 1):
     return header_para
 
 
-def merge_spans(header_para: dict):
+def merge_spans(header_para):
+
     not_empty = [h for h in header_para if h]
     closed = []
 
@@ -184,7 +179,7 @@ def merge_spans(header_para: dict):
     return closed
 
 
-def segment_pdf(filename: str, round_digits: int = 1):
+def segment_pdf(filename, round_digits=1):
     """
     splits pdf file into headers and paragraphs
     @param round_digits - how many digits should be rounded while counting count_fonts
