@@ -1,6 +1,8 @@
 import datetime
+import json
 import logging
 import os
+import ssl
 import urllib
 
 import magic
@@ -150,3 +152,19 @@ class Scraper:
         if exc_value is not None:
             self.save_snapshot()
         self.close()
+
+
+def get_oecd_parsing_results():
+    """
+    Returns list of dicts with oecd api results
+    """
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    res = requests.get(URL, verify=False)
+
+    data = json.loads(res.text)
+
+    parsing_results = [parse_result_dict(result) for result in data["results"]]
+    parsing_results = [p for p in parsing_results if p[db_fields.URL] is not None]
+
+    return parsing_results
