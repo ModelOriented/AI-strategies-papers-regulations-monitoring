@@ -17,7 +17,7 @@ def calculate_similarities_to_targets(
     queries: List[str], emb_type: db_fields.EmbeddingType, key=db_fields.FILENAME
 ) -> Dict[str, Dict[str, float]]:
     """Calculate similarities of all sentences from all processed texts to given targets.
-    Returns mapping filename (or other choosen key) -> query -> list of similarities of all sentences in text."""
+    Returns mapping: filename (or other choosen key) -> query -> list of similarities of all sentences in text."""
     target_embeddings = sentence_embeddings.get_sentence_to_embedding_mapping(
         queries, emb_type
     )
