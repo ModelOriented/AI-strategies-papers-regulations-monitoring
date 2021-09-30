@@ -13,9 +13,10 @@ from mars.utils import search_for_url
 import typer
 import os
 from dotenv import load_dotenv
+from typing import List
 
 
-def get_longest(text_list: list) -> list:
+def get_longest(text_list: list) -> List[int]:
     lengths = []
     for text in text_list:
         lengths.append(len(text))
@@ -23,7 +24,7 @@ def get_longest(text_list: list) -> list:
     return text_list[int(np.argmax(lengths))]
 
 
-def extract_references_from_jobin2019(file_name):
+def extract_references_from_jobin2019(file_name: str) -> List[str]:
     def split(txt, seps):
         default_sep = seps[0]
 
@@ -208,8 +209,8 @@ def extract_topics_from_jobin_citations(path_to_jobin_file: str) -> pd.DataFrame
 
 def parse_and_save():
     """
-    Parses and saves data from jobin2019 extraction to csv in data folder
-    @return: csv file in mars/data
+    Parses and saves data from jobin2019 extraction to csv in data folder.
+    Saves a csv file in mars/data
     """
     load_dotenv(".env")
     file_name = os.environ["JOBIN2019_LOCATION"]

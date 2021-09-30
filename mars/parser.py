@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 from typing import List
 
 import newspaper
-
+import pdfminer
 import mars.db as db
 import mars.logging
 from mars import config
