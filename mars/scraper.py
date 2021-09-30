@@ -8,6 +8,7 @@ import requests
 from selenium import webdriver
 
 from mars import config, db
+from mars.storage import FileSync, get_random_filename
 
 
 class Scraper:
@@ -90,7 +91,9 @@ class Scraper:
 
                 if "application/pdf" in content_type:
 
-                    file_tmp_name = os.path.join(config.raw_files_dir, "./tmp.pdf")
+                    file_tmp_name = os.path.join(
+                        config.tmp_files_dir, get_random_filename() + ".pdf"
+                    )
                     urllib.request.urlretrieve(url, file_tmp_name)
 
                     mime = magic.Magic(mime=True)
