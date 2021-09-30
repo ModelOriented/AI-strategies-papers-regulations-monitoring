@@ -20,6 +20,7 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
   * **score_for_annotation.py** - code for setting scores to sentences accordingly to their annotation value
   * **split_to_sentences.py**
   * **parse-dir.py**
+  * **parse_jobin2019.py** - parses jobin2019 and creates labels in mars/data folder
 * **docker-compose.yml** - definition of services
 * **annotation** - application for annotation
   * **app.py** - main script
