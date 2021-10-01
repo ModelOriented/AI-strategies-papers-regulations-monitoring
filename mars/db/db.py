@@ -49,7 +49,6 @@ def save_doc(
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
     doc = collections.document_sources.createDocument()
-
     doc[URL] = url
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
