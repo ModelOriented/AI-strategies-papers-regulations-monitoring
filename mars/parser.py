@@ -12,6 +12,7 @@ import pdfminer
 
 import mars.db as db
 import mars.logging
+from mars.storage import FileSync
 
 logger = mars.logging.new_logger(__name__)
 
@@ -35,10 +36,11 @@ def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
     # get file from database
     doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
 
-    filename = doc[db.FILENAME]
+    file_id = doc[db.FILENAME]
     # read file
-    with open(filename, "r") as f:
-        raw_html = f.read()
+    with FileSync(file_id) as filename:
+        with open(filename, "r") as f:
+            raw_html = f.read()
 
     if method == db.ExtractionMethod.newspaper:
         article = newspaper.Article(url=" ", language="en", keep_article_html=True)
@@ -61,9 +63,9 @@ def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
         return
 
     doc = db.collections.document_sources.fetchFirstExample({db.URL: source_url})[0]
-    file_name = doc[db.FILENAME]
-
-    document_dict = extract_text_from_pdf(file_name)
+    file_id = doc[db.FILENAME]
+    with FileSync(file_id) as file_name:
+        document_dict = extract_text_from_pdf(file_name)
 
     # leave for future meta
     # return Pdf(separated_text, empty_pages, all_text)

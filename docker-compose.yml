@@ -81,6 +81,8 @@ services:
       EXPLICIT_DEFAULTS_FOR_TIMESTAMP: 1
       USER: poznan
       ARANGODB_URL: http://arangodb_db_container:8529
+      USE_WEBDAV: 0
+      LOGGING_LEVEL: INFO
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
   webdav:
     build: webdav
