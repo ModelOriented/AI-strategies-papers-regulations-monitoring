@@ -1,7 +1,6 @@
 """Extracting content from HTMLs and PDFs"""
 
 import glob
-import logging
 import os
 from abc import ABC
 from dataclasses import dataclass
@@ -10,14 +9,11 @@ from typing import List
 
 import newspaper
 import pdfminer
+
 import mars.db as db
 import mars.logging
-from mars import config
 
-logger = logging.getLogger(__name__)
-
-logger.setLevel(logging.getLevelName(config.logging_level))
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S")
+logger = mars.logging.new_logger(__name__)
 
 
 class HTMLFilter(HTMLParser, ABC):
