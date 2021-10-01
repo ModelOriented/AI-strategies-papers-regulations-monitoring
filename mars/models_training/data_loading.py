@@ -8,7 +8,10 @@ from mars.models_training import datasets
 from mars.models_training.datasets import DocumentLevelDataset
 
 
-def transform_to_X_y(similarities: Dict[str, Dict[str, float]], labels: pd.DataFrame):
+def transform_to_X_y(
+    similarities: Dict[str, Dict[str, float]], labels: pd.DataFrame
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Transforms similarities dict and labels dataframe to ndarrays for training."""
     df = pd.DataFrame(dict(similarities))
     df_labels = labels[df.columns]
     document_names = df_labels.columns
