@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 
 # coding: utf-8
-import logging
-
 import mars.logging
 import mars.parser
 import typer
-from mars import config, db, oecd_downloading
+from mars import db, oecd_downloading
 from mars.db import db_fields
 from mars.scraper import Scraper
 
-logger = logging.getLogger(__name__)
-level = logging.getLevelName(config.logging_level)
-logger.setLevel(level)
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
+logger = mars.logging.new_logger(__name__)
 
 
 def main(headless: bool = True):

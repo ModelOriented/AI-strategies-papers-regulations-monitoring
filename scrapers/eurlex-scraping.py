@@ -3,10 +3,7 @@ import urllib
 from mars import config, db, logging, parser
 from mars.scraper import Scraper
 
-logger = logging.getLogger(__name__)
-level = logging.getLevelName(config.logging_level)
-logger.setLevel(level)
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
+logger = logging.new_logger(__name__)
 
 
 def get_eurlex_search_link(keyword: str, lang: str):
