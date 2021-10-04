@@ -24,7 +24,7 @@ def main(headless: bool = True):
 
     for result in parsing_results:
         # check if link if valid
-        if not result[db_fields.URL].startswith(("http", "www")):
+        if not result[db_fields.URL].startswith("http"):
             logger.debug("Fixing invalid link: %s" % result[db_fields.URL])
             result[db_fields.URL] = "http://" + result[db_fields.URL]
         try:
