@@ -1,28 +1,21 @@
 """Split all pdfs from database"""
-from typer.models import FileTextWrite
-from mars import logging, config
 import typer
-from mars.db import db_fields
-from mars.segmentation.pdf_segmentation import segment_pdf
-from mars.segmentation.html_segmantation import segment_html
-from mars.db import collections
+from mars import config, logging
+from mars.db import collections, db_fields
 from mars.db.db_fields import (
     CONTENT,
-    FILENAME,
+    DOC_ID,
     FILE_TYPE,
+    FILENAME,
     HTML_TAG,
     ID,
     IS_HEADER,
     SEQUENCE_NUMBER,
-    TEXT_ID,
-    FileType,
 )
+from mars.segmentation.html_segmantation import segment_html
+from mars.segmentation.pdf_segmentation import segment_pdf
 
-logger = logging.getLogger(__name__)
-level = logging.getLevelName(config.logging_level)
-logger.setLevel(level)
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
-
+logger = logging.new_logger(__name__)
 
 ROUND_DIGIT = 1
 
@@ -31,7 +24,7 @@ def segment_and_upload() -> None:
     for doc in collections.document_sources.fetchAll():
         try:
             if (
-                len(collections.segmented_texts.fetchFirstExample({TEXT_ID: doc[ID]}))
+                len(collections.segmented_texts.fetchFirstExample({DOC_ID: doc[ID]}))
                 == 1
             ):
                 print("Skipping %s" % doc[ID])
@@ -45,7 +38,7 @@ def segment_and_upload() -> None:
 
             for s in segs:
                 segmented_doc = collections.segmented_texts.createDocument()
-                segmented_doc[TEXT_ID] = doc[ID]
+                segmented_doc[DOC_ID] = doc[ID]
                 segmented_doc[HTML_TAG] = s["html_tag"]
                 segmented_doc[CONTENT] = s["content"]
                 segmented_doc[SEQUENCE_NUMBER] = s["sequence_number"]

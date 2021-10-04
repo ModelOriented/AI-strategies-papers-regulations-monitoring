@@ -1,6 +1,5 @@
 from arango import ArangoClient
 from arango.http import DefaultHTTPClient
-
 from mars import config
 
 

@@ -3,6 +3,7 @@ import uuid
 
 from mars import config
 from mars.db import collections
+from mars.storage import FileSync
 from mars.db.db_fields import (
     CONTENT,
     DOC_ID,
@@ -48,7 +49,6 @@ def save_doc(
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
     doc = collections.document_sources.createDocument()
-
     doc[URL] = url
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
@@ -83,12 +83,12 @@ def _new_file(file_content, file_type: str):
     for pdfs file_content is current filename
     @TODO rename
     """
-    os.makedirs(config.raw_files_dir, exist_ok=True)
-    filename = os.path.join(config.raw_files_dir, str(uuid.uuid4()) + "." + file_type)
-    if file_type == FileType.pdf:
-        with open(filename, "wb") as file:
-            file.write(file_content)
-    else:
-        with open(filename, "w") as file:
-            file.write(file_content)
-    return filename
+    file_id = str(uuid.uuid4()) + "." + file_type
+    with FileSync(file_id) as filename:
+        if file_type == FileType.pdf:
+            with open(filename, "wb") as file:
+                file.write(file_content)
+        else:
+            with open(filename, "w") as file:
+                file.write(file_content)
+    return file_id

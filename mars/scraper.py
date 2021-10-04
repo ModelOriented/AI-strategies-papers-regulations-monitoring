@@ -9,7 +9,8 @@ import magic
 import requests
 from selenium import webdriver
 
-from mars import config, db
+from mars.storage import FileSync, get_random_filename
+from mars import config, db, logging
 
 
 class Scraper:
@@ -22,12 +23,7 @@ class Scraper:
         self.verbose = verbose
         self.print_log("Setting up driver")
         self.log_dir = config.scrapper_logs_dir
-        self.logger = logging.getLogger(__name__)
-
-        self.logger.setLevel(logging.getLevelName(config.logging_level))
-        logging.basicConfig(
-            format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %H:%M:%S"
-        )
+        self.logger = logging.new_logger(__name__)
 
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(config.raw_files_dir, exist_ok=True)
@@ -92,7 +88,9 @@ class Scraper:
 
                 if "application/pdf" in content_type:
 
-                    file_tmp_name = os.path.join(config.raw_files_dir, "./tmp.pdf")
+                    file_tmp_name = os.path.join(
+                        config.tmp_files_dir, get_random_filename() + ".pdf"
+                    )
                     urllib.request.urlretrieve(url, file_tmp_name)
 
                     mime = magic.Magic(mime=True)
