@@ -10,7 +10,7 @@ from mars.db import db_fields
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-URL = "https://www.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
+URL = "https://api.oecd.ai/ws/AIPO/API/dashboards/policyInitiatives.xqy?conceptUris=undefined"
 
 
 def parse_result_dict(result: dict) -> Dict[str, str]:
