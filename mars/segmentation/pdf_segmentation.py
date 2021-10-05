@@ -1,5 +1,6 @@
 import re
 from operator import itemgetter
+from typing import Tuple
 
 import fitz
 
@@ -9,7 +10,7 @@ def count_fonts(doc: fitz.fitz.Document, round_digits: int = 1) -> Tuple[dict, d
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
     :rtype: [(font_size, count), (font_size, count}], dict
-    :return: most used count_fonts sorted by count, font style information
+    :return: most used fonts sorted by count, font style information
     """
     styles = {}
     font_counts = {}
@@ -28,12 +29,12 @@ def count_fonts(doc: fitz.fitz.Document, round_digits: int = 1) -> Tuple[dict, d
 
                         font_counts[identifier] = (
                             font_counts.get(identifier, 0) + 1
-                        )  # count the count_fonts usage
+                        )  # count the fonts usage
 
     font_counts = sorted(font_counts.items(), key=itemgetter(1), reverse=True)
 
     if len(font_counts) < 1:
-        raise ValueError("Zero discriminating count_fonts found!")
+        raise ValueError("Zero discriminating fonts found!")
 
     return font_counts, styles
 
@@ -42,7 +43,7 @@ def translate_font_to_tags(
     font_counts: dict, styles: dict, round_digits: int = 1
 ) -> dict:
     """Returns dictionary with font sizes as keys and tags as value.
-    :param font_counts: (font_size, count) for all count_fonts occuring in document
+    :param font_counts: (font_size, count) for all fonts occuring in document
     :type font_counts: list
     :param styles: all styles found in the document
     :type styles: dict
@@ -182,7 +183,7 @@ def merge_spans(header_para):
 def segment_pdf(filename, round_digits=1):
     """
     splits pdf file into headers and paragraphs
-    @param round_digits - how many digits should be rounded while counting count_fonts
+    @param round_digits - how many digits should be rounded while counting fonts
 
     @returns list of dicts {"html_tag": string, "content": string}
     """
