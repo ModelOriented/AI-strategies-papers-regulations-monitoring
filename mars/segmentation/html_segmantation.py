@@ -1,13 +1,16 @@
-from mars.db import db_fields
+import re
+
 import newspaper
 from bs4 import BeautifulSoup
-import re
+from mars.db import db_fields
 
 
 def segment_html(
     filename, extraction_method=db_fields.ExtractionMetod.newspaper
 ) -> list:
-
+    """
+    Splits html file into list of html headers and paragraphs (h1-h6 and p tags)
+    """
     article = newspaper.Article(url=" ", language="en", keep_article_html=True)
     with open(filename, mode="r") as f:
         raw_html = f.read()

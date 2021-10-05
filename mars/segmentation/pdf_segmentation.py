@@ -1,9 +1,11 @@
-import fitz
 import re
 from operator import itemgetter
+from typing import Tuple
+
+import fitz
 
 
-def fonts(doc, round_digits=1) -> tuple[dict, dict]:
+def count_fonts(doc: fitz.fitz.Document, round_digits: int = 1) -> Tuple[dict, dict]:
     """Extracts fonts and their usage in PDF documents.
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
@@ -37,7 +39,9 @@ def fonts(doc, round_digits=1) -> tuple[dict, dict]:
     return font_counts, styles
 
 
-def font_tags(font_counts, styles, round_digits=1) -> dict:
+def translate_font_to_tags(
+    font_counts: dict, styles: dict, round_digits: int = 1
+) -> dict:
     """Returns dictionary with font sizes as keys and tags as value.
     :param font_counts: (font_size, count) for all fonts occuring in document
     :type font_counts: list
@@ -73,7 +77,7 @@ def font_tags(font_counts, styles, round_digits=1) -> dict:
     return size_tag
 
 
-def headers_para(doc, size_tag, round_digits=1):
+def tag_headers(doc: fitz.fitz.Document, size_tag: dict, round_digits: int = 1):
     """Scrapes headers & paragraphs from PDF and return texts with element tags.
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
@@ -139,7 +143,6 @@ def headers_para(doc, size_tag, round_digits=1):
 def merge_spans(header_para):
 
     not_empty = [h for h in header_para if h]
-
     closed = []
 
     # fix to avoid errors out of range
@@ -185,9 +188,9 @@ def segment_pdf(filename, round_digits=1):
     @returns list of dicts {"html_tag": string, "content": string}
     """
     doc = fitz.open(filename=filename)
-    font_counts, styles = fonts(doc, round_digits=round_digits)
-    size_tag = font_tags(font_counts, styles, round_digits=round_digits)
-    arr = headers_para(doc, size_tag, round_digits=round_digits)
+    font_counts, styles = count_fonts(doc, round_digits=round_digits)
+    size_tag = translate_font_to_tags(font_counts, styles, round_digits=round_digits)
+    arr = tag_headers(doc, size_tag, round_digits=round_digits)
     segments = merge_spans(arr)
 
     return segments

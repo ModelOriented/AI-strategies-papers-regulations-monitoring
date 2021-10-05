@@ -44,6 +44,7 @@ SIMILARITY_SCORE = "similarity_score"
 HTML_TAG = "html_tag"
 IS_HEADER = "is_header"
 SEQUENCE_NUMBER = "sequence_number"
+LANGUAGE = "language"
 
 # Sentences:
 SENTENCE_NUMBER = "sentence_number"
