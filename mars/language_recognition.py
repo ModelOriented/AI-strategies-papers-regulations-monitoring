@@ -5,6 +5,7 @@ from spacy_langdetect import LanguageDetector
 
 @Language.factory("language_detector")
 def _create_language_detector(nlp: Language, name: str) -> LanguageDetector:
+    """Function registered to spacy as a pipeline step"""
     return LanguageDetector(language_detection_function=None)
 
 

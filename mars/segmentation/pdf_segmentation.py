@@ -1,11 +1,14 @@
 import re
 from operator import itemgetter
+from typing import Tuple
+
+import fitz
 
 import fitz
 
 
 def count_fonts(doc: fitz.fitz.Document, round_digits: int = 1) -> Tuple[dict, dict]:
-    """Extracts count_fonts and their usage in PDF documents.
+    """Extracts fonts and their usage in PDF documents.
     :param doc: PDF document to iterate through
     :type doc: <class 'fitz.fitz.Document'>
     :rtype: [(font_size, count), (font_size, count}], dict
