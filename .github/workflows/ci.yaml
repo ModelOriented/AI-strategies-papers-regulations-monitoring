@@ -19,6 +19,6 @@ jobs:
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
       - name: Build images
         id: build_images
-        run:
+        run: |
           export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
           docker-compose build
