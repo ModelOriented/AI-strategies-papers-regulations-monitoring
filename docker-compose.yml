@@ -113,6 +113,24 @@ services:
       - ./raw_data:/storage
     ports:
       - 8082:8080
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+    depends_on:
+      - arangodb_db_container
+    secrets:
+      - arango_secrets
+    volumes:
+      - ./raw_data:/mair/raw_data
+      - ./log_dir:/mair/log_dir
+    environment:
+      USER: tests
+      ARANGODB_URL: http://arangodb_db_container:8529
+      USE_WEBDAV: 0
 
 volumes:
   arangodb_data_container:
