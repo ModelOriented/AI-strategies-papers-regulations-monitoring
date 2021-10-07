@@ -1,5 +1,6 @@
 ARG docker_user
-FROM ${docker_user}/common
+ARG docker_tag
+FROM ${docker_user}/common:${docker_tag}
 
 COPY annotation .
 EXPOSE 8080
