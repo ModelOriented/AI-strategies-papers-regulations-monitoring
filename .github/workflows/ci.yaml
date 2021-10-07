@@ -12,12 +12,12 @@ jobs:
       - name: Get current branch
         id: branch
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
-      - name: Pull images
-        id: pull_images
-        run: |
-          export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
-          export DOCKER_TAG=${{ steps.branch.outputs.branch }}
-          docker-compose pull
+        #      - name: Pull images
+        #        id: pull_images
+        #        run: |
+        #          export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
+        #          export DOCKER_TAG=${{ steps.branch.outputs.branch }}
+        #          docker-compose pull
       - name: Build images
         id: build_images
         run: |
