@@ -23,7 +23,7 @@ jobs:
           export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
           docker-compose build
       - name: Push images
-        id: build_images
+        id: push_images
         run: |
           docker tag ${{ secrets.DOCKERHUB_USER }}/common:latest ${{ secrets.DOCKERHUB_USER }}/common:${{ steps.branch.outputs.branch }}
           docker push ${{ secrets.DOCKERHUB_USER }}/common
