@@ -1,4 +1,5 @@
-FROM piotrp/mair_common
+ARG docker_user
+FROM ${docker_user}/common
 
 COPY annotation .
 EXPOSE 8080

@@ -5,9 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: piotrp/mair_common
+    image: "${DOCKER_USER}/common"
   arangodb_db_container:
     build: arango
+    image: "${DOCKER_USER}/arango"
     ports:
       - 8080:8529
     secrets:
@@ -16,9 +17,12 @@ services:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
   annotation:
+    image: "${DOCKER_USER}/annotation"
     build:
       context: .
       dockerfile: annotation/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
     ports:
       - 8081:8501
     depends_on:
@@ -29,9 +33,12 @@ services:
       ARANGODB_URL: http://arangodb_db_container:8529
       LOGGING_LEVEL: INFO
   reporting_app:
+    image: "${DOCKER_USER}/reporing_app"
     build:
       context: .
       dockerfile: reporting_app/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
     ports:
       - 8084:8501
     depends_on:
@@ -52,7 +59,7 @@ services:
     secrets:
       - airflow_secrets
   scrapers_airflow_www:
-    image: piotrp/mair_common
+    image: "${DOCKER_USER}/common"
     depends_on:
       - airflow_db
     secrets:
@@ -63,10 +70,13 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
     command: bash -c "source /run/secrets/airflow_secrets && airflow webserver"
   scrapers_airflow_scheduler:
+    image: "${DOCKER_USER}/airflow_scheduler"
     shm_size: 512M
     build:
       context: .
       dockerfile: scrapers/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
     depends_on:
       - airflow_db
       - arangodb_db_container
@@ -87,6 +97,7 @@ services:
       LOGGING_LEVEL: INFO
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
   webdav:
+    image: "${DOCKER_USER}/webdav"
     build: webdav
     secrets:
       - webdav_secrets
