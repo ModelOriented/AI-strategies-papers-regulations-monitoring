@@ -21,7 +21,6 @@ jobs:
       - name: Build images
         id: build_images
         run: |
-          docker images -a
           export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
           export DOCKER_TAG=${{ steps.branch.outputs.branch }}
           export COMPOSE_DOCKER_CLI_BUILD=1
