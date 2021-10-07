@@ -8,4 +8,4 @@ RUN mkdir raw_data
 ENV RAW_FILES_DIR="/mair/raw_data" \
     LOGGING_LEVEL="DEBUG"
 
-RUN poetry run pytest .
+CMD poetry run pytest .
