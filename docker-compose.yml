@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
     image: "${DOCKER_USER}/common:${DOCKER_TAG}"
   arangodb_db_container:
     build: arango
@@ -24,6 +26,7 @@ services:
       args:
         docker_user: "${DOCKER_USER}"
         docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     ports:
       - 8081:8501
     depends_on:
@@ -41,6 +44,7 @@ services:
       args:
         docker_user: "${DOCKER_USER}"
         docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     ports:
       - 8084:8501
     depends_on:
@@ -80,6 +84,7 @@ services:
       args:
         docker_user: "${DOCKER_USER}"
         docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     depends_on:
       - airflow_db
       - arangodb_db_container
