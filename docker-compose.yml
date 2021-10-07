@@ -27,6 +27,7 @@ services:
       - arango_secrets
     environment:
       ARANGODB_URL: http://arangodb_db_container:8529
+      LOGGING_LEVEL: INFO
   reporting_app:
     build:
       context: .
@@ -39,6 +40,7 @@ services:
       - arango_secrets
     environment:
       ARANGODB_URL: http://arangodb_db_container:8529
+      LOGGING_LEVEL: INFO
     volumes:
       - ./data:/mair/data
   airflow_db:
