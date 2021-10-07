@@ -22,3 +22,18 @@ jobs:
         run: |
           export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
           docker-compose build
+      - name: Push images
+        id: build_images
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USER }}/common:latest ${{ secrets.DOCKERHUB_USER }}/common:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/common
+          docker tag ${{ secrets.DOCKERHUB_USER }}/reporting_app:latest ${{ secrets.DOCKERHUB_USER }}/reporting_app:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/reporting_app
+          docker tag ${{ secrets.DOCKERHUB_USER }}/annotation:latest ${{ secrets.DOCKERHUB_USER }}/annotation:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/annotation
+          docker tag ${{ secrets.DOCKERHUB_USER }}/webdav:latest ${{ secrets.DOCKERHUB_USER }}/webdav:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/webdav
+          docker tag ${{ secrets.DOCKERHUB_USER }}/airflow_scheduler:latest ${{ secrets.DOCKERHUB_USER }}/airflow_scheduler:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/airflow_scheduler
+          docker tag ${{ secrets.DOCKERHUB_USER }}/arango:latest ${{ secrets.DOCKERHUB_USER }}/arango:${{ steps.branch.outputs.branch }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/arango
