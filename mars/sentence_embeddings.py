@@ -1,5 +1,6 @@
 """Functions for embedding sentences with different methods."""
 
+import os
 from typing import Dict, List, Union
 
 import numpy as np
@@ -13,8 +14,11 @@ from mars.db.db_fields import EmbeddingType
 
 LABSE_SIZE = 768
 LASER_SIZE = 1024
-
-laser = Laser()
+try:
+    laser = Laser()
+except FileNotFoundError:
+    os.system("poetry run python -m laserembeddings download-models")
+    laser = Laser()
 
 labse_preprocessor = hub.KerasLayer(
     "https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2"
