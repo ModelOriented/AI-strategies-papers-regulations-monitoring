@@ -13,6 +13,12 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_NO_INTERACTION=1 \
     VENV_PATH="/opt/pysetup/.venv"
 
+RUN mkdir raw_data log_dir
+
+ENV RAW_FILES_DIR="/mair/raw_data" \
+    SCRAPER_LOGS_DIR="/mair/log_dir" \
+    GECKODRIVER_PATH="/mair/geckodriver"
+
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
@@ -28,6 +34,9 @@ RUN apt-get update \
     && pip install --upgrade pip \
     # configure poetry & make a virtualenv ahead of time since we only need one
     && python -m venv $VENV_PATH
+
+COPY install_prerequirements.sh .
+RUN sudo sh install_prerequirements.sh
 
 RUN poetry config virtualenvs.create false \
     # cleanup

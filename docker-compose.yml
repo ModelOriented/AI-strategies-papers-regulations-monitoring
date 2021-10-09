@@ -132,6 +132,7 @@ services:
       USER: tests
       ARANGODB_URL: http://arangodb_db_container:8529
       USE_WEBDAV: 0
+      LOGGING_LEVEL: INFO
 
 volumes:
   arangodb_data_container:
