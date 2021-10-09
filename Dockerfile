@@ -36,7 +36,7 @@ RUN apt-get update \
     && python -m venv $VENV_PATH
 
 COPY install_prerequirements.sh .
-RUN sudo sh install_prerequirements.sh
+RUN sh install_prerequirements.sh
 
 RUN poetry config virtualenvs.create false \
     # cleanup
