@@ -12,6 +12,15 @@ jobs:
       - name: Get current branch
         id: branch
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: Pull DVC
+        id: pull_dvc
+        run: dvc pull
       - name: Build images
         id: build_images
         run: |
