@@ -127,6 +127,7 @@ services:
     volumes:
       - ./raw_data:/mair/raw_data
       - ./log_dir:/mair/log_dir
+      - ./data:/mair/data
     environment:
       USER: tests
       ARANGODB_URL: http://arangodb_db_container:8529
