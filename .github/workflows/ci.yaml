@@ -20,7 +20,9 @@ jobs:
           export_default_credentials: true
       - name: Pull DVC
         id: pull_dvc
-        run: dvc pull
+        run: |
+          apt-get install -y dvc
+          dvc pull
       - name: Build images
         id: build_images
         run: |
