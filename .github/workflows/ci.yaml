@@ -21,7 +21,7 @@ jobs:
       - name: Pull DVC
         id: pull_dvc
         run: |
-          apt-get install -y dvc
+          sudo apt-get install -y dvc
           dvc pull
       - name: Build images
         id: build_images
