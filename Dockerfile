@@ -45,6 +45,6 @@ RUN pip install --upgrade pip
 
 COPY pyproject.toml .
 COPY poetry.lock .
-RUN poetry install --no-interaction --no-ansi -vvv
+RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
 COPY ./mars ./mars
-RUN poetry install --no-interaction --no-ansi -vvv
+RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
