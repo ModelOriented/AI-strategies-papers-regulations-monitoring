@@ -48,3 +48,7 @@ COPY poetry.lock .
 RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
 COPY ./mars ./mars
 RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
+
+# Copy DVC requirements
+RUN mkdir ./data && mkdir ./models
+COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
