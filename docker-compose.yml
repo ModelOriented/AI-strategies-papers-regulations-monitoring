@@ -12,7 +12,7 @@ services:
     build: arango
     image: "${DOCKER_USER}/arango:${DOCKER_TAG}"
     ports:
-      - 8080:8529
+      - "${DOCKER_PORT_PREFIX}0:8529"
     secrets:
       - arango_secrets
     volumes:
@@ -28,7 +28,7 @@ services:
         docker_tag: "${DOCKER_TAG}"
         BUILDKIT_INLINE_CACHE: 1
     ports:
-      - 8081:8501
+      - "${DOCKER_PORT_PREFIX}1:8501"
     depends_on:
       - arangodb_db_container
     secrets:
@@ -46,7 +46,7 @@ services:
         docker_tag: "${DOCKER_TAG}"
         BUILDKIT_INLINE_CACHE: 1
     ports:
-      - 8084:8501
+      - "${DOCKER_PORT_PREFIX}4:8501"
     depends_on:
       - arangodb_db_container
     secrets:
@@ -71,7 +71,7 @@ services:
     secrets:
       - airflow_secrets
     ports:
-      - 8083:8080
+      - "${DOCKER_PORT_PREFIX}3:8080"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
     command: bash -c "source /run/secrets/airflow_secrets && airflow webserver"
@@ -114,7 +114,7 @@ services:
     volumes:
       - ./raw_data:/storage
     ports:
-      - 8082:8080
+      - "${DOCKER_PORT_PREFIX}2:8080"
   tests:
     shm_size: 512M
     build:
