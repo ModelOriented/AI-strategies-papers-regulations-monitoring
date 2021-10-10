@@ -95,6 +95,8 @@ services:
     volumes:
       - ./raw_data:/mair/raw_data
       - ./log_dir:/mair/log_dir
+      - ./data:/mair/data
+      - ./models:/mair/models
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 0
@@ -114,6 +116,7 @@ services:
     ports:
       - 8082:8080
   tests:
+    shm_size: 512M
     build:
       context: .
       dockerfile: tests/Dockerfile
@@ -128,6 +131,7 @@ services:
       - ./raw_data:/mair/raw_data
       - ./log_dir:/mair/log_dir
       - ./data:/mair/data
+      - ./models:/mair/models
     environment:
       USER: tests
       ARANGODB_URL: http://arangodb_db_container:8529
