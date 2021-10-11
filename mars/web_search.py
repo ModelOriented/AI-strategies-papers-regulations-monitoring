@@ -1,6 +1,6 @@
+import os
 import time
 import urllib
-import os
 
 import undetected_chromedriver as uc
 from googlesearch import search
@@ -19,6 +19,7 @@ def get_google_first_result_bs(query: str) -> str:
         return result[0]
     else:
         return result[1]
+
 
 def initiate_driver() -> uc.Chrome:
     chrome_options = uc.ChromeOptions()
@@ -39,7 +40,6 @@ def get_google_first_result_selenium(driver: uc.Chrome, query: str) -> str:
     query = urllib.parse.quote_plus(query)
 
     def search_for_item(query, which):
-
         driver.get("https://www.google.com/search?q=" + query + "&start=" + str(0))
 
         time.sleep(2)
@@ -120,5 +120,4 @@ def get_inteligent_first_search_results(queries: list) -> dict:
             )
 
         results[query] = result
-
     return results
