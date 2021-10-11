@@ -2,7 +2,7 @@ import unittest
 from mars.utils import search_for_url, fetch_paper_information
 import undetected_chromedriver as uc
 
-from mars.web_search import get_duckduckgo_first_result
+from mars.web_search import get_duckduckgo_first_result, initiate_driver
 
 
 class SearchMethods(unittest.TestCase):
@@ -17,7 +17,7 @@ class SearchMethods(unittest.TestCase):
 
     def test_duck_duck_go_search(self):
         "First run of this may be long"
-        driver = uc.Chrome()
+        driver = initiate_driver()
         result = get_duckduckgo_first_result(driver, "jellyfish")
         self.assertIsInstance(result, str)
 
