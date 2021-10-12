@@ -1,3 +1,4 @@
+import os
 import time
 import urllib
 
@@ -20,7 +21,17 @@ def get_google_first_result_bs(query: str) -> str:
         return result[1]
 
 
-def get_google_first_result_selenium(query):
+def initiate_driver() -> uc.Chrome:
+    chrome_options = uc.ChromeOptions()
+    if os.getuid() == 0:
+        chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--headless")
+    driver = uc.Chrome(options=chrome_options)
+
+    return driver
+
+
+def get_google_first_result_selenium(driver: uc.Chrome, query: str) -> str:
     """
     Uses undetected chrome browser to query google and fetch the first link. Omits google
     scholar. Does not omit adds.
@@ -29,8 +40,8 @@ def get_google_first_result_selenium(query):
     query = urllib.parse.quote_plus(query)
 
     def search_for_item(query, which):
-        driver = uc.Chrome()
         driver.get("https://www.google.com/search?q=" + query + "&start=" + str(0))
+
         time.sleep(2)
         driver.find_element_by_xpath('//*[@id="L2AGLb"]').click()
         item = driver.find_elements_by_css_selector("h3")[which]
@@ -49,7 +60,7 @@ def get_google_first_result_selenium(query):
     return result
 
 
-def get_duckduckgo_first_result(driver, query: str) -> str:
+def get_duckduckgo_first_result(driver: uc.Chrome, query: str) -> str:
     """
     Gets url from the first (top) result of duckduckgo.
 
@@ -101,7 +112,7 @@ def get_inteligent_first_search_results(queries: list) -> dict:
 
         if selenium_google_down and basic_google_down:
             if duck_duck_driver is False:
-                duck_duck_driver = uc.Chrome()
+                duck_duck_driver = initiate_driver()
 
             result = (
                 get_duckduckgo_first_result(duck_duck_driver, query),
@@ -109,5 +120,4 @@ def get_inteligent_first_search_results(queries: list) -> dict:
             )
 
         results[query] = result
-
     return results

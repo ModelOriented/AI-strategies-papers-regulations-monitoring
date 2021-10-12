@@ -3,7 +3,7 @@ import os
 from mars.utils import search_for_url, fetch_paper_information
 import undetected_chromedriver as uc
 
-from mars.web_search import get_duckduckgo_first_result
+from mars.web_search import get_duckduckgo_first_result, initiate_driver
 
 
 class SearchMethods(unittest.TestCase):
@@ -18,15 +18,7 @@ class SearchMethods(unittest.TestCase):
 
     def test_duck_duck_go_search(self):
         "First run of this may be long"
-        chrome_options = uc.ChromeOptions()
-        # running as roor
-        if os.getuid() == 0:
-            chrome_options.add_argument("--no-sandbox")
-        # headless
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--remote-debugging-port=9222")
-
-        driver = uc.Chrome(options=chrome_options)
+        driver = initiate_driver()
         result = get_duckduckgo_first_result(driver, "jellyfish")
         self.assertIsInstance(result, str)
 
