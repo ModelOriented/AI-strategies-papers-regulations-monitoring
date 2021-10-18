@@ -1,9 +1,4 @@
-import pdfminer
 import numpy as np
-import pdfminer.converter
-import pdfminer.layout
-import pdfminer.pdfinterp
-import pdfminer.pdfpage
 import re
 import pandas as pd
 from mars.utils import fetch_paper_information, split_on_words
