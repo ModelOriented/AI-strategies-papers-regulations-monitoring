@@ -14,6 +14,7 @@ from mars.db.db_fields import (
 )
 from mars.segmentation.html_segmantation import segment_html
 from mars.segmentation.pdf_segmentation import segment_pdf
+from mars.storage import FileSync
 
 logger = logging.new_logger(__name__)
 
@@ -30,11 +31,11 @@ def segment_and_upload() -> None:
                 print("Skipping %s" % doc[ID])
                 # text already segmented - ommiting
                 continue
-
-            if doc[FILE_TYPE] == db_fields.FileType.html:
-                segs = segment_html(doc[FILENAME])
-            elif doc[FILE_TYPE] == db_fields.FileType.pdf:
-                segs = segment_pdf(doc[FILENAME], ROUND_DIGIT)
+            with FileSync(doc[FILENAME]) as filename:
+                if doc[FILE_TYPE] == db_fields.FileType.html:
+                    segs = segment_html(filename)
+                elif doc[FILE_TYPE] == db_fields.FileType.pdf:
+                    segs = segment_pdf(filename, ROUND_DIGIT)
 
             for s in segs:
                 segmented_doc = collections.segmented_texts.createDocument()
@@ -52,6 +53,7 @@ def segment_and_upload() -> None:
                 segmented_doc.save()
         except Exception as e:
             logging.log_exception("", e, logger)
+            logger.error('Segmentation of document %s has failed:' % doc[ID])
 
 
 if __name__ == "__main__":

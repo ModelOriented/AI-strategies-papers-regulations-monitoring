@@ -11,7 +11,6 @@ from mars.db.db_fields import (
     FILENAME,
     ID,
     SOURCE,
-    TEXT_ID,
     URL,
     id_to_key,
     SENTENCE,
@@ -52,12 +51,14 @@ def split_to_sentences(source: str) -> None:
             query, BATCH_SIZE, bindVars={"source": source}
         )
 
-    for doc in documents:
+    # Cache results locally
+    results = [doc for doc in documents]
+    for doc in results:
         if (
-            len(collections.sentences.fetchFirstExample({TEXT_ID: doc[ID]})) == 0
+            len(collections.sentences.fetchFirstExample({DOC_ID: doc[ID]})) == 0
         ):  # if the text is not already splitted
             print("Processing", doc[ID], "...")
-            doc_source = collections.document_sources[id_to_key(doc[TEXT_ID])]
+            doc_source = collections.document_sources[id_to_key(doc[DOC_ID])]
             text = doc[CONTENT]
             sents = split_text(text)
             counter = 0
@@ -69,7 +70,7 @@ def split_to_sentences(source: str) -> None:
                 processed_text_doc[IS_HEADER] = doc[IS_HEADER]
                 # indicate order of segments in doc
                 processed_text_doc[SEQUENCE_NUMBER] = doc[SEQUENCE_NUMBER]
-                processed_text_doc[TEXT_ID] = doc[ID]
+                processed_text_doc[DOC_ID] = doc[ID]
                 processed_text_doc[SENTENCE] = sent
                 processed_text_doc[FILENAME] = doc_source[URL].split("/")[-1]
                 processed_text_doc.save()
