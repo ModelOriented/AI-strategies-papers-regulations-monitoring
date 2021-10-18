@@ -5,22 +5,30 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: piotrp/mair_common
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    image: "${DOCKER_USER}/common:${DOCKER_TAG}"
   arangodb_db_container:
     build: arango
+    image: "${DOCKER_USER}/arango:${DOCKER_TAG}"
     ports:
-      - 8080:8529
+      - "${DOCKER_PORT_PREFIX}0:8529"
     secrets:
       - arango_secrets
     volumes:
       - arangodb_data_container:/var/lib/arangodb3
       - arangodb_apps_data_container:/var/lib/arangodb3-apps
   annotation:
+    image: "${DOCKER_USER}/annotation:${DOCKER_TAG}"
     build:
       context: .
       dockerfile: annotation/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     ports:
-      - 8081:8501
+      - "${DOCKER_PORT_PREFIX}1:8501"
     depends_on:
       - arangodb_db_container
     secrets:
@@ -29,11 +37,16 @@ services:
       ARANGODB_URL: http://arangodb_db_container:8529
       LOGGING_LEVEL: INFO
   reporting_app:
+    image: "${DOCKER_USER}/reporting_app:${DOCKER_TAG}"
     build:
       context: .
       dockerfile: reporting_app/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     ports:
-      - 8084:8501
+      - "${DOCKER_PORT_PREFIX}4:8501"
     depends_on:
       - arangodb_db_container
     secrets:
@@ -52,21 +65,26 @@ services:
     secrets:
       - airflow_secrets
   scrapers_airflow_www:
-    image: piotrp/mair_common
+    image: "${DOCKER_USER}/common:${DOCKER_TAG}"
     depends_on:
       - airflow_db
     secrets:
       - airflow_secrets
     ports:
-      - 8083:8080
+      - "${DOCKER_PORT_PREFIX}3:8080"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
     command: bash -c "source /run/secrets/airflow_secrets && airflow webserver"
   scrapers_airflow_scheduler:
+    image: "${DOCKER_USER}/airflow_scheduler:${DOCKER_TAG}"
     shm_size: 512M
     build:
       context: .
       dockerfile: scrapers/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
     depends_on:
       - airflow_db
       - arangodb_db_container
@@ -87,13 +105,33 @@ services:
       LOGGING_LEVEL: INFO
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
   webdav:
+    image: "${DOCKER_USER}/webdav:${DOCKER_TAG}"
     build: webdav
     secrets:
       - webdav_secrets
     volumes:
       - ./raw_data:/storage
     ports:
-      - 8082:8080
+      - "${DOCKER_PORT_PREFIX}2:8080"
+  tests:
+    shm_size: 512M
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+    depends_on:
+      - arangodb_db_container
+    secrets:
+      - arango_secrets
+    volumes:
+      - ./raw_data:/mair/raw_data
+      - ./log_dir:/mair/log_dir
+    environment:
+      USER: tests
+      ARANGODB_URL: http://arangodb_db_container:8529
+      USE_WEBDAV: 0
 
 volumes:
   arangodb_data_container:

@@ -1,4 +1,6 @@
-FROM piotrp/mair_common
+ARG docker_user
+ARG docker_tag
+FROM ${docker_user}/common:${docker_tag}
 
 COPY annotation .
 EXPOSE 8080
