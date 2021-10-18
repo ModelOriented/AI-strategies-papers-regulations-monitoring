@@ -26,11 +26,15 @@ eurlex = BashOperator(
 )
 
 segment_pdf_and_html = BashOperator(
-    task_id="segment_pdf_and_html", bash_command="python /mair/scripts/segment_pdf_and_html.py", dag=dag
+    task_id="segment_pdf_and_html",
+    bash_command="python /mair/scripts/segment_pdf_and_html.py",
+    dag=dag,
 )
 
 split_to_sentences = BashOperator(
-    task_id="split_to_sentences", bash_command="python /mair/scripts/processing/split_to_sentences.py all", dag=dag
+    task_id="split_to_sentences",
+    bash_command="python /mair/scripts/processing/split_to_sentences.py all",
+    dag=dag,
 )
 
 [oecd, eurlex] >> segment_pdf_and_html >> split_to_sentences

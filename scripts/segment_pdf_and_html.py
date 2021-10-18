@@ -53,7 +53,7 @@ def segment_and_upload() -> None:
                 segmented_doc.save()
         except Exception as e:
             logging.log_exception("", e, logger)
-            logger.error('Segmentation of document %s has failed:' % doc[ID])
+            logger.error("Segmentation of document %s has failed:" % doc[ID])
 
 
 if __name__ == "__main__":
