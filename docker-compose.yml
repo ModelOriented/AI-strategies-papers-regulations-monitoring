@@ -54,8 +54,6 @@ services:
     environment:
       ARANGODB_URL: http://arangodb_db_container:8529
       LOGGING_LEVEL: INFO
-    volumes:
-      - ./data:/mair/data
   airflow_db:
     image: mysql:5.7
     volumes:
