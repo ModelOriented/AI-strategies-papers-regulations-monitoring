@@ -1,5 +1,6 @@
 """Split all pdfs from database"""
 import typer
+import mars
 from mars import config, logging
 from mars.db import collections, db_fields
 from mars.db.db_fields import (
@@ -22,15 +23,27 @@ ROUND_DIGIT = 1
 
 
 def segment_and_upload() -> None:
-    for doc in collections.document_sources.fetchAll():
+    get_done_query = f"FOR u IN {collections.SEGMENTED_TEXTS} RETURN u.{DOC_ID}"
+    done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
+    done_docs = set(list(done_docs))
+
+    all_docs = list(collections.document_sources.fetchAll())
+    todo_docs = [doc for doc in all_docs if doc[ID] not in done_docs]
+
+    logger.info(
+        "Already segmented documents: %s / %s"
+        % (len(all_docs) - len(todo_docs), len(all_docs))
+    )
+    logger.info(
+        "Waiting for segmentation documents: %s / %s" % (len(todo_docs), len(all_docs))
+    )
+    for index, doc in enumerate(todo_docs):
         try:
-            if (
-                len(collections.segmented_texts.fetchFirstExample({DOC_ID: doc[ID]}))
-                == 1
-            ):
-                print("Skipping %s" % doc[ID])
-                # text already segmented - ommiting
-                continue
+            logger.info(
+                "Segmenting %s (%s%%)"
+                % (doc[ID], round(100 * index / len(todo_docs), 1))
+            )
+
             with FileSync(doc[FILENAME]) as filename:
                 if doc[FILE_TYPE] == db_fields.FileType.html:
                     segs = segment_html(filename)
