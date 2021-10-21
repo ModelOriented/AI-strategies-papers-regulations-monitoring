@@ -14,16 +14,22 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
 
 
 def calculate_similarities_to_targets(
-    queries: List[str], emb_type: db_fields.EmbeddingType, key=db_fields.FILENAME
+    queries: List[str],
+    emb_type: db_fields.EmbeddingType,
+    key=db_fields.FILENAME,
+    filter=dict(),
 ) -> Dict[str, Dict[str, float]]:
     """Calculate similarities of all sentences from all processed texts to given targets.
-    Returns mapping: filename (or other choosen key) -> query -> list of similarities of all sentences in text."""
+    Returns mapping: filename (or other choosen key) -> query -> list of similarities of all sentences in text.
+    Filters processed texts using filter parameter."""
     target_embeddings = sentence_embeddings.get_sentence_to_embedding_mapping(
         queries, emb_type
     )
     all_similarities = defaultdict(dict)
     logging.debug("Loading targets similarities...")
-    for processed_text in tqdm(db.collections.processed_texts.fetchAll()):
+    for processed_text in tqdm(
+        db.collections.processed_texts.fetchByExample(filter, batchSize=100)
+    ):
         if (
             processed_text[db_fields.EMBEDDINGS] is None
             or processed_text[db_fields.EMBEDDINGS][emb_type] is None

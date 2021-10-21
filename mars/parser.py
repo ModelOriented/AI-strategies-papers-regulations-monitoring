@@ -11,7 +11,6 @@ import newspaper
 import pdfminer
 from pdfminer import converter, layout, pdfinterp, pdfpage
 
-
 import mars.db as db
 import mars.logging
 from mars.storage import FileSync
@@ -124,9 +123,9 @@ def add_missing_files_to_db(path: str):
             continue
 
 
-def parse_source(source: str, batch_size: int):
+def parse_documents(filter: dict, batch_size: int = 100):
     for doc in db.collections.document_sources.fetchByExample(
-        {db.SOURCE: source}, batchSize=batch_size
+        filter, batchSize=batch_size
     ):
         logger.info("Parsing %s" % doc[db.URL])
         if doc[db.FILE_TYPE] == db.FileType.pdf:
@@ -135,8 +134,9 @@ def parse_source(source: str, batch_size: int):
         elif doc[db.FILE_TYPE] == db.FileType.html:
             parse_html(doc[db.URL], db.ExtractionMethod.newspaper)
 
-        else:
-            continue
+
+def parse_source(source: str, batch_size: int):
+    parse_documents({db.SOURCE: source}, batch_size=batch_size)
 
 
 def extract_text_from_pdf(file_name: str) -> dict:

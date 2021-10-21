@@ -6,15 +6,14 @@ import numpy as np
 import pandas as pd
 import typer
 from dotenv import load_dotenv
-
 from mars.db import db_fields
-from mars.parser import extract_text_from_pdf
-from mars.scraper import Scraper
-from mars.utils import fetch_paper_information, split_on_words
-from mars.utils import search_for_url
-from mars.web_search import get_inteligent_first_search_results
-from mars.models_training.datasets import  DocumentLevelDataset, labels_paths
 from mars.db.db_fields import DATASET
+from mars.models_training.datasets import DocumentLevelDataset, labels_paths
+from mars.parser import extract_text_from_pdf, parse_documents
+from mars.scraper import Scraper
+from mars.utils import fetch_paper_information, search_for_url, split_on_words
+from mars.web_search import get_inteligent_first_search_results
+
 
 def get_longest(text_list: list) -> List[int]:
     lengths = []
@@ -58,44 +57,33 @@ def match_references_substring(ref1: list, ref2: list) -> dict:
         for j, r2 in enumerate(ref2):
             if r2.lower() in r1.lower():
                 refs[i] = j
-
     return refs
 
 
 def extract_citations_from_jobin2019(file_name: str) -> dict:
     """Extracts citation numbers from jobin2019 - preprint version"""
-
     # get text
     separated_text = extract_text_from_pdf(file_name)["separated_text"]
-
     # getting the longest - the proper text on page
     text_on_pages = [get_longest(st) for st in separated_text]
     text_on_pages = np.array(text_on_pages)
-
     # split words like buckets
     # everything above justice fairness and equity is Transparency
     # later it is excluded from text and everything above Non-maleficience is Justice, fairness, and equity, etc.
-
     split_words = list(get_issue_mapping().values())
     split_words.append("Discussion")
-
     # clean
     for i, text in enumerate(text_on_pages):
         text = text.replace("\n", "")
         text = text.replace("(cf. Table 2)", "")
         text = text.replace("1.5", "")
-
         text_on_pages[i] = text
-
     relevant_text = " ".join(text_on_pages[7:13])
     threads = split_on_words(relevant_text, split_words)
-
     # pop empty one
     threads.pop("Discussion")
-
     all_citations = dict.fromkeys(list(threads.keys()))
     for key, text in threads.items():
-
         citations = np.array(re.findall(r"\d+", text))
         additional_citations = re.findall(r"\d+[–]\d+", text)
         for ac in additional_citations:
@@ -108,7 +96,6 @@ def extract_citations_from_jobin2019(file_name: str) -> dict:
     for key, ac in all_citations.items():
         ac = np.unique(ac)
         all_citations[key] = ac
-
     return all_citations
 
 
@@ -133,7 +120,6 @@ def match_references_with_url(references: list, arxiv_id: str) -> dict:
     links = {}
 
     for i, j in refs.items():
-
         try:
             if refs[i] is not None:
                 links[i] = references_scholar[j]["url"]
@@ -230,12 +216,17 @@ def parse_and_save():
 
 def upload_to_database():
     jobin = pd.read_csv(labels_paths[DocumentLevelDataset.jobin2019])
-    links = jobin['link']
+    links = jobin["link"]
     scraper = Scraper()
     for link in links:
-        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual, metadata={DATASET: DocumentLevelDataset.jobin2019})
+        scraper.save_document(
+            url=link,
+            source=db_fields.SourceWebsite.manual,
+            metadata={DATASET: DocumentLevelDataset.jobin2019},
+        )
+    parse_documents({DATASET: DocumentLevelDataset.jobin2019})
 
 
 if __name__ == "__main__":
-    #typer.run(parse_and_save)
+    # typer.run(parse_and_save)
     typer.run(upload_to_database)
