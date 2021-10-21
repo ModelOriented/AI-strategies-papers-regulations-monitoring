@@ -236,5 +236,5 @@ def upload_to_database():
 
 
 if __name__ == "__main__":
-    typer.run(parse_and_save)
+    #typer.run(parse_and_save)
     typer.run(upload_to_database)
