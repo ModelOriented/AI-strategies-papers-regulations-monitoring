@@ -232,9 +232,9 @@ def upload_to_database():
     links = jobin['link']
     scraper = Scraper()
     for link in links:
-        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual)
+        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual, metadata={'dataset':'jobin2019'})
 
 
 if __name__ == "__main__":
-    #typer.run(parse_and_save)
+    typer.run(parse_and_save)
     typer.run(upload_to_database)
