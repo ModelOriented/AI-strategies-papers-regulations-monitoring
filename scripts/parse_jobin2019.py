@@ -13,7 +13,7 @@ from mars.scraper import Scraper
 from mars.utils import fetch_paper_information, split_on_words
 from mars.utils import search_for_url
 from mars.web_search import get_inteligent_first_search_results
-from mars.models_training.datasets import  DocumentLevelDataset
+from mars.models_training.datasets import  DocumentLevelDataset, labels_paths
 from mars.db.db_fields import DATASET
 
 def get_longest(text_list: list) -> List[int]:
@@ -225,11 +225,11 @@ def parse_and_save():
     data["title"] = [ar for ar in actual_references]
     data["link"] = [ac[0] for ac in actual_link.values()]
     data["source"] = [ac[1] for ac in actual_link.values()]
-    data.to_csv("data/jobin2019.csv")
+    data.to_csv(labels_paths[DocumentLevelDataset.jobin2019])
 
 
 def upload_to_database():
-    jobin = pd.read_csv('data/jobin2019.csv')
+    jobin = pd.read_csv(labels_paths[DocumentLevelDataset.jobin2019])
     links = jobin['link']
     scraper = Scraper()
     for link in links:

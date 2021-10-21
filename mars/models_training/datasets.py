@@ -3,7 +3,7 @@ from enum import Enum
 import pandas as pd
 
 
-# TODO: @Wisnia tutaj dodaj ten nowy dataset
+
 class DocumentLevelDataset(Enum):
     ethics_ai_ethics = "hagendorffEthicsAIEthics2020"
     jobin2019 = "jobin2019"
