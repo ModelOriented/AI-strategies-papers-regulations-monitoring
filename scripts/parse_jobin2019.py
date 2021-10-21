@@ -13,7 +13,8 @@ from mars.scraper import Scraper
 from mars.utils import fetch_paper_information, split_on_words
 from mars.utils import search_for_url
 from mars.web_search import get_inteligent_first_search_results
-
+from mars.models_training.datasets import  DocumentLevelDataset
+from mars.db.db_fields import DATASET
 
 def get_longest(text_list: list) -> List[int]:
     lengths = []
@@ -232,9 +233,9 @@ def upload_to_database():
     links = jobin['link']
     scraper = Scraper()
     for link in links:
-        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual, metadata={'dataset':'jobin2019'})
+        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual, metadata={DATASET: DocumentLevelDataset.jobin2019})
 
 
 if __name__ == "__main__":
-    typer.run(parse_and_save)
+    #typer.run(parse_and_save)
     typer.run(upload_to_database)

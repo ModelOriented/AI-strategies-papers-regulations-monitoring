@@ -20,6 +20,7 @@ EXTRACTION_METHOD = "extraction_method"
 COUNTRY = "country"
 TITLE = "title"
 USER = "user"
+DATASET = "dataset"
 
 # Processed texts:
 TEXT_ID = "textId"
