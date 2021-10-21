@@ -52,3 +52,4 @@ RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoet
 # Copy DVC requirements
 RUN mkdir ./data && mkdir ./models
 COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
+COPY ./data/jobin2019.csv ./data/

@@ -1,15 +1,20 @@
-import numpy as np
-import re
-import pandas as pd
-from mars.utils import fetch_paper_information, split_on_words
-from mars.web_search import get_inteligent_first_search_results
-from mars.parser import extract_text_from_pdf
-from mars.utils import search_for_url
-import typer
 import os
-from dotenv import load_dotenv
+import re
 from typing import List
 
+import numpy as np
+import pandas as pd
+import typer
+from dotenv import load_dotenv
+
+from mars.db import db_fields
+from mars.parser import extract_text_from_pdf
+from mars.scraper import Scraper
+from mars.utils import fetch_paper_information, split_on_words
+from mars.utils import search_for_url
+from mars.web_search import get_inteligent_first_search_results
+from mars.models_training.datasets import  DocumentLevelDataset, labels_paths
+from mars.db.db_fields import DATASET
 
 def get_longest(text_list: list) -> List[int]:
     lengths = []
@@ -220,8 +225,17 @@ def parse_and_save():
     data["title"] = [ar for ar in actual_references]
     data["link"] = [ac[0] for ac in actual_link.values()]
     data["source"] = [ac[1] for ac in actual_link.values()]
-    data.to_csv("data/jobin2019.csv")
+    data.to_csv(labels_paths[DocumentLevelDataset.jobin2019])
+
+
+def upload_to_database():
+    jobin = pd.read_csv(labels_paths[DocumentLevelDataset.jobin2019])
+    links = jobin['link']
+    scraper = Scraper()
+    for link in links:
+        scraper.save_document(url=link, source=db_fields.SourceWebsite.manual, metadata={DATASET: DocumentLevelDataset.jobin2019})
 
 
 if __name__ == "__main__":
-    typer.run(parse_and_save)
+    #typer.run(parse_and_save)
+    typer.run(upload_to_database)
