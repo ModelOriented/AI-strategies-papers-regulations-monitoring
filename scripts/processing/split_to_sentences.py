@@ -9,6 +9,7 @@ from mars import logging
 from mars.db.db_fields import (
     CONTENT,
     DOC_ID,
+    SEGMENT_ID,
     FILENAME,
     ID,
     SOURCE,
@@ -46,49 +47,48 @@ def split_text(text: str) -> List[str]:
 def split_to_sentences(source: str) -> None:
     """Splits all text to sentences and saves them to db"""
     if source == "all":
-        documents = collections.segmented_texts.fetchAll()
+        segments = collections.segmented_texts.fetchAll()
     else:
         print("Processing documents from source:", source)
-        documents = mars.db.database.AQLQuery(
+        segments = mars.db.database.AQLQuery(
             query, BATCH_SIZE, bindVars={"source": source}
         )
 
-    get_done_query = f"FOR u IN {collections.SENTENCES} RETURN u.{DOC_ID}"
-    done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
-    done_docs = set(list(done_docs))
+    get_done_query = f"FOR u IN {collections.SENTENCES} RETURN u.{SEGMENT_ID}"
+    done_segments = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
+    done_segments = set(list(done_segments))
 
-    all_docs = list(documents)
-    todo_docs = [doc for doc in all_docs if doc[ID] not in done_docs]
+    all_segments = list(segments)
+    todo_segments = [segment for segment in all_segments if segment[ID] not in done_segments]
 
     logger.info(
         "Already splited documents: %s / %s"
-        % (len(all_docs) - len(todo_docs), len(all_docs))
+        % (len(all_segments) - len(todo_segments), len(all_segments))
     )
     logger.info(
-        "Waiting for split documents: %s / %s" % (len(todo_docs), len(all_docs))
+        "Waiting for split documents: %s / %s" % (len(todo_segments), len(all_segments))
     )
 
-    for index, doc in enumerate(todo_docs):
+    for index, segment in enumerate(todo_segments):
         logger.info(
             "Processing %s (%s%%)"
-            % (doc[ID], round(100 * index / len(todo_docs), 1))
+            % (segment[ID], round(100 * index / len(todo_segments), 1))
         )
-        doc_source = collections.document_sources[id_to_key(doc[DOC_ID])]
-        text = doc[CONTENT]
+        text = segment[CONTENT]
         sents = split_text(text)
         counter = 0
         for sent in sents:
-            processed_text_doc = collections.sentences.createDocument()
+            sentence = collections.sentences.createDocument()
             # indicate order of sentences in segment
-            processed_text_doc[SENTENCE_NUMBER] = counter
-            processed_text_doc[HTML_TAG] = doc[HTML_TAG]
-            processed_text_doc[IS_HEADER] = doc[IS_HEADER]
+            sentence[SENTENCE_NUMBER] = counter
+            sentence[HTML_TAG] = segment[HTML_TAG]
+            sentence[IS_HEADER] = segment[IS_HEADER]
             # indicate order of segments in doc
-            processed_text_doc[SEQUENCE_NUMBER] = doc[SEQUENCE_NUMBER]
-            processed_text_doc[DOC_ID] = doc[ID]
-            processed_text_doc[SENTENCE] = sent
-            processed_text_doc[FILENAME] = doc_source[URL].split("/")[-1]
-            processed_text_doc.save()
+            sentence[SEQUENCE_NUMBER] = segment[SEQUENCE_NUMBER]
+            sentence[SEGMENT_ID] = segment[ID]
+            sentence[DOC_ID] = segment[DOC_ID]
+            sentence[SENTENCE] = sent
+            sentence.save()
             counter += 1
 
 if __name__ == "__main__":
