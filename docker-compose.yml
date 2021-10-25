@@ -62,7 +62,7 @@ services:
     command: bash -c "source /run/secrets/airflow_secrets && /entrypoint.sh mysqld --explicit_defaults_for_timestamp=1"
     secrets:
       - airflow_secrets
-  scrapers_airflow_www:
+  airflow_www:
     image: "${DOCKER_USER}/common:${DOCKER_TAG}"
     depends_on:
       - airflow_db
@@ -73,12 +73,12 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
     command: bash -c "source /run/secrets/airflow_secrets && airflow webserver"
-  scrapers_airflow_scheduler:
+  airflow_scheduler:
     image: "${DOCKER_USER}/airflow_scheduler:${DOCKER_TAG}"
     shm_size: 512M
     build:
       context: .
-      dockerfile: scrapers/Dockerfile
+      dockerfile: airflow/Dockerfile
       args:
         docker_user: "${DOCKER_USER}"
         docker_tag: "${DOCKER_TAG}"
@@ -93,6 +93,7 @@ services:
     volumes:
       - ./raw_data:/mair/raw_data
       - ./log_dir:/mair/log_dir
+      - airflow_logs:/root/airflow/logs
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 0
@@ -100,7 +101,7 @@ services:
       USER: poznan
       ARANGODB_URL: http://arangodb_db_container:8529
       USE_WEBDAV: 0
-      LOGGING_LEVEL: INFO
+      LOGGING_LEVEL: DEBUG
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
   webdav:
     image: "${DOCKER_USER}/webdav:${DOCKER_TAG}"
@@ -135,6 +136,7 @@ volumes:
   arangodb_data_container:
   arangodb_apps_data_container:
   airflow_db_data:
+  airflow_logs:
 secrets:
   airflow_secrets:
     file: ./airflow_secrets.env

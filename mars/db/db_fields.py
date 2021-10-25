@@ -49,6 +49,7 @@ LANGUAGE = "language"
 
 # Sentences:
 SENTENCE_NUMBER = "sentence_number"
+SEGMENT_ID = "source_segment_id"
 
 
 class EmbeddingType(str, Enum):

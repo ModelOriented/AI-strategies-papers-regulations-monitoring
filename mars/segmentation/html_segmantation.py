@@ -3,22 +3,30 @@ import re
 import newspaper
 from bs4 import BeautifulSoup
 from mars.db import db_fields
+from mars import logging
+
+
+logger = logging.new_logger(__name__)
 
 
 def segment_html(
-    filename, extraction_method=db_fields.ExtractionMetod.newspaper
+    filename, extraction_method=db_fields.ExtractionMethod.newspaper
 ) -> list:
     """
     Splits html file into list of html headers and paragraphs (h1-h6 and p tags)
     """
-    article = newspaper.Article(url=" ", language="en", keep_article_html=True)
+    article = newspaper.Article(url=" ", language="en", keep_article_html=False)
     with open(filename, mode="r") as f:
         raw_html = f.read()
-
     article.set_html(raw_html)
     article.parse()
-    processed_html = article.article_html
-    soup = BeautifulSoup(processed_html)
+    if article.top_node is None:
+        logger.info("Best top node of document is None")
+        return []
+    parser = article.config.get_parser()
+    top_node = parser.nodeToString(article.top_node)
+
+    soup = BeautifulSoup(top_node)
     segs = []
     counter = 0
     for header in soup.find_all([re.compile("^h[1-6]$"), "p"]):
