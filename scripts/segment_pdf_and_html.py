@@ -67,7 +67,10 @@ def segment_and_upload() -> None:
                     segmented_doc[IS_HEADER] = False
                 segmented_doc.save()
             end_time = time.time()
-            logger.info("Parse time: %ss | Save time: %ss" % (int(parsed_time - start_time), int(end_time - parsed_time)))
+            logger.info(
+                "Parse time: %ss | Save time: %ss"
+                % (int(parsed_time - start_time), int(end_time - parsed_time))
+            )
         except Exception as e:
             logger.error("Segmentation of document %s has failed:" % doc[ID])
             logging.log_exception("", e, logger)

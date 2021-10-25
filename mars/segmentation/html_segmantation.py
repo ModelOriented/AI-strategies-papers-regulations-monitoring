@@ -8,6 +8,7 @@ from mars import logging
 
 logger = logging.new_logger(__name__)
 
+
 def segment_html(
     filename, extraction_method=db_fields.ExtractionMethod.newspaper
 ) -> list:
@@ -20,7 +21,7 @@ def segment_html(
     article.set_html(raw_html)
     article.parse()
     if article.top_node is None:
-        logger.info('Best top node of document is None')
+        logger.info("Best top node of document is None")
         return []
     parser = article.config.get_parser()
     top_node = parser.nodeToString(article.top_node)
