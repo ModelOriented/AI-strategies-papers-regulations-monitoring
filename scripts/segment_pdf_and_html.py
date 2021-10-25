@@ -1,5 +1,6 @@
 """Split all pdfs from database"""
 import typer
+import time
 import mars
 from mars import config, logging
 from mars.db import collections, db_fields
@@ -44,12 +45,13 @@ def segment_and_upload() -> None:
                 % (doc[ID], round(100 * index / len(todo_docs), 1))
             )
 
+            start_time = time.time()
             with FileSync(doc[FILENAME]) as filename:
                 if doc[FILE_TYPE] == db_fields.FileType.html:
                     segs = segment_html(filename)
                 elif doc[FILE_TYPE] == db_fields.FileType.pdf:
                     segs = segment_pdf(filename, ROUND_DIGIT)
-
+            parsed_time = time.time()
             for s in segs:
                 segmented_doc = collections.segmented_texts.createDocument()
                 segmented_doc[DOC_ID] = doc[ID]
@@ -64,9 +66,11 @@ def segment_and_upload() -> None:
                 else:
                     segmented_doc[IS_HEADER] = False
                 segmented_doc.save()
+            end_time = time.time()
+            logger.info("Parse time: %ss | Save time: %ss" % (int(parsed_time - start_time), int(end_time - parsed_time)))
         except Exception as e:
-            logging.log_exception("", e, logger)
             logger.error("Segmentation of document %s has failed:" % doc[ID])
+            logging.log_exception("", e, logger)
 
 
 if __name__ == "__main__":
