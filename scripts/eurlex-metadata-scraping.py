@@ -25,7 +25,7 @@ for doc in collections.document_sources.fetchByExample(
             doc[db_fields.COUNTRY] = root.find(".//CREATED_BY/PREFLABEL").text
             doc[db_fields.TITLE] = root.find(".//EXPRESSION_TITLE/VALUE").text
             doc[db_fields.START_DATE] = root.find(".//WORK_DATE_DOCUMENT/VALUE").text
-            print(doc)
+            doc.patch()
 
     except Exception as e:
         logging.log_exception("", e, logger)
