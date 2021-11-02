@@ -1,4 +1,5 @@
 import unittest
+import os
 from mars.utils import search_for_url, fetch_paper_information
 import undetected_chromedriver as uc
 
