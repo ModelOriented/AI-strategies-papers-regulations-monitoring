@@ -13,8 +13,10 @@ class DeftCorpusLoader(object):
         self.corpus_path = deft_corpus_path
         self._default_train_output_path = os.path.join(deft_corpus_path, "deft_files/converted_train")
         self._default_dev_output_path = os.path.join(deft_corpus_path, "deft_files/converted_dev")
+        self._default_test_output_path = os.path.join(deft_corpus_path, "test_files/labeled/subtask_1")
         # Load English tokenizer, tagger, parser, NER and word vectors
         self._parser = English()
+
 
     def convert_to_classification_format(self, train_output_path = None, dev_output_path = None):
 
@@ -36,19 +38,22 @@ class DeftCorpusLoader(object):
 
         train_source_path = os.path.join(self.corpus_path, "deft_files/train")
         dev_source_path = os.path.join(self.corpus_path, "deft_files/dev")
+
         task1_converter.convert(Path(train_source_path), Path(train_output_path))
         task1_converter.convert(Path(dev_source_path), Path(dev_output_path))
 
-    def load_classification_data(self, train_data_path = None, dev_data_path = None, preprocess= False, clean=False):
+    def load_classification_data(self, train_data_path = None, dev_data_path = None, test_data_path = None, preprocess= False, clean=False):
 
-        if(train_data_path ==  None or dev_data_path == None):
+        if(train_data_path ==  None or dev_data_path == None or test_data_path == None):
             if os.path.exists(self._default_train_output_path) and os.path.exists(self._default_dev_output_path):
                 train_data_path = self._default_train_output_path
                 dev_data_path = self._default_dev_output_path
+                test_data_path = self._default_test_output_path
             else:
                 self.convert_to_classification_format()
                 train_data_path = self.converted_train_path
                 dev_data_path = self.converted_dev_path
+                test_data_path = self.converted_dev_path
 
         train_deft_files = os.listdir(train_data_path)
         train_dataframe = pd.DataFrame([])
@@ -64,17 +69,26 @@ class DeftCorpusLoader(object):
             dataframe.columns = ["Sentence","HasDef"]
             dev_dataframe = dev_dataframe.append(dataframe, ignore_index=True)
 
+        test_deft_files = os.listdir(test_data_path)
+        test_dataframe = pd.DataFrame([])
+        for file in test_deft_files:
+            dataframe = pd.read_csv(os.path.join(test_data_path, file), sep="\t", header=None)
+            dataframe.columns = ["Sentence", "HasDef"]
+            test_dataframe = test_dataframe.append(dataframe, ignore_index=True)
+
         if(preprocess):
             self.preprocess_data(train_dataframe)
             self.preprocess_data(dev_dataframe)
+            self.preprocess_data(test_dataframe)
             
         if(clean and preprocess):
             self.clean_data(train_dataframe)
             self.clean_data(dev_dataframe)
+            self.clean_data(test_dataframe)
         elif(clean):
             raise ValueError("Can't set `clean` flag to true if `preprocess` flag hasn't been already set.")
 
-        return (train_dataframe, dev_dataframe)
+        return (train_dataframe, dev_dataframe, test_dataframe)
 
     def explore_data(self, dataframe, split):
         print("\nHead of ", split," Dataframe:\n==============================================================")

@@ -1,3 +1,8 @@
+import transformers
+import tqdm
+import shutil
+import tensorflow as tf
+
 from typing import Tuple, List
 
 import en_core_web_lg
@@ -9,22 +14,30 @@ from tqdm import tqdm
 import os
 import numpy as np
 
+
 from mars.definition_extraction import DeftCorpusLoader
 
-STORAGE_PATH = "mars/definition_extraction/deft_corpus/data"
-positive = "DEFINITION"
-negative = "NOT DEFINITION"
+import tensorflow as tf
+from transformers import TFRobertaForSequenceClassification
+
+from transformers import AutoTokenizer
+
 
 
 def transform_to_spacy3(frame: pd.DataFrame, cats: list) -> List[Tuple]:
     ret = []
     sentences = frame['Sentence'].reset_index(drop=True)
     for i in range(len(sentences)):
-        ret.append((sentences[i], str(cats[i]['DEFINITION'])))
+        if cats[i]['DEFINITION'] is True:
+            cat = 1
+        else:
+            cat = 0
+
+        ret.append((sentences[i], cat))
     return ret
 
 
-def create_from_wiki(path='mars/definition_extraction/wcl_datasets_v1.2/wikipedia/', files=None) -> List[Tuple]:
+def create_from_wiki(path='../mars/definition_extraction/wcl_datasets_v1.2/wikipedia/', files=None) -> List[Tuple]:
     if files is None:
         files = {'wiki_bad.txt': 0, 'wiki_good.txt': 1}
 
@@ -56,13 +69,14 @@ def create_from_wiki(path='mars/definition_extraction/wcl_datasets_v1.2/wikipedi
     file_sentences = list(file_sentences.values())[0] + list(file_sentences.values())[1]
     return file_sentences
 
-def filter_out(sentences:List[Tuple], max_length:int)->List[Tuple]:
 
+def filter_out(sentences: List[Tuple], max_length: int) -> List[Tuple]:
     res = []
     for x in sentences:
         if len(x[0]) <= max_length:
             res.append(x)
     return res
+
 
 def make_docs(data: List[Tuple[str, str]]) -> List[spacy.tokens.doc.Doc]:
     """
@@ -88,37 +102,67 @@ def make_docs(data: List[Tuple[str, str]]) -> List[spacy.tokens.doc.Doc]:
     return docs
 
 def main():
-    """
-        Generate data from data from deft corpus. On basis of:
-        https://github.com/Elzawawy/DeftEval
-    """
-    os.chdir('../')
+
+    TRANSFORMER = "roberta-base"
+    tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
+
+    STORAGE_PATH = "../mars/definition_extraction/deft_corpus/data"
+    positive = "DEFINITION"
+    negative = "NOT DEFINITION"
+
     print("Initializing...")
     deft_loader = DeftCorpusLoader(STORAGE_PATH)
-    trainframe, devframe = deft_loader.load_classification_data(preprocess=True, clean=True)
+    trainframe, devframe, testframe = deft_loader.load_classification_data(preprocess=True, clean=True)
     train_cats = [{positive: bool(y), negative: not bool(y)} for y in trainframe["HasDef"]]
     dev_cats = [{positive: bool(y), negative: not bool(y)} for y in devframe["HasDef"]]
+    test_cats = [{positive: bool(y), negative: not bool(y)} for y in testframe["HasDef"]]
 
     print("Transforming to spacy3 format")
     wiki = create_from_wiki()
     train_df = transform_to_spacy3(trainframe, train_cats)
     dev_df = transform_to_spacy3(devframe, dev_cats)
+    test_df = transform_to_spacy3(testframe, test_cats)
 
-    train_df = wiki[:(3/4 * len(wiki))] + train_df
-    dev_df = wiki[(3/4 * len(wiki)):] + dev_df
-    #train_df = filter_out(train_df, max_length=512)
-    #dev_df = filter_out(dev_df, max_length=512)
+    train_df = wiki[:int((3 / 4 * len(wiki)))] + train_df
+    dev_df = wiki[int((3 / 4 * len(wiki))):] + dev_df
 
+    train_sentences, train_labels = list(trainframe["Sentence"]), list(trainframe["HasDef"])
+    val_sentences, val_labels = list(devframe["Sentence"]), list(devframe["HasDef"])
+    test_sentences, test_labels = list(testframe["Sentence"]), list(testframe["HasDef"])
 
-    print("Creating docs and saving in data/ folder")
-    train_docs = make_docs(train_df)
-    doc_bin = DocBin(docs=train_docs, attrs=["LEMMA", "POS"])
-    doc_bin.to_disk("data/definition_data/train.spacy")
+    train_encodings = tokenizer(train_sentences, truncation=True, padding=True)
+    val_encodings = tokenizer(val_sentences, truncation=True, padding=True)
+    test_encodings = tokenizer(test_sentences, truncation=True, padding=True)
 
-    dev_docs = make_docs(dev_df)
-    doc_bin = DocBin(docs=dev_docs, attrs=["LEMMA", "POS"])
-    doc_bin.to_disk("data/definition_data/dev.spacy")
+    model = TFRobertaForSequenceClassification.from_pretrained(TRANSFORMER)
 
+    optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
+    model.compile(optimizer=optimizer, loss=model.compute_loss)  # can also use any keras loss fn
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((
+        dict(train_encodings),
+        train_labels
+    ))
+    val_dataset = tf.data.Dataset.from_tensor_slices((
+        dict(val_encodings),
+        val_labels
+    ))
+    test_dataset = tf.data.Dataset.from_tensor_slices((
+        dict(test_encodings),
+        test_labels
+    ))
+
+    model = TFRobertaForSequenceClassification.from_pretrained(TRANSFORMER)
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
+    model.compile(optimizer=optimizer, loss=model.compute_loss)
+
+    model.fit(train_dataset.shuffle(1000).batch(16),
+              validation_data=val_dataset.shuffle(1000).batch(16),
+              epochs=5,
+              batch_size=16)
+    
+    model.save('../models/' + TRANSFORMER)
 
 if __name__ == "__main__":
     typer.run(main)
