@@ -18,7 +18,7 @@ import numpy as np
 from mars.definition_extraction import DeftCorpusLoader
 
 import tensorflow as tf
-from transformers import TFRobertaForSequenceClassification
+from transformers import TFDistilBertForSequenceClassification
 
 from transformers import AutoTokenizer
 
@@ -102,8 +102,8 @@ def make_docs(data: List[Tuple[str, str]]) -> List[spacy.tokens.doc.Doc]:
     return docs
 
 def main():
-
-    TRANSFORMER = "roberta-base"
+    batch_size = 2
+    TRANSFORMER = "distilbert-base-uncased"
     tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
 
     STORAGE_PATH = "../mars/definition_extraction/deft_corpus/data"
@@ -113,28 +113,29 @@ def main():
     print("Initializing...")
     deft_loader = DeftCorpusLoader(STORAGE_PATH)
     trainframe, devframe, testframe = deft_loader.load_classification_data(preprocess=True, clean=True)
-    train_cats = [{positive: bool(y), negative: not bool(y)} for y in trainframe["HasDef"]]
-    dev_cats = [{positive: bool(y), negative: not bool(y)} for y in devframe["HasDef"]]
-    test_cats = [{positive: bool(y), negative: not bool(y)} for y in testframe["HasDef"]]
 
-    print("Transforming to spacy3 format")
     wiki = create_from_wiki()
-    train_df = transform_to_spacy3(trainframe, train_cats)
-    dev_df = transform_to_spacy3(devframe, dev_cats)
-    test_df = transform_to_spacy3(testframe, test_cats)
-
-    train_df = wiki[:int((3 / 4 * len(wiki)))] + train_df
-    dev_df = wiki[int((3 / 4 * len(wiki))):] + dev_df
+    wiki_sentences = [x[0] for x in wiki]
+    wiki_labels = [x[1] for x in wiki]
 
     train_sentences, train_labels = list(trainframe["Sentence"]), list(trainframe["HasDef"])
     val_sentences, val_labels = list(devframe["Sentence"]), list(devframe["HasDef"])
     test_sentences, test_labels = list(testframe["Sentence"]), list(testframe["HasDef"])
 
+    train_sentences = train_sentences + wiki_sentences[:int(len(wiki_sentences) * 7/10)]
+    val_sentences = val_sentences + wiki_sentences[int(len(wiki_sentences) * 7/10):int(len(wiki_sentences) * 9/10)]
+    test_sentences = test_sentences + wiki_sentences[int(len(wiki_sentences) * 9/10):]
+
+    train_labels = train_labels + wiki_labels[:int(len(wiki_sentences) * 7/10)]
+    val_labels = val_labels + wiki_labels[int(len(wiki_sentences) * 7/10):int(len(wiki_sentences) * 9/10)]
+    test_labels = test_labels + wiki_labels[int(len(wiki_sentences) * 9/10):]
+
+    print("Tokenizing")
     train_encodings = tokenizer(train_sentences, truncation=True, padding=True)
     val_encodings = tokenizer(val_sentences, truncation=True, padding=True)
     test_encodings = tokenizer(test_sentences, truncation=True, padding=True)
 
-    model = TFRobertaForSequenceClassification.from_pretrained(TRANSFORMER)
+    model = TFDistilBertForSequenceClassification.from_pretrained(TRANSFORMER)
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
     model.compile(optimizer=optimizer, loss=model.compute_loss)  # can also use any keras loss fn
@@ -152,15 +153,22 @@ def main():
         test_labels
     ))
 
-    model = TFRobertaForSequenceClassification.from_pretrained(TRANSFORMER)
+    print("Creating model")
+    model = TFDistilBertForSequenceClassification.from_pretrained(TRANSFORMER)
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
-    model.compile(optimizer=optimizer, loss=model.compute_loss)
+    model.compile(optimizer=optimizer, loss=model.compute_loss, metrics=["accuracy"])
 
-    model.fit(train_dataset.shuffle(1000).batch(16),
-              validation_data=val_dataset.shuffle(1000).batch(16),
+    es = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+    mc = tf.keras.callbacks.ModelCheckpoint(
+        "../models", monitor='val_loss', verbose=0, save_best_only=True,
+        save_weights_only=False, mode='auto', save_freq='epoch')
+
+    model.fit(train_dataset.shuffle(1000).batch(batch_size),
+              validation_data=val_dataset.shuffle(1000).batch(batch_size),
+              callbacks = [es, mc],
               epochs=5,
-              batch_size=16)
+              batch_size=batch_size)
     
     model.save('../models/' + TRANSFORMER)
 
