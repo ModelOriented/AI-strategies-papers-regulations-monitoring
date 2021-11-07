@@ -21,6 +21,7 @@ COUNTRY = "country"
 TITLE = "title"
 USER = "user"
 DATASET = "dataset"
+START_DATE = "startDate"
 
 # Processed texts:
 TEXT_ID = "textId"
