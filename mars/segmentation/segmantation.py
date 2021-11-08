@@ -24,11 +24,14 @@ ROUND_DIGIT = 1
 
 
 def segment_and_upload(key_min, key_max) -> None:
-    get_done_query = f"FOR u IN {collections.SEGMENTED_TEXTS} FILTER TO_NUMBER(u._key) > {key_min} && TO_NUMBER(u._key) < {key_max} RETURN u.{DOC_ID}"
+    get_done_query = f"FOR u IN {collections.SEGMENTED_TEXTS} RETURN u.{DOC_ID}"
     done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
     done_docs = set(list(done_docs))
 
-    all_docs = list(collections.document_sources.fetchAll())
+    all_docs_query = f"FOR u IN {collections.document_sources} FILTER TO_NUMBER(u._key) > {key_min} && TO_NUMBER(u._key) < {key_max} RETURN u"
+    all_docs = mars.db.database.AQLQuery(all_docs_query, 10000, rawResults=True)
+    all_docs = set(list(all_docs))
+
     todo_docs = [doc for doc in all_docs if doc[ID] not in done_docs]
 
     logger.info(
