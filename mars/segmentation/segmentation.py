@@ -23,7 +23,7 @@ logger = logging.new_logger(__name__)
 ROUND_DIGIT = 1
 
 
-def segment_and_upload(key_min, key_max) -> None:
+def segment_and_upload(key_min: int, key_max: int) -> None:
     get_done_query = f"FOR u IN {collections.SEGMENTED_TEXTS} RETURN u.{DOC_ID}"
     done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
     done_docs = set(list(done_docs))
