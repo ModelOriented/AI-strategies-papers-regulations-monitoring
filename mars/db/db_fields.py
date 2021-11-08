@@ -50,7 +50,7 @@ LANGUAGE = "language"
 # Sentences:
 SENTENCE_NUMBER = "sentence_number"
 SEGMENT_ID = "source_segment_id"
-
+IS_DEFINITION = "is_definition"
 
 class EmbeddingType(str, Enum):
     LASER = "laser"
