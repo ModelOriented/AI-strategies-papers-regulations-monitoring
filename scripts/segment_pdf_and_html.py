@@ -9,4 +9,4 @@ if __name__ == "__main__":
     min_key = mars.db.database.AQLQuery(min_key_query, 1, rawResults=True)[0]
     max_key = mars.db.database.AQLQuery(max_key_query, 1, rawResults=True)[0]
 
-    typer.run(segmentation.segment_and_upload(key_min=min_key, key_max=max_key))
+    segmentation.segment_and_upload(key_min=min_key, key_max=max_key)
