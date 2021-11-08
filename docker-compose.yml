@@ -8,7 +8,7 @@ services:
       args:
         BUILDKIT_INLINE_CACHE: 1
     image: "${DOCKER_USER}/common:${DOCKER_TAG}"
-  arangodb_db_container:
+  arangodb:
     build: arango
     image: "${DOCKER_USER}/arango:${DOCKER_TAG}"
     ports:
@@ -30,11 +30,11 @@ services:
     ports:
       - "${DOCKER_PORT_PREFIX}1:8501"
     depends_on:
-      - arangodb_db_container
+      - arangodb
     secrets:
       - arango_secrets
     environment:
-      ARANGODB_URL: http://arangodb_db_container:8529
+      ARANGODB_URL: http://arangodb:8529
       LOGGING_LEVEL: INFO
   reporting_app:
     image: "${DOCKER_USER}/reporting_app:${DOCKER_TAG}"
@@ -48,11 +48,11 @@ services:
     ports:
       - "${DOCKER_PORT_PREFIX}4:8501"
     depends_on:
-      - arangodb_db_container
+      - arangodb
     secrets:
       - arango_secrets
     environment:
-      ARANGODB_URL: http://arangodb_db_container:8529
+      ARANGODB_URL: http://arangodb:8529
       LOGGING_LEVEL: INFO
   airflow_db:
     image: mysql:5.7
@@ -85,7 +85,7 @@ services:
         BUILDKIT_INLINE_CACHE: 1
     depends_on:
       - airflow_db
-      - arangodb_db_container
+      - arangodb
     secrets:
       - airflow_secrets
       - arango_secrets
@@ -99,7 +99,7 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 0
       EXPLICIT_DEFAULTS_FOR_TIMESTAMP: 1
       USER: poznan
-      ARANGODB_URL: http://arangodb_db_container:8529
+      ARANGODB_URL: http://arangodb:8529
       USE_WEBDAV: 0
       LOGGING_LEVEL: DEBUG
     command: bash -c "source /run/secrets/airflow_secrets && airflow db init && airflow scheduler"
@@ -121,7 +121,7 @@ services:
         docker_user: "${DOCKER_USER}"
         docker_tag: "${DOCKER_TAG}"
     depends_on:
-      - arangodb_db_container
+      - arangodb
     secrets:
       - arango_secrets
     volumes:
@@ -129,8 +129,13 @@ services:
       - ./log_dir:/mair/log_dir
     environment:
       USER: tests
-      ARANGODB_URL: http://arangodb_db_container:8529
+      ARANGODB_URL: http://arangodb:8529
       USE_WEBDAV: 0
+  redis:
+    image: redis:6-alpine
+    secrets:
+      - redis_conf
+    command: "redis-server /run/secrets/redis_conf"
 
 volumes:
   arangodb_data_container:
@@ -139,8 +144,12 @@ volumes:
   airflow_logs:
 secrets:
   airflow_secrets:
-    file: ./airflow_secrets.env
+    file: secrets/airflow.env
   arango_secrets:
-    file: ./arango_secrets.env
+    file: secrets/arango.env
   webdav_secrets:
-    file: ./webdav_secrets.env
+    file: secrets/webdav.env
+  redis_secrets:
+    file: secrets/redis.env
+  redis_conf:
+    file: secrets/redis.conf

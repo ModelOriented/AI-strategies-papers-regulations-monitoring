@@ -136,4 +136,7 @@ notebooks/sg/similarities.csv
 
 #Docker secrets
 *_secrets.env
+secrets/*
+!secrets/*.example
+
 chromedriver
