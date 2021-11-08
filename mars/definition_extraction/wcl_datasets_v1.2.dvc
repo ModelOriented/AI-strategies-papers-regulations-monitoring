@@ -1,0 +1,5 @@
+outs:
+- md5: eccffd89d5b863171a4288c6a7bac396.dir
+  size: 2245688
+  nfiles: 3
+  path: wcl_datasets_v1.2
