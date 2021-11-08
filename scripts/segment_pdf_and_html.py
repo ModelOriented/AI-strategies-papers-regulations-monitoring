@@ -1,5 +1,4 @@
 """Split all pdfs from database"""
-import typer
 import mars.segmentation.segmentation as segmentation
 import mars.db
 
