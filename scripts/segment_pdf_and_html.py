@@ -1,6 +1,6 @@
 """Split all pdfs from database"""
 import typer
-import mars.segmentation.segmantation as segmentation
+import mars.segmentation.segmentation as segmentation
 import mars.db
 
 if __name__ == "__main__":
