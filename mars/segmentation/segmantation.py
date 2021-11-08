@@ -28,7 +28,7 @@ def segment_and_upload(key_min, key_max) -> None:
     done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
     done_docs = set(list(done_docs))
 
-    all_docs_query = f"FOR u IN {collections.document_sources} FILTER TO_NUMBER(u._key) > {key_min} && TO_NUMBER(u._key) < {key_max} RETURN u"
+    all_docs_query = f"FOR u IN {collections.DOCUMENTS} FILTER TO_NUMBER(u._key) >= {key_min} && TO_NUMBER(u._key) <= {key_max} RETURN u"
     all_docs = mars.db.database.AQLQuery(all_docs_query, 10000, rawResults=True)
     all_docs = set(list(all_docs))
 
