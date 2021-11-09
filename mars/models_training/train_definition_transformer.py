@@ -191,5 +191,6 @@ def main():
           f"Precision: {pr}"
           f"Recall: {rc}")
 
+
 if __name__ == "__main__":
     typer.run(main)
