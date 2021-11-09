@@ -23,4 +23,4 @@ webdav_login = os.getenv("WEBDAV_LOGIN") or "user"
 webdav_password = os.getenv("WEBDAV_PASSWORD")
 webdav_url = os.getenv("WEBDAV_ENDPOINT")
 use_webdav = (os.getenv("USE_WEBDAV") or "0") in ["1", "True", "true", "TRUE"]
-redis_password = os.getenv("REDIS_PASSWORD")
+redis_url = os.getenv("REDIS_URL")

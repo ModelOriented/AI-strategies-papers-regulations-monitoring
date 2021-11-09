@@ -136,6 +136,52 @@ services:
     secrets:
       - redis_conf
     command: "redis-server /run/secrets/redis_conf"
+  webserver:
+    image: "${DOCKER_USER}/webserver:${DOCKER_TAG}"
+    build:
+      context: .
+      dockerfile: webserver/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
+    ports:
+      - "${DOCKER_PORT_PREFIX}5:5000"
+    depends_on:
+      - arangodb
+      - redis
+    secrets:
+      - arango_secrets
+      - webdav_secrets
+      - redis_secrets
+    volumes:
+      - ./raw_data:/mair/raw_data
+      - ./log_dir:/mair/log_dir
+    environment:
+      ARANGODB_URL: http://arangodb:8529
+      LOGGING_LEVEL: INFO
+  rq_worker:
+    image: "${DOCKER_USER}/rq_worker:${DOCKER_TAG}"
+    build:
+      context: .
+      dockerfile: rq_worker/Dockerfile
+      args:
+        docker_user: "${DOCKER_USER}"
+        docker_tag: "${DOCKER_TAG}"
+        BUILDKIT_INLINE_CACHE: 1
+    depends_on:
+      - arangodb
+      - redis
+    secrets:
+      - arango_secrets
+      - webdav_secrets
+      - redis_secrets
+    volumes:
+      - ./raw_data:/mair/raw_data
+      - ./log_dir:/mair/log_dir
+    environment:
+      ARANGODB_URL: http://arangodb:8529
+      LOGGING_LEVEL: INFO
 
 volumes:
   arangodb_data_container:
