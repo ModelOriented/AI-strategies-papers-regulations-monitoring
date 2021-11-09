@@ -22,7 +22,7 @@ jobs:
         id: pull_dvc
         run: |
           sudo snap install dvc --classic
-          dvc pull
+          dvc pull -A
       - name: Build images
         id: build_images
         run: |
