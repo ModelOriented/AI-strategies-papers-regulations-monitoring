@@ -49,6 +49,8 @@ RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoet
 COPY ./mars ./mars
 RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
 
+RUN python -m spacy download en_core_web_sm
+
 # Copy DVC requirements
 RUN mkdir ./data && mkdir ./models
 COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
