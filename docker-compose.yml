@@ -181,7 +181,8 @@ services:
       - ./log_dir:/mair/log_dir
     environment:
       ARANGODB_URL: http://arangodb:8529
-      LOGGING_LEVEL: INFO
+      LOGGING_LEVEL: DEBUG
+      USE_WEBDAV: 0
 
 volumes:
   arangodb_data_container:
