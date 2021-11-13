@@ -24,7 +24,6 @@ jobs:
           sudo snap install dvc --classic
           mkdir -p .dvc/cache
           gsutil -m cp -r gs://mair-dvc-storage/MARS/* .dvc/cache/
-          ls .dvc/cache
           dvc pull -v
       - name: Build images
         id: build_images
