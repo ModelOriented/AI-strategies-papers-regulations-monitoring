@@ -4,9 +4,12 @@ Monitoring of AI strategies, papers, and regulations
 Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring (to access please contact [Stanisław Giziński](https://github.com/Gizzio) or [Hanna Zdulska](https://github.com/HaZdula))
 
 ### Project structure
-* **airflow_secrets.env[.example]** - configuration file for credentials of airflow database
-* **arango_secrets.env[.example]** - configuration file for credentials of arango database
-* **webdav_secrets.env[.example]** - configuration file for credentials of webdav
+* **secrets** contains credentials and donfiguration files for docker containers
+  * **airflow.env[.example]** - credentials of airflow database
+  * **arango.env[.example]** - credentials of arango database
+  * **webdav.env[.example]** - credentials of webdav
+  * **redis.env[.example]** - credentials of redis
+  * **redis.conf[.example]** - configuration file of redis
 * **mars** contains modules with code
   * **db** contains database connection abstraction layer
   * **config.py** contains configuration utils
@@ -35,10 +38,16 @@ Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regu
 ## Pre-requirements
 * docker
 * docker-compose
+
 ## Configuration
-Remove `.example` from *_secrets.env.example files and configure them with randomly generate passwords
+#### Using docker-compose
+Remove `.example` from secrets/*.example files and configure them with randomly generate passwords
+#### Manual use
+Move .env.example to .env and configure it
+
 ## Installation
-`docker-compose build`
+`docker-compose pull`
+
 ## Running
 ### Inside docker
 `docker-compose up`
