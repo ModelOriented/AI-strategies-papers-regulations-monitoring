@@ -21,6 +21,9 @@ COUNTRY = "country"
 TITLE = "title"
 USER = "user"
 DATASET = "dataset"
+START_DATE = "startDate"
+DOC_NAME = "name"
+DOC_JOBS = "jobs"
 
 # Processed texts:
 TEXT_ID = "textId"

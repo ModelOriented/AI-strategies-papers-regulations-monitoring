@@ -41,8 +41,8 @@ jobs:
           export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
           export DOCKER_TAG=${{ steps.branch.outputs.branch }}
           export DOCKER_TAG=${DOCKER_TAG//\//-}
-          mv arango_secrets.env.example arango_secrets.env
-          docker-compose up -d arangodb_db_container
+          mv secrets/arango.env.example secrets/arango.env
+          docker-compose up -d arangodb
           sleep 15
           docker-compose up --exit-code-from tests tests
       - name: Login to Docker Hub
