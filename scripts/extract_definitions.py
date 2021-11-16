@@ -1,30 +1,10 @@
-import numpy as np
-import tqdm
-import typer
-
-from mars.db import collections
-from mars.db.db_fields import SENTENCE, IS_DEFINITION
-from mars.definition_model import DistilBertBaseUncased
-
-
-def main():
-    model = DistilBertBaseUncased("../models/distilbert-base-uncased")
-
-    BATCH_SIZE = 100
-    big_number = 1000000000000
-    query = collections.sentences.fetchAll(limit=big_number, batchSize=big_number)
-
-    results = np.array(query.result)
-    results = np.array_split(results, query.count // BATCH_SIZE)
-
-    for batch_results in tqdm.tqdm(results, total=len(results)):
-        sections_to_update = []
-        for section in batch_results:
-            is_definition = model.predict_single_sentence(section[SENTENCE])
-            section[IS_DEFINITION] = float(is_definition)
-            sections_to_update.append(section)
-        collections.sentences.bulkSave(sections_to_update, onDuplicate="update")
-
+import mars
+from mars.document_definition_scoring import document_definition_scoring
 
 if __name__ == "__main__":
-    typer.run(main)
+    min_key_query = f"FOR u IN {mars.db.collections.DOCUMENTS} SORT TO_NUMBER(u._key) ASC LIMIT 1 RETURN TO_NUMBER(u._key)"
+    max_key_query = f"FOR u IN {mars.db.collections.DOCUMENTS} SORT TO_NUMBER(u._key) DESC LIMIT 1 RETURN TO_NUMBER(u._key)"
+    min_key = mars.db.database.AQLQuery(min_key_query, 1, rawResults=True)[0]
+    max_key = mars.db.database.AQLQuery(max_key_query, 1, rawResults=True)[0]
+
+    document_definition_scoring(min_key, max_key, path_to_model="../models/distilbert-base-uncased")
