@@ -1,5 +1,5 @@
 import mars.db
-from mars import logging
+from mars import logging, config
 from mars.db import collections
 from mars.db.db_fields import (
     SENTENCE,
@@ -14,14 +14,14 @@ logger = logging.new_logger(__name__)
 
 
 def document_definition_scoring(key_min: int, key_max: int,
-                                path_to_model: str = "../models/distilbert-base-uncased") -> None:
+                                path_to_model: str = "distilbert-base-uncased") -> None:
     """
 
     @param key_min: lowest document key
     @param key_max: highest document key
     @param path_to_model: path to folder with definition model
     """
-
+    path_to_model = config.models_dir + '/' + path_to_model
     # get documents with at least one not-scored sentence
     get_todo_docs_query = f"FOR u IN {collections.SENTENCES} " \
                           f"FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, \"/\")[1]) >= {key_min} " \
@@ -39,7 +39,7 @@ def document_definition_scoring(key_min: int, key_max: int,
         # get all not-scored sentences
         get_todo_sentences_query = f"FOR u IN {collections.SENTENCES} " \
                                    f"FILTER u.{SENTENCE_DOC_ID} == \"{doc}\" " \
-                                   f"FILTER IS_NUMBER(u.{IS_DEFINITION}) == false " \ 
+                                   f"FILTER IS_NUMBER(u.{IS_DEFINITION}) == false " \
                                    f"RETURN DISTINCT u"
 
         todo_sentences = mars.db.database.AQLQuery(get_todo_sentences_query, 10000)
