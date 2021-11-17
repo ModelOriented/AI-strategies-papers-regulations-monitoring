@@ -22,7 +22,9 @@ jobs:
         id: pull_dvc
         run: |
           sudo snap install dvc --classic
-          dvc pull
+          mkdir -p .dvc/cache
+          gsutil -m cp -r gs://mair-dvc-storage/MARS/* .dvc/cache/
+          dvc pull -v
       - name: Build images
         id: build_images
         run: |

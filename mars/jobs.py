@@ -14,9 +14,14 @@ def run_splitting(doc_key):
     from mars.sentences_splitting import split_to_sentences
     split_to_sentences(doc_key, doc_key)
 
+def run_document_definition_scoring(doc_key):
+    from mars.document_definition_scoring import document_definition_scoring
+    document_definition_scoring(doc_key, doc_key)
+
 steps = [
         { 'name': 'Segmentation', 'method': run_segmentation },
-        { 'name': 'Splitting to sentences', 'method': run_splitting }
+        { 'name': 'Splitting to sentences', 'method': run_splitting },
+        { 'name': 'Definition scoring', 'method': run_document_definition_scoring }
 ]
 
 def report_success(job, connection, result, *args, **kwargs):
