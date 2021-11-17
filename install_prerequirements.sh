@@ -5,7 +5,8 @@ wget -N https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodr
 tar xzvf geckodriver-v0.30.0-linux64.tar.gz
 rm geckodriver-v0.30.0-linux64.tar.gz
 # chrome driver
-wget https://chromedriver.storage.googleapis.com/94.0.4606.61/chromedriver_linux64.zip -O chromedriver.zip
+curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE > version
+wget https://chromedriver.storage.googleapis.com/$(cat version)/chromedriver_linux64.zip -O chromedriver.zip
 unzip chromedriver.zip
 rm chromedriver.zip
 #chrome
