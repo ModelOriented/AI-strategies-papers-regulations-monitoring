@@ -53,3 +53,7 @@ RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoet
 RUN mkdir ./data && mkdir ./models
 COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
 COPY ./data/jobin2019.csv ./data/
+COPY ./models/distilbert-base-uncased ./models/distilbert-base-uncased
+
+ENV DATA_DIR=/mair/data \
+    MODELS_DIR=/mair/models

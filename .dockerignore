@@ -1,5 +1,6 @@
 .venv
 .git
+.dvc
 raw_data
 log_dir
 notebooks
