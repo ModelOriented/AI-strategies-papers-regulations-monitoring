@@ -71,13 +71,13 @@ export default {
     loadData () {
       const docKey = this.$route.query.document
       if (!docKey) return
-      fetch('http://localhost:8505/api/documents/' + docKey + '/sentences', { method: 'GET' })
+      fetch('/api/documents/' + docKey + '/sentences', { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.segments = response
         })
         .catch(console.error)
-      fetch('http://localhost:8505/api/documents/' + docKey + '/definitions?n=' + this.count, { method: 'GET' })
+      fetch('/api/documents/' + docKey + '/definitions?n=' + this.count, { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.definitions = response
