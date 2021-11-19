@@ -36,7 +36,22 @@ export default {
     count () {
       this.loadData()
     },
+    defaultVisibleSegments: 'updateGroups',
+    segments: 'updateGroups'
+  },
+  computed: {
+    definitionsKeys () {
+      return this.definitions.map(d => d.segment + '_' + d.sentence).reduce((agg, v) => ({ ...agg, [v]: true }), {})
+    },
     defaultVisibleSegments () {
+      return [...new Set(this.definitions.map(d => d.segment).map(x => [x - 1, x, x + 1]).flat())].sort()
+    }
+  },
+  methods: {
+    updateCount (v) {
+      console.log(v)
+    },
+    updateGroups () {
       if (this.segments.length === 0) {
         this.groups = []
         return
@@ -54,19 +69,6 @@ export default {
         }
       }
       this.groups = groups
-    }
-  },
-  computed: {
-    definitionsKeys () {
-      return this.definitions.map(d => d.segment + '_' + d.sentence).reduce((agg, v) => ({ ...agg, [v]: true }), {})
-    },
-    defaultVisibleSegments () {
-      return [...new Set(this.definitions.map(d => d.segment).map(x => [x - 1, x, x + 1]).flat())].sort()
-    }
-  },
-  methods: {
-    updateCount (v) {
-      console.log(v)
     },
     loadData () {
       const docKey = this.$route.query.document
