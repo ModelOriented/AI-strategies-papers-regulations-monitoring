@@ -3,7 +3,7 @@ import os
 from mars import config
 from mars.definition_model import DistilBertBaseUncased
 
-path_to_model = '../models/' + 'distilbert-base-uncased'
+path_to_model = config.models_dir + "/" + 'distilbert-base-uncased'
 dbu = DistilBertBaseUncased(path_to_model)
 
 
