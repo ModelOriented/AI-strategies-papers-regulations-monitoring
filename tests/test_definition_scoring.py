@@ -17,7 +17,7 @@ class DefinitionScoring(unittest.TestCase):
         self.assertTrue(score > 0.5)
 
     def test_long_test(self):
-        with open("long_text.txt", 'r') as f:
+        with open("tests/long_text.txt", 'r') as f:
             text = f.readlines()
             text = "\n".join(text).replace("\n", "")
 
