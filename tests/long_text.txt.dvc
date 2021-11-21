@@ -1,5 +1,0 @@
-outs:
-- md5: 44814aa229f509dd614b33fa8fd8320d
-  size: 16633
-  path: long_text.txt
-  isexec: true
