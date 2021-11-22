@@ -15,8 +15,7 @@ class AbstractDefinitionModel(ABC):
 
 class DistilBertBaseUncased(AbstractDefinitionModel):
 
-    def __init__(self, path_to_model: str = None, path_to_tokenizer: str = None,
-                 transformer: str = "distilbert-base-uncased"):
+    def __init__(self, path_to_model: str, path_to_tokenizer: str):
         self.model = TFDistilBertForSequenceClassification.from_pretrained(path_to_model)
         self.tokenizer = AutoTokenizer.from_pretrained(path_to_tokenizer)
 
