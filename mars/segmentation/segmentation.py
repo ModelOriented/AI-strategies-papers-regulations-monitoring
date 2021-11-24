@@ -23,15 +23,25 @@ logger = logging.new_logger(__name__)
 ROUND_DIGIT = 1
 
 
-def segment_and_upload(key_min: int, key_max: int, catch_exceptions = True) -> None:
+def segment_and_upload(key_min: int, key_max: int, catch_exceptions=True) -> None:
+    """
+    Segment documents from database and upload them
+    @param key_min: int key to first document
+    @param key_max: int key to last document
+    @param catch_exceptions: bool
+    """
+
+    # Get already done document
     get_done_query = f"FOR u IN {collections.SEGMENTED_TEXTS} RETURN u.{DOC_ID}"
     done_docs = mars.db.database.AQLQuery(get_done_query, 10000, rawResults=True)
     done_docs = set(list(done_docs))
 
+    # get all documents
     all_docs_query = f"FOR u IN {collections.DOCUMENTS} FILTER TO_NUMBER(u._key) >= {key_min} && TO_NUMBER(u._key) <= {key_max} RETURN u"
     all_docs = mars.db.database.AQLQuery(all_docs_query, 10000)
     all_docs = set(list(all_docs))
 
+    # find documents to segment
     todo_docs = [doc for doc in all_docs if doc[ID] not in done_docs]
 
     logger.info(
@@ -56,6 +66,8 @@ def segment_and_upload(key_min: int, key_max: int, catch_exceptions = True) -> N
                     segs = segment_pdf(filename, ROUND_DIGIT)
             parsed_time = time.time()
             for s in segs:
+
+                # describe segments
                 segmented_doc = collections.segmented_texts.createDocument()
                 segmented_doc[DOC_ID] = doc[ID]
                 segmented_doc[HTML_TAG] = s["html_tag"]
@@ -68,6 +80,8 @@ def segment_and_upload(key_min: int, key_max: int, catch_exceptions = True) -> N
                     segmented_doc[IS_HEADER] = True
                 else:
                     segmented_doc[IS_HEADER] = False
+
+                # save
                 segmented_doc.save()
             end_time = time.time()
             logger.info(

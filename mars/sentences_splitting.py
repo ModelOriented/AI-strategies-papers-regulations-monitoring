@@ -28,6 +28,11 @@ logger = logging.new_logger(__name__)
 
 
 def split_text(text: str) -> List[str]:
+    """
+    Splits texts into senteces
+    @param text: str
+    @return: List of strings
+    """
     while "\n\n" in text:
         text = text.replace("\n\n", "\n")
     sents = []
@@ -41,15 +46,21 @@ def split_text(text: str) -> List[str]:
 
 
 def split_to_sentences(key_min: int, key_max: int) -> None:
-    """Splits texts from given key range to sentences and saves them to db"""
+    """Splits texts from given key range to sentences and saves them to db
+    @param key_min: int key to first document
+    @param key_max: int key to last document
+    """
 
+    # Get already done document
     get_done_docs_query = f"FOR u IN {collections.SENTENCES} RETURN DISTINCT u.{DOC_ID}"
     done_docs = mars.db.database.AQLQuery(get_done_docs_query, 10000, rawResults=True)
     done_docs = set(list(done_docs))
 
+    # get all documents
     get_all_docs_query = f"FOR u IN {collections.DOCUMENTS} FILTER TO_NUMBER(u._key) >= {key_min} && TO_NUMBER(u._key) <= {key_max} RETURN DISTINCT u.{ID}"
     all_docs = mars.db.database.AQLQuery(get_all_docs_query, 10000, rawResults=True)
 
+    # find documents to segment
     all_docs = set(list(all_docs))
     todo_docs = list(all_docs - done_docs)
 

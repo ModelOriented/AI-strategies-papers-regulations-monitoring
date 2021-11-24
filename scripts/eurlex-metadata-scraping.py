@@ -1,3 +1,4 @@
+"""Scrap metadata about existing docs in database"""
 import requests
 from lxml import etree
 from mars.db import collections
@@ -5,11 +6,14 @@ import mars.db.db_fields as db_fields
 from mars import logging
 from mars import config
 
+# setup logger
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.getLevelName(config.logging_level))
 
 url = "http://publications.europa.eu/resource/celex/%s?language=%s"
 
+# get all docs without metadata from eurlex
 for doc in list(
     collections.document_sources.fetchByExample(
         {db_fields.SOURCE: db_fields.SourceWebsite.eurlex, db_fields.TITLE: None},
@@ -17,10 +21,13 @@ for doc in list(
     )
 ):
     try:
+        # create url with selected celex number
         url_celex = url % (doc["celex"], doc["lang"])
         r = requests.get(url_celex, headers={"Accept": "application/xml;notice=object"})
         r.raise_for_status()
         root = etree.fromstring(r.content)
+
+        # fill missing metadata
 
         doc[db_fields.COUNTRY] = root.find(".//CREATED_BY/PREFLABEL").text
         doc[db_fields.TITLE] = root.find(".//EXPRESSION_TITLE/VALUE").text

@@ -1,3 +1,4 @@
+"""Wrapper around logging library"""
 import traceback
 from logging import *
 from logging import Logger, basicConfig, getLevelName, getLogger

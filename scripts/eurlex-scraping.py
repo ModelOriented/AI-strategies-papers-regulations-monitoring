@@ -1,3 +1,4 @@
+"""Scrap documents from eurlex"""
 import urllib
 
 from mars import config, db, logging, parser
@@ -7,6 +8,12 @@ logger = logging.new_logger(__name__)
 
 
 def get_eurlex_search_link(keyword: str, lang: str):
+    """
+
+    @param keyword: used to search in eurlex
+    @param lang: languge of document
+    @return: string with url
+    """
     url = (
         "https://eur-lex.europa.eu/search.html?scope=EURLEX&text=%22"
         + keyword.replace(" ", "-")
@@ -18,6 +25,13 @@ def get_eurlex_search_link(keyword: str, lang: str):
 
 
 def scrap_eurlex_single_page(s: Scraper, metadata: dict):
+    """
+
+    @param s: instance of Scraper
+    @param metadata: additional dict to insert to dock
+    """
+
+    # find all celex numbers on page
     celexes = s.driver.find_elements_by_xpath(
         "//*[contains(text(), 'CELEX')]/following-sibling::dd"
     )
@@ -44,16 +58,23 @@ def scrap_eurlex_single_page(s: Scraper, metadata: dict):
 
 
 def go_to_eurlex_page(s: Scraper, i: int, based: str):
+    """
+
+    @param s: instance of Scraper
+    @param i: destination page number
+    @param based: search url
+    """
     s.driver.get(based + "&page=" + str(i))
 
 
-# @TODO
+# constans
 keywords = ["Artificial Intelligence", "AI"]
 langs = ["en"]
 URL_POINT = "http://publications.europa.eu/resource/celex/"
 
 for lang in langs:
     for keyword in keywords:
+        # create url
         s = Scraper()
         u = get_eurlex_search_link(keyword, lang)
         s.driver.get(u)
