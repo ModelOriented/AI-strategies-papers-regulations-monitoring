@@ -9,4 +9,4 @@ if __name__ == "__main__":
     max_key = mars.db.database.AQLQuery(max_key_query, 1, rawResults=True)[0]
 
     # pass it to dedicated definitions
-    document_definition_scoring(min_key, max_key, path_to_model="../models/distilbert-base-uncased")
+    document_definition_scoring(min_key, max_key, path_to_model="distilbert-base-uncased")
