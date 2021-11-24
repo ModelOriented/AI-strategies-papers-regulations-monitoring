@@ -21,7 +21,9 @@ def document_definition_scoring(key_min: int, key_max: int,
     @param key_max: highest document key
     @param path_to_model: path to folder with definition model
     """
+    path_to_tokenizer = config.models_dir + '/tokenizers/' + path_to_model
     path_to_model = config.models_dir + '/' + path_to_model
+
     # get documents with at least one not-scored sentence
     get_todo_docs_query = f"FOR u IN {collections.SENTENCES} " \
                           f"FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, \"/\")[1]) >= {key_min} " \
@@ -32,7 +34,7 @@ def document_definition_scoring(key_min: int, key_max: int,
     todo_docs = mars.db.database.AQLQuery(get_todo_docs_query, 10000, rawResults=True)
     todo_docs = set(list(todo_docs))
 
-    dbc = DistilBertBaseUncased(path_to_model)
+    dbc = DistilBertBaseUncased(path_to_model, path_to_tokenizer)
 
     for doc_index, doc in enumerate(todo_docs):
 

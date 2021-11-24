@@ -15,7 +15,7 @@ from transformers import AutoTokenizer
 from transformers import TFRobertaForSequenceClassification
 
 from mars.definition_extraction import DeftCorpusLoader
-
+from mars.config import models_dir
 
 def transform_to_spacy3(frame: pd.DataFrame, cats: list) -> List[Tuple]:
     ret = []
@@ -173,7 +173,8 @@ def main():
               epochs=3,
               batch_size=batch_size)
 
-    model.save_pretrained('../models/' + TRANSFORMER + "_pretrained")
+    model.save_pretrained(models_dir + '/' + TRANSFORMER)
+    tokenizer.save_pretrained(models_dir + "/tokenizers/" + TRANSFORMER)
 
     preds = model.predict(test_dataset.batch(16))
 
