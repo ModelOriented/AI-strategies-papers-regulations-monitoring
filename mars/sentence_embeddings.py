@@ -59,6 +59,25 @@ def get_sentence_to_embedding_mapping(
     return target_embeddings
 
 
+def fetch_batches_until_empty(
+    collection, filter: dict, batch_size=1000
+) -> Iterator[list]:
+    """Fetch collection in batches. Stop fetching when there is no fields after filtering"""
+    finished = False
+    batch = 0
+    while not finished:
+        batch += 1
+        print("Fetching next batch:", batch)
+        results = [
+            d for d in collection.fetchByExample(filter, batch_size, limit=batch_size)
+        ]
+        if len(results) != 0:
+            yield results
+        else:
+            finished = True
+            print("Finished")
+
+
 def score_embeddings_for_documents(
     key_min: int, key_max: int, emb_type: db_fields.EmbeddingType
 ):
@@ -68,13 +87,16 @@ def score_embeddings_for_documents(
     todo_docs = mars.db.database.AQLQuery(all_docs_between_keys, 10000, rawResults=True)
     print("All docs:", len(todo_docs))
     for doc_key in todo_docs:
-        sents_docs = collections.sentences.fetchByExample(
+        for sents_docs in fetch_batches_until_empty(
+            collections.sentences,
             {db_fields.SENTENCE_DOC_ID: doc_key, db_fields.EMBEDDING: None},
-            batchSize=1000,
-        )
-        print(f"Processing doc {doc_key}. Sentences to process: {len(sents_docs)}")
-        sents = [sent_doc[db_fields.SENTENCE] for sent_doc in sents_docs]
-        embeddings = embedd_sentences(sents, emb_type)
-        for embedding, sent_doc in zip(embeddings, sents_docs):
-            sent_doc[db_fields.EMBEDDING] = list(embedding.numpy())
-            sent_doc.patch()
+            100,
+        ):
+            print(
+                f"Processing doc {doc_key}. Sentences to process in this batch: {len(sents_docs)}"
+            )
+            sents = [sent_doc[db_fields.SENTENCE] for sent_doc in sents_docs]
+            embeddings = embedd_sentences(sents, emb_type)
+            for embedding, sent_doc in zip(embeddings, sents_docs):
+                sent_doc[db_fields.EMBEDDING] = list(embedding.numpy())
+                sent_doc.patch()
