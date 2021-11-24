@@ -9,7 +9,8 @@ import tensorflow_hub as hub
 import tensorflow_text as text  # Needed for loading universal-sentence-encoder-cmlm/multilingual-preprocess
 from laserembeddings import Laser
 
-from mars.db import db_fields
+import mars.db
+from mars.db import collections, db_fields
 from mars.db.db_fields import EmbeddingType
 
 LABSE_SIZE = 768
@@ -56,3 +57,24 @@ def get_sentence_to_embedding_mapping(
     for emb, targ in zip(embds, sentences):
         target_embeddings[targ] = emb
     return target_embeddings
+
+
+def score_embeddings_for_documents(
+    key_min: int, key_max: int, emb_type: db_fields.EmbeddingType
+):
+    all_docs_between_keys = f"""FOR d in {collections.DOCUMENTS}
+        FILTER TO_NUMBER(d._key)>={key_min} && TO_NUMBER(d._key)<={key_max}
+        return d._id"""
+    todo_docs = mars.db.database.AQLQuery(all_docs_between_keys, 10000, rawResults=True)
+    print("All docs:", len(todo_docs))
+    for doc_key in todo_docs:
+        sents_docs = collections.sentences.fetchByExample(
+            {db_fields.SENTENCE_DOC_ID: doc_key, db_fields.EMBEDDING: None},
+            batchSize=1000,
+        )
+        print(f"Processing doc {doc_key}. Sentences to process: {len(sents_docs)}")
+        sents = [sent_doc[db_fields.SENTENCE] for sent_doc in sents_docs]
+        embeddings = embedd_sentences(sents, emb_type)
+        for embedding, sent_doc in zip(embeddings, sents_docs):
+            sent_doc[db_fields.EMBEDDING] = list(embedding.numpy())
+            sent_doc.patch()

@@ -6,7 +6,6 @@ del mars.sentence_embeddings.laser
 
 from typing import Iterator
 
-EMBEDDING = "embedding"
 
 
 def fetch_batches_until_empty(
