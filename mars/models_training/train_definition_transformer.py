@@ -18,6 +18,12 @@ from mars.definition_extraction import DeftCorpusLoader
 
 
 def transform_to_spacy3(frame: pd.DataFrame, cats: list) -> List[Tuple]:
+    """
+    Transforms pd.DataFrame object to spacy3 digestible format
+    @param frame: dataframe with sentences
+    @param cats: categories in form of lists
+    @return: returns a list of tuples (sentence, category)
+    """
     ret = []
     sentences = frame['Sentence'].reset_index(drop=True)
     for i in range(len(sentences)):
@@ -31,11 +37,19 @@ def transform_to_spacy3(frame: pd.DataFrame, cats: list) -> List[Tuple]:
 
 
 def create_from_wiki(path='../definition_extraction/wcl_datasets_v1.2/wikipedia/', files=None) -> List[Tuple]:
+    """
+    From a folder with wikipedia dataset
+    function creates spacy3 digestible list of tuples
+    @param path: path to wikipedia dataset
+    @param files: dict with keys in form of paths to files in directory, and values in form of categories.
+    @return: returns a list of tuples (sentence, category)
+    """
     if files is None:
         files = {'wiki_bad.txt': 0, 'wiki_good.txt': 1}
 
     file_sentences = {}
 
+    # parse wikipedia files
     for f in files.keys():
         filename = os.path.join(path, f)
         defs = []
@@ -64,6 +78,12 @@ def create_from_wiki(path='../definition_extraction/wcl_datasets_v1.2/wikipedia/
 
 
 def filter_out(sentences: List[Tuple], max_length: int) -> List[Tuple]:
+    """
+    Filter out long sentences
+    @param sentences: list of tuples (sentence, category)
+    @param max_length: maximal length to be allowed
+    @return: returns filtered list of tuples (sentence, category)
+    """
     res = []
     for x in sentences:
         if len(x[0]) <= max_length:
@@ -119,18 +139,22 @@ def main():
     negative = "NOT DEFINITION"
 
     print("Initializing...")
+    # get the data
     deft_loader = DeftCorpusLoader(STORAGE_PATH)
     trainframe, devframe, testframe = deft_loader.load_classification_data(preprocess=True, clean=True)
 
     wiki = create_from_wiki()
+    # shuffle wikipedia data
     random.Random(42).shuffle(wiki)
     wiki_sentences = [x[0] for x in wiki]
     wiki_labels = [x[1] for x in wiki]
 
+    # get sentences and labels
     train_sentences, train_labels = list(trainframe["Sentence"]), list(trainframe["HasDef"])
     val_sentences, val_labels = list(devframe["Sentence"]), list(devframe["HasDef"])
     test_sentences, test_labels = list(testframe["Sentence"]), list(testframe["HasDef"])
 
+    # split on train-val-test
     train_sentences = train_sentences + wiki_sentences[:int(len(wiki_sentences) * 7 / 10)]
     val_sentences = val_sentences + wiki_sentences[int(len(wiki_sentences) * 7 / 10):int(len(wiki_sentences) * 9 / 10)]
     test_sentences = test_sentences + wiki_sentences[int(len(wiki_sentences) * 9 / 10):]
@@ -140,10 +164,12 @@ def main():
     test_labels = test_labels + wiki_labels[int(len(wiki_sentences) * 9 / 10):]
 
     print("Tokenizing")
+    # tokenize sentences
     train_encodings = tokenizer(train_sentences, truncation=True, padding=True)
     val_encodings = tokenizer(val_sentences, truncation=True, padding=True)
     test_encodings = tokenizer(test_sentences, truncation=True, padding=True)
 
+    # make tf2 datasets
     train_dataset = tf.data.Dataset.from_tensor_slices((
         dict(train_encodings),
         train_labels
@@ -162,6 +188,7 @@ def main():
     optimizer = tf.keras.optimizers.Adam(learning_rate=5e-5)
     model.compile(optimizer=optimizer, loss=model.compute_loss, metrics=["accuracy"])
 
+    # define callbacks
     es = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
     mc = tf.keras.callbacks.ModelCheckpoint(
         "../models/transformer-models/" + TRANSFORMER, monitor='val_loss', verbose=1, save_best_only=True,
@@ -173,8 +200,10 @@ def main():
               epochs=3,
               batch_size=batch_size)
 
+    # save model
     model.save_pretrained('../models/' + TRANSFORMER + "_pretrained")
 
+    # measure on test set
     preds = model.predict(test_dataset.batch(16))
 
     predictions = tf.math.softmax(preds.logits, axis=-1)

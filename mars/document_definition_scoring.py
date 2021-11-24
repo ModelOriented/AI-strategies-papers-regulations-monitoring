@@ -16,6 +16,8 @@ logger = logging.new_logger(__name__)
 def document_definition_scoring(key_min: int, key_max: int,
                                 path_to_model: str = "distilbert-base-uncased") -> None:
     """
+    Get the range of documents from key_min
+    to key_max and score them with definition-scoring model
 
     @param key_min: lowest document key
     @param key_max: highest document key
@@ -48,7 +50,7 @@ def document_definition_scoring(key_min: int, key_max: int,
             "(%s%%) Processing document %s. Sentences count: %s"
             % (round(100 * doc_index / len(todo_docs), 1), doc, len(list(todo_sentences)))
         )
-
+        # score the sentences and save them in database
         for index, sentence in enumerate(todo_sentences):
             text = sentence[SENTENCE]
             sentence[IS_DEFINITION] = float(dbc.predict_single_sentence(text))
