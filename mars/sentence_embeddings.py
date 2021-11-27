@@ -13,6 +13,7 @@ import mars.db
 from mars.db import collections, db_fields
 from mars.db.db_fields import EmbeddingType
 from mars import logging
+from mars.config import models_dir
 
 logger = logging.new_logger(__name__)
 
@@ -25,9 +26,11 @@ except FileNotFoundError:
     laser = Laser()
 
 labse_preprocessor = hub.KerasLayer(
-    "https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2"
+    models_dir + "/" + "universal-sentence-encoder-cmlm_multilingual-preprocess_2"
 )
-labse_encoder = hub.KerasLayer("https://tfhub.dev/google/LaBSE/2")
+labse_encoder = hub.KerasLayer(
+    models_dir + "/" + "labse2"
+)
 
 
 def _normalization(embeds):
