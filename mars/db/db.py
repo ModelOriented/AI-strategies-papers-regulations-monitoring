@@ -10,6 +10,8 @@ from mars.db.db_fields import (
     EXTRACTION_METHOD,
     FILE_TYPE,
     FILENAME,
+    DOC_NAME,
+    DOC_JOBS,
     SOURCE,
     URL,
     USER,
@@ -45,6 +47,8 @@ def save_doc(
     file_type: FileType,
     source: SourceWebsite,
     additional_data: dict = dict(),
+    user: str = env_user,
+    name: str = None
 ) -> None:
     """Saves new source document to database"""
     file_name = _new_file(raw_file_content, file_type)
@@ -53,11 +57,14 @@ def save_doc(
     doc[FILE_TYPE] = file_type
     doc[FILENAME] = file_name
     doc[SOURCE] = source
-    doc[USER] = env_user
+    doc[USER] = user
+    doc[DOC_NAME] = name
+    doc[DOC_JOBS] = []
     for key, value in additional_data.items():
         if key not in document_source_field_keys:
             doc[key] = value
     doc.save()
+    return doc
 
 
 def save_extracted_content(
@@ -85,7 +92,10 @@ def _new_file(file_content, file_type: str):
     """
     file_id = str(uuid.uuid4()) + "." + file_type
     with FileSync(file_id) as filename:
-        if file_type == FileType.pdf:
+        if file_content is None:
+            with open(filename, 'w') as file:
+                file.write("")
+        elif file_type == FileType.pdf:
             with open(filename, "wb") as file:
                 file.write(file_content)
         else:

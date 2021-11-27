@@ -20,6 +20,10 @@ EXTRACTION_METHOD = "extraction_method"
 COUNTRY = "country"
 TITLE = "title"
 USER = "user"
+DATASET = "dataset"
+START_DATE = "startDate"
+DOC_NAME = "name"
+DOC_JOBS = "jobs"
 
 # Processed texts:
 TEXT_ID = "textId"
@@ -48,7 +52,9 @@ LANGUAGE = "language"
 
 # Sentences:
 SENTENCE_NUMBER = "sentence_number"
-
+SEGMENT_ID = "source_segment_id"
+SENTENCE_DOC_ID = "source_doc_id"
+IS_DEFINITION = "is_definition"
 
 class EmbeddingType(str, Enum):
     LASER = "laser"

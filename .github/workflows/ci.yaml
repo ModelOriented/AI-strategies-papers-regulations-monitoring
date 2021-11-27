@@ -1,0 +1,59 @@
+name: CI
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repo 
+        uses: actions/checkout@v2
+      - name: Get current branch
+        id: branch
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: Pull DVC
+        id: pull_dvc
+        run: |
+          sudo snap install dvc --classic
+          mkdir -p .dvc/cache
+          gsutil -m cp -r gs://mair-dvc-storage/MARS/* .dvc/cache/
+          dvc pull -v
+      - name: Build images
+        id: build_images
+        run: |
+          export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
+          export DOCKER_TAG=${{ steps.branch.outputs.branch }}
+          export DOCKER_TAG=${DOCKER_TAG//\//-}
+          export COMPOSE_DOCKER_CLI_BUILD=1
+          export DOCKER_BUILDKIT=1
+          docker build . -t $DOCKER_USER/common:$DOCKER_TAG --cache-from $DOCKER_USER/common:$DOCKER_TAG
+          docker-compose build
+      - name: Run tests
+        id: run_tests
+        run: |
+          export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
+          export DOCKER_TAG=${{ steps.branch.outputs.branch }}
+          export DOCKER_TAG=${DOCKER_TAG//\//-}
+          mv secrets/arango.env.example secrets/arango.env
+          docker-compose up -d arangodb
+          sleep 15
+          docker-compose up --exit-code-from tests tests
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
+      - name: Push images
+        id: push_images
+        run: |
+          export DOCKER_USER=${{ secrets.DOCKERHUB_USER }}
+          export DOCKER_TAG=${{ steps.branch.outputs.branch }}
+          export DOCKER_TAG=${DOCKER_TAG//\//-}
+          docker-compose push
