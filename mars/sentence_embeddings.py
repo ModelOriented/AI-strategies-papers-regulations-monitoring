@@ -11,6 +11,7 @@ from laserembeddings import Laser
 
 from mars.db import db_fields
 from mars.db.db_fields import EmbeddingType
+from mars.config import models_dir
 
 LABSE_SIZE = 768
 LASER_SIZE = 1024
@@ -21,19 +22,21 @@ except FileNotFoundError:
     laser = Laser()
 
 labse_preprocessor = hub.KerasLayer(
-    "https://tfhub.dev/google/universal-sentence-encoder-cmlm/multilingual-preprocess/2"
+    models_dir + "/" + "universal-sentence-encoder-cmlm_multilingual-preprocess_2"
 )
-labse_encoder = hub.KerasLayer("https://tfhub.dev/google/LaBSE/2")
 
+labse_encoder = hub.KerasLayer(
+models_dir + "/" + "labse2"
+)
 
 def _normalization(embeds):
     norms = np.linalg.norm(embeds, 2, axis=1, keepdims=True)
     return embeds / norms
 
 
+
 def embedd_sentences(
-    sents: Union[List[str], str], embedding_type: EmbeddingType
-) -> np.ndarray:
+    sents: Union[List[str], str], embedding_type: EmbeddingType) -> np.ndarray:
     """Calculates embeddings for given sentence list, or single sentence."""
     if embedding_type == EmbeddingType.LABSE:
         if isinstance(sents, str):
