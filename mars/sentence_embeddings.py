@@ -85,7 +85,7 @@ def fetch_batches_until_empty(
 
 
 def score_embeddings_for_documents(
-    key_min: int, key_max: int, emb_type: db_fields.EmbeddingType
+    key_min: int, key_max: int, emb_type: db_fields.EmbeddingType = None
 ):
     if emb_type is None:
         score_embeddings_for_documents(key_min, key_max, EmbeddingType.LABSE)

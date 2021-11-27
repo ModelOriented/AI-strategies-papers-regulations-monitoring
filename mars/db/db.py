@@ -17,8 +17,7 @@ from mars.db.db_fields import (
     USER,
     ExtractionMethod,
     FileType,
-    SourceWebsite,
-    EMBEDDING
+    SourceWebsite
 )
 
 env_user = config.user
@@ -61,7 +60,6 @@ def save_doc(
     doc[USER] = user
     doc[DOC_NAME] = name
     doc[DOC_JOBS] = []
-    doc[EMBEDDING] = {}
     for key, value in additional_data.items():
         if key not in document_source_field_keys:
             doc[key] = value

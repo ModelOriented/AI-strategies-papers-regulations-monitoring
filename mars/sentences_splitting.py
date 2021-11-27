@@ -18,6 +18,7 @@ from mars.db.db_fields import (
     IS_HEADER,
     SEQUENCE_NUMBER,
     SENTENCE_NUMBER,
+    EMBEDDING
 )
 
 BATCH_SIZE = 100
@@ -90,5 +91,6 @@ def split_to_sentences(key_min: int, key_max: int) -> None:
                 sentence[SEGMENT_ID] = segment[ID]
                 sentence[DOC_ID] = segment[DOC_ID]
                 sentence[SENTENCE] = sent
+                sentence[EMBEDDING] = {}
                 sentence.save()
                 counter += 1
