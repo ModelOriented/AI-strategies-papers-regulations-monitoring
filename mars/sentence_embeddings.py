@@ -1,7 +1,7 @@
 """Functions for embedding sentences with different methods."""
 
 import os
-from typing import Dict, List, Union
+from typing import Dict, Iterator, List, Union
 
 import numpy as np
 import tensorflow as tf
