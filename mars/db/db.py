@@ -17,8 +17,11 @@ from mars.db.db_fields import (
     USER,
     ExtractionMethod,
     FileType,
-    SourceWebsite,
+    SourceWebsite
 )
+from mars.db._connection import database
+from itertools import accumulate, repeat, takewhile
+from typing import Iterator
 
 env_user = config.user
 document_source_field_keys = [URL, FILENAME, FILE_TYPE, SOURCE]
@@ -102,3 +105,9 @@ def _new_file(file_content, file_type: str):
             with open(filename, "w") as file:
                 file.write(file_content)
     return file_id
+
+
+def fetch_batches_until_empty(query, batch_size=1000, **kwargs) -> Iterator[list]:
+    """Fetch collection in batches. Stop fetching when there is no fields after filtering"""
+    generator = (list(database.AQLQuery(query, **kwargs)) for i in repeat(1))
+    return takewhile(lambda x: len(x) != 0, generator)

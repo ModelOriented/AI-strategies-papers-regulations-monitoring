@@ -15,7 +15,7 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
 
 def calculate_similarities_to_targets(
     queries: List[str],
-    emb_type: db_fields.EmbeddingType,
+    emb_type: db_fields.EmbeddingType = db_fields.EmbeddingType.LABSE,
     key=db_fields.FILENAME,
     filter=dict(),
 ) -> Dict[str, Dict[str, float]]:

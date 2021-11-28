@@ -54,6 +54,8 @@ RUN mkdir ./data && mkdir ./models && mkdir ./models/tokenizers
 COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
 COPY ./data/jobin2019.csv ./data/
 COPY ./models/distilbert-base-uncased ./models/distilbert-base-uncased
+COPY ./models/labse2 ./models/labse2
+COPY ./models/universal-sentence-encoder-cmlm_multilingual-preprocess_2 ./models/universal-sentence-encoder-cmlm_multilingual-preprocess_2
 COPY ./models/tokenizers/distilbert-base-uncased ./models/tokenizers/distilbert-base-uncased
 
 ENV DATA_DIR=/mair/data \
