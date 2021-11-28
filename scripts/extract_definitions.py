@@ -7,4 +7,4 @@ if __name__ == "__main__":
     min_key = mars.db.database.AQLQuery(min_key_query, 1, rawResults=True)[0]
     max_key = mars.db.database.AQLQuery(max_key_query, 1, rawResults=True)[0]
 
-    document_definition_scoring(min_key, max_key, path_to_model="../models/distilbert-base-uncased")
+    document_definition_scoring(min_key, max_key, path_to_model="distilbert-base-uncased")

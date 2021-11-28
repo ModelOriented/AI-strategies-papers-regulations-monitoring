@@ -49,6 +49,7 @@ HTML_TAG = "html_tag"
 IS_HEADER = "is_header"
 SEQUENCE_NUMBER = "sequence_number"
 LANGUAGE = "language"
+SEGMENT_DOC_ID = "source_doc_id"
 
 # Sentences:
 SENTENCE_NUMBER = "sentence_number"
