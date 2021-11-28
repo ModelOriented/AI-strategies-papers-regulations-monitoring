@@ -1,7 +1,7 @@
 """Functions for embedding sentences with different methods."""
 
 import os
-from typing import Dict, Iterator, List, Union
+from typing import Dict, List, Union
 
 import numpy as np
 import tensorflow as tf
@@ -10,7 +10,7 @@ import tensorflow_text as text  # Needed for loading universal-sentence-encoder-
 from laserembeddings import Laser
 
 import mars.db
-from mars.db import collections, db_fields
+from mars.db import collections, db_fields, fetch_batches_until_empty
 from mars.db.db_fields import EmbeddingType
 from mars import logging
 from mars.config import models_dir
@@ -53,37 +53,6 @@ def embedd_sentences(
     return _normalization(embds)
 
 
-def get_sentence_to_embedding_mapping(
-    sentences: List[str],
-    emb_type: db_fields.EmbeddingType = db_fields.EmbeddingType.LABSE,
-) -> Dict[str, np.ndarray]:
-    # TODO: tests, also for types
-    embds = embedd_sentences(sentences, emb_type)
-    target_embeddings = dict()
-    for emb, targ in zip(embds, sentences):
-        target_embeddings[targ] = emb
-    return target_embeddings
-
-
-def fetch_batches_until_empty(
-    collection, filter: dict, batch_size=1000
-) -> Iterator[list]:
-    """Fetch collection in batches. Stop fetching when there is no fields after filtering"""
-    finished = False
-    batch = 0
-    while not finished:
-        batch += 1
-        logger.info("Fetching next batch: %s", batch)
-        results = [
-            d for d in collection.fetchByExample(filter, batch_size, limit=batch_size)
-        ]
-        if len(results) != 0:
-            yield results
-        else:
-            finished = True
-            logger.info("Finished")
-
-
 def score_embeddings_for_documents(
     key_min: int, key_max: int, emb_type: db_fields.EmbeddingType = None
 ):
@@ -97,16 +66,14 @@ def score_embeddings_for_documents(
     todo_docs = mars.db.database.AQLQuery(all_docs_between_keys, 10000, rawResults=True)
     logger.info("All docs: %s", len(todo_docs))
     for doc_key in todo_docs:
-        for sents_docs in fetch_batches_until_empty(
-            collections.sentences,
-            {db_fields.SENTENCE_DOC_ID: doc_key, db_fields.EMBEDDING: {emb_type: None}},
-            100,
-        ):
+        for sents_docs in fetch_batches_until_empty(f"FOR u IN {collections.SENTENCES} FILTER u.{db_fields.SENTENCE_DOC_ID} == \"{doc_key}\" && (u.{db_fields.EMBEDDING}.{emb_type} == NULL || u.{db_fields.EMBEDDING}.{emb_type} == NULL) LIMIT 100 RETURN u"):
             logger.info(
                 f"Processing doc {doc_key}. Sentences to process in this batch: {len(sents_docs)}"
             )
             sents = [sent_doc[db_fields.SENTENCE] for sent_doc in sents_docs]
             embeddings = embedd_sentences(sents, emb_type)
             for embedding, sent_doc in zip(embeddings, sents_docs):
-                sent_doc[db_fields.EMBEDDING][emb_type] = list(embedding.numpy())
-                sent_doc.patch()
+                if sent_doc[db_fields.EMBEDDING] is None:
+                    sent_doc[db_fields.EMBEDDING] = {}
+                sent_doc[db_fields.EMBEDDING][emb_type] = list(embedding if type(embedding) == np.ndarray else embedding.numpy())
+                sent_doc.forceSave()

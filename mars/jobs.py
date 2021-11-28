@@ -18,7 +18,7 @@ def run_document_definition_scoring(doc_key):
     from mars.document_definition_scoring import document_definition_scoring
     document_definition_scoring(doc_key, doc_key)
 
-def run_sentence_embeddding(doc_key):
+def run_sentence_embedding(doc_key):
     from mars.sentence_embeddings import score_embeddings_for_documents
     score_embeddings_for_documents(doc_key, doc_key)
 
@@ -26,7 +26,7 @@ steps = [
         { 'name': 'Segmentation', 'method': run_segmentation },
         { 'name': 'Splitting to sentences', 'method': run_splitting },
         { 'name': 'Definition scoring', 'method': run_document_definition_scoring },
-        { 'name': 'Calculating embeddings', 'method': run_sentence_embeddding }
+        { 'name': 'Calculating embeddings', 'method': run_sentence_embedding }
 ]
 
 def report_success(job, connection, result, *args, **kwargs):
