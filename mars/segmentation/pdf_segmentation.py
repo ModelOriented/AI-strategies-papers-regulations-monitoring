@@ -141,7 +141,11 @@ def tag_headers(doc: fitz.fitz.Document, size_tag: dict, round_digits: int = 1):
 
 
 def merge_spans(header_para):
-
+    """
+    Merge spans with same tag
+    @param header_para: result of tag_headers funtion
+    @return: list of segments
+    """
     not_empty = [h for h in header_para if h]
     closed = []
 
@@ -183,6 +187,7 @@ def merge_spans(header_para):
 def segment_pdf(filename, round_digits=1):
     """
     splits pdf file into headers and paragraphs
+    @param filename - string
     @param round_digits - how many digits should be rounded while counting fonts
 
     @returns list of dicts {"html_tag": string, "content": string}

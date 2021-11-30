@@ -20,6 +20,11 @@ class DistilBertBaseUncased(AbstractDefinitionModel):
         self.tokenizer = AutoTokenizer.from_pretrained(path_to_tokenizer)
 
     def predict_single_sentence(self, sentence: str) -> float:
+        """
+        Predict probabilistic score of being a definition
+        @param sentence: a single sentence in form of string
+        @return: probabilistic output of being a definition
+        """
         def predict_tokens(inputs):
             inputs["labels"] = tf.reshape(tf.constant(1), (-1, 1))  # Batch size 1
             outputs = self.model(inputs)

@@ -14,7 +14,12 @@ def segment_html(
 ) -> list:
     """
     Splits html file into list of html headers and paragraphs (h1-h6 and p tags)
+    @param filename: string
+    @param extraction_method: only newspaper supported
+    @return: list of dicts with segments
     """
+
+    # create and read html
     article = newspaper.Article(url=" ", language="en", keep_article_html=False)
     with open(filename, mode="r") as f:
         raw_html = f.read()
@@ -26,6 +31,7 @@ def segment_html(
     parser = article.config.get_parser()
     top_node = parser.nodeToString(article.top_node)
 
+    # create segments
     soup = BeautifulSoup(top_node)
     segs = []
     counter = 0

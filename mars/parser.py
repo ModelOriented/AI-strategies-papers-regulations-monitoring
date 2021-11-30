@@ -22,12 +22,18 @@ class HTMLFilter(HTMLParser, ABC):
     text = ""
 
     def handle_data(self, data):
+        """
+        @param data: string
+        """
         self.text += data
 
 
 def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
     """
     Parses html file using extraction method, saves result to db.
+    @param source_url: string
+    @param method: db.ExtractionMethod
+    @return: None
     """
 
     if db.is_content_present(source_url, method):
@@ -58,7 +64,11 @@ def parse_html(source_url: str, method: db.ExtractionMethod) -> None:
 
 
 def parse_pdf(source_url: str, method: db.ExtractionMethod) -> None:
-    """Extracts text and metadata from *.pdf file, saves results to dv."""
+    """Extracts text and metadata from *.pdf file, saves results to dv.
+    @param source_url: str
+    @param method: db.ExtractionMethod
+    @return: None
+    """
 
     if db.is_content_present(source_url, method):
         return
@@ -83,6 +93,10 @@ class Pdf:
 
 
 def add_missing_files_to_db(path: str):
+    """
+    Add files to database from path
+    @param path: string
+    """
     for filename in glob.glob(os.path.join(path, "*.pdf")):
         try:
             if not db.is_document_present(filename):
@@ -124,6 +138,11 @@ def add_missing_files_to_db(path: str):
 
 
 def parse_documents(filter: dict, batch_size: int = 100):
+    """
+    Parse documents in database
+    @param filter: dict to specify documents
+    @param batch_size: int
+    """
     for doc in db.collections.document_sources.fetchByExample(
         filter, batchSize=batch_size
     ):
@@ -136,11 +155,19 @@ def parse_documents(filter: dict, batch_size: int = 100):
 
 
 def parse_source(source: str, batch_size: int):
+    """
+    Parse document from database from source
+    @param source: str
+    @param batch_size: int
+    """
     parse_documents({db.SOURCE: source}, batch_size=batch_size)
 
 
 def extract_text_from_pdf(file_name: str) -> dict:
-    """Extract text and other attributes from pdf in form od dict"""
+    """Extract text and other attributes from pdf in form od dict
+    @param file_name:  string
+    @return: dict
+    """
     empty_pages = []
     separated_text = []
     all_text = ""

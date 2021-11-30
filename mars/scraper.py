@@ -50,6 +50,9 @@ class Scraper:
     def _save_html(self, url: str, source: db.SourceWebsite, meta=dict()):
         """
         save html source to filename
+        @param url: str
+        @param source: db.SourceWebsite
+        @param meta: dict with metadata
         """
         try:
             present = db.is_document_present(url)
@@ -78,6 +81,9 @@ class Scraper:
     def _save_pdf(self, url: str, source: db.SourceWebsite, meta=dict()):
         """
         save pdf
+        @param url: str
+        @param source: db.SourceWebsite
+        @param meta: dict with metadata
         """
         try:
             present = db.is_document_present(url)
@@ -112,7 +118,11 @@ class Scraper:
             raise
 
     def save_document(self, url: str, source: db.SourceWebsite, metadata=dict()):
-        """ """
+        """
+        save document to database
+        @param url: str
+        @param source: db.SourceWebsite
+        @param meta: dict with metadata"""
         try:
             if "pdf" in url:
                 try:
