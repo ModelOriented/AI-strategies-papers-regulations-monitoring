@@ -18,21 +18,5 @@ LABELS = pd.DataFrame.from_dict(
 )
 
 
-class DataLoading(unittest.TestCase):
-    @patch(
-        "mars.models_training.data_loading.similarity_calculation.calculate_similarities_to_targets"
-    )
-    def test_loads_ethics_ai_dataset(self, mock_similarity_calculation):
-
-        X, y = data_loading.load_document_level_issues_dataset(
-            datasets.DocumentLevelDataset.ethics_ai_ethics,
-            db_fields.EmbeddingType.LABSE,
-        )
-        mock_similarity_calculation.assert_called_once_with(
-            datasets.targets[datasets.DocumentLevelDataset.ethics_ai_ethics],
-            db_fields.EmbeddingType.LABSE,
-        )
-
-
 if __name__ == "__main__":
     unittest.main()

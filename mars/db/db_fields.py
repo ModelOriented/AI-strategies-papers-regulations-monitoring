@@ -57,6 +57,8 @@ SEGMENT_ID = "source_segment_id"
 SENTENCE_DOC_ID = "source_doc_id"
 IS_DEFINITION = "is_definition"
 EMBEDDING = "embedding"
+ISSUES = "issues"
+
 
 class EmbeddingType(str, Enum):
     LASER = "laser"
@@ -78,3 +80,9 @@ class ExtractionMethod(str, Enum):
     newspaper = "newspaper3k"
     pdfminer = "pdfminer"
     simple_html = "simple_html"
+
+
+class IssueSearchMethod(str, Enum):
+    LASER = "laser"
+    LABSE = "labse"
+    KEYWORDS = "keywords"
