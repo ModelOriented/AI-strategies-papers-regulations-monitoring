@@ -9,7 +9,6 @@ test_sentences = [
     'Transparency Justice, fairness, and equity Non-maleficence Responsibility and accountability Privacy Beneficence Freedom and autonomy Trust Sustainability Dignity Solidarity'
 ]
 
-
 class KeyTopicModel(unittest.TestCase):
     def test_score_topics(self):
         ktm = KeywordTopicModel()
