@@ -4,6 +4,7 @@ import mars
 
 if __name__ == "__main__":
 
+    # find first and last keys of docs without splitted sentences
     min_key_query = f"FOR u IN {mars.db.collections.DOCUMENTS} SORT TO_NUMBER(u._key) ASC LIMIT 1 RETURN TO_NUMBER(u._key)"
     max_key_query = f"FOR u IN {mars.db.collections.DOCUMENTS} SORT TO_NUMBER(u._key) DESC LIMIT 1 RETURN TO_NUMBER(u._key)"
     min_key = mars.db.database.AQLQuery(min_key_query, 1, rawResults=True)[0]

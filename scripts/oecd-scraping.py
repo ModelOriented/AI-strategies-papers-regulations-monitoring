@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-
-# coding: utf-8
+"""Scrap documents from oecd"""
 import mars.logging
 import mars.parser
 import typer

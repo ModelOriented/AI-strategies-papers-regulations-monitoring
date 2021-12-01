@@ -1,3 +1,4 @@
+"""Scrap documents from given directory"""
 import dotenv
 import typer
 
