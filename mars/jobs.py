@@ -22,12 +22,20 @@ def run_sentence_embedding(doc_key):
     from mars.sentence_embeddings import score_embeddings_for_documents
     score_embeddings_for_documents(doc_key, doc_key)
 
+def run_issues_scoring(doc_key):
+    from mars.similarity_calculation import infer_issues_for_documents
+    infer_issues_for_documents()
+    # TODO dokończ
+    pass
+
 steps = [
         { 'name': 'Segmentation', 'method': run_segmentation },
         { 'name': 'Splitting to sentences', 'method': run_splitting },
         { 'name': 'Definition scoring', 'method': run_document_definition_scoring },
         { 'name': 'Calculating embeddings', 'method': run_sentence_embedding }
 ]
+
+
 
 def report_success(job, connection, result, *args, **kwargs):
     doc_key = str(job.args[0])

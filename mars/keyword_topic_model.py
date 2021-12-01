@@ -1,9 +1,11 @@
 import json
 import os
+from typing import List, Union
 
 import spacy
 
 from mars.config import data_dir
+from mars.db import db_fields
 
 try:
     nlp = spacy.load('en_core_web_md')
@@ -19,6 +21,7 @@ class KeywordTopicModel:
 
     def __init__(self):
         self.topics = topics
+        self.name = db_fields.IssueSearchMethod.KEYWORDS
 
     def score_sentence(self, sentence):
 
@@ -34,3 +37,12 @@ class KeywordTopicModel:
                 score[key] = 0
 
         return score
+
+    def calc_and_save_predictions_for_sentence(
+        self, sent
+    ):
+        if sent[db_fields.ISSUES] is None:
+            sent[db_fields.ISSUES] = dict()
+
+        sent[db_fields.ISSUES][self.type] = self.score_sentence(sent.sentence)
+        sent.forceSave()

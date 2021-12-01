@@ -7,6 +7,7 @@ from tqdm import tqdm
 from mars import db, logging, sentence_embeddings
 from mars.db import collections, db_fields
 from mars.db.db import fetch_batches_until_empty
+from mars.keyword_topic_model import KeywordTopicModel
 
 logger = logging.new_logger(__name__)
 
@@ -57,6 +58,8 @@ def calculate_similarities_to_targets(
     return all_similarities
 
 
+
+
 class SimilarityCalculator:
     def __init__(self, emb_type: db_fields.EmbeddingType):
         self.target_embeddings = dict()
@@ -91,15 +94,25 @@ class SimilarityCalculator:
         similarity = self.calc_similarity(sent_embedding, target)
         sent[db_fields.ISSUES][self.emb_type][target] = similarity
 
+def load_deafult_issues():
+    # TODO Staszku Tutaj
+    pass
+
 
 def infer_issues_for_documents(
     key_min: int,
     key_max: int,
     issue_search_method: db_fields.IssueSearchMethod,
-    issues: List[str],
+    issues: List[str] = load_deafult_issues(),
 ):
     todo_docs = db.get_ids_of_docs_between(key_min, key_max)
-    simmilarity_calculator = SimilarityCalculator(issue_search_method)
+
+    if issue_search_method == db_fields.IssueSearchMethod.KEYWORDS:
+        keyword_model = KeywordTopicModel()
+    else:
+
+        simmilarity_calculator = SimilarityCalculator(issue_search_method)
+
     for doc_key in todo_docs:
         for sents_docs in fetch_batches_until_empty(
             f'FOR u IN {collections.SENTENCES} FILTER u.{db_fields.SENTENCE_DOC_ID} == "{doc_key}" && (u.{db_fields.ISSUES}.{issue_search_method} == NULL) LIMIT 100 RETURN u'
@@ -108,9 +121,12 @@ def infer_issues_for_documents(
                 f"Processing doc {doc_key}. Sentences to process in this batch: {len(sents_docs)}"
             )
             for sent in sents_docs:
-                simmilarity_calculator.calc_and_save_similarity_for_sentence(
-                    sent, issues
-                )
+                if issue_search_method == db_fields.IssueSearchMethod.KEYWORDS:
+                    keyword_model.calc_and_save_predictions_for_sentence(sent)
+                else:
+                    simmilarity_calculator.calc_and_save_similarity_for_sentence(
+                        sent, issues
+                    )
 
 
 def clean_issues(

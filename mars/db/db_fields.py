@@ -83,6 +83,6 @@ class ExtractionMethod(str, Enum):
 
 
 class IssueSearchMethod(str, Enum):
-    LASER = "laser"
-    LABSE = "labse"
+    LASER = EmbeddingType.LASER
+    LABSE = EmbeddingType.LASER
     KEYWORDS = "keywords"
