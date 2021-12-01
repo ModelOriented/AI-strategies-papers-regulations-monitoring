@@ -50,9 +50,10 @@ COPY ./mars ./mars
 RUN poetry install --no-interaction --no-ansi -vvv && rm -rf /root/.cache/pypoetry
 
 # Copy DVC requirements
-RUN mkdir ./data && mkdir ./models && mkdir ./models/tokenizers
+RUN mkdir ./data && mkdir ./models && mkdir ./models/tokenizers && mkdir ./data/keywords
 COPY ./data/labels_hagendorffEthicsAIEthics2020.csv ./data/
 COPY ./data/jobin2019.csv ./data/
+COPY ./data/keywords/topics.json ./data/keywords
 COPY ./models/distilbert-base-uncased ./models/distilbert-base-uncased
 COPY ./models/labse2 ./models/labse2
 COPY ./models/universal-sentence-encoder-cmlm_multilingual-preprocess_2 ./models/universal-sentence-encoder-cmlm_multilingual-preprocess_2
