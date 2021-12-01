@@ -1,6 +1,6 @@
 import unittest
 
-from models.keyword_topic_model import KeywordTopicModel
+from mars.keyword_topic_model import KeywordTopicModel
 
 test_sentences = [
     'Our results reveal a global convergence emerging around five ethical principles (transparency, justice and fairness, non-maleficence, responsibility and privacy), with substantive divergence in relation to how these principles are interpreted, why they are deemed important, what issue, domain or actors they pertain to, and how they should be implemented.',
