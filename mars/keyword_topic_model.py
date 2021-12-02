@@ -44,5 +44,5 @@ class KeywordTopicModel:
         if sent[db_fields.ISSUES] is None:
             sent[db_fields.ISSUES] = dict()
 
-        sent[db_fields.ISSUES][self.type] = self.score_sentence(sent.sentence)
+        sent[db_fields.ISSUES][self.name] = self.score_sentence(sent.sentence)
         sent.forceSave()

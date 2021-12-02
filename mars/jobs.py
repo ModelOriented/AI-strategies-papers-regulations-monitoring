@@ -24,15 +24,16 @@ def run_sentence_embedding(doc_key):
 
 def run_issues_scoring(doc_key):
     from mars.similarity_calculation import infer_issues_for_documents
-    infer_issues_for_documents()
-    # TODO dokończ
-    pass
+    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.KEYWORDS)
+    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.LASER)
+    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.LABSE)
 
 steps = [
         { 'name': 'Segmentation', 'method': run_segmentation },
         { 'name': 'Splitting to sentences', 'method': run_splitting },
         { 'name': 'Definition scoring', 'method': run_document_definition_scoring },
-        { 'name': 'Calculating embeddings', 'method': run_sentence_embedding }
+        { 'name': 'Calculating embeddings', 'method': run_sentence_embedding },
+        { 'name': 'Issues scoring', 'method': run_issues_scoring }
 ]
 
 

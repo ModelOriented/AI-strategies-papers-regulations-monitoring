@@ -8,6 +8,7 @@ from mars import db, logging, sentence_embeddings
 from mars.db import collections, db_fields
 from mars.db.db import fetch_batches_until_empty
 from mars.keyword_topic_model import KeywordTopicModel
+from mars.models_training.datasets import DocumentLevelDataset, targets
 
 logger = logging.new_logger(__name__)
 
@@ -61,7 +62,8 @@ def calculate_similarities_to_targets(
 
 
 class SimilarityCalculator:
-    def __init__(self, emb_type: db_fields.EmbeddingType):
+    def __init__(self, emb_type: db_fields.IssueSearchMethod):
+        assert emb_type != db_fields.IssueSearchMethod.KEYWORDS
         self.target_embeddings = dict()
         self.emb_type = emb_type
 
@@ -95,9 +97,7 @@ class SimilarityCalculator:
         sent[db_fields.ISSUES][self.emb_type][target] = similarity
 
 def load_deafult_issues():
-    # TODO Staszku Tutaj
-    pass
-
+    return targets[DocumentLevelDataset.jobin2019]
 
 def infer_issues_for_documents(
     key_min: int,
@@ -110,7 +110,6 @@ def infer_issues_for_documents(
     if issue_search_method == db_fields.IssueSearchMethod.KEYWORDS:
         keyword_model = KeywordTopicModel()
     else:
-
         simmilarity_calculator = SimilarityCalculator(issue_search_method)
 
     for doc_key in todo_docs:
