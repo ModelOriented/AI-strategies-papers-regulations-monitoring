@@ -12,18 +12,14 @@ jobs:
       - name: Get current branch
         id: branch
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
-      - name: Login to GCP
-        uses: google-github-actions/setup-gcloud@master
+      - name: Azure Login
+        uses: Azure/login@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          creds: ${{ secrets.azure_creds }}
       - name: Pull DVC
         id: pull_dvc
         run: |
           sudo snap install dvc --classic
-          mkdir -p .dvc/cache
-          gsutil -m cp -r gs://mair-dvc-storage/MARS/* .dvc/cache/
           dvc pull -v
       - name: Build images
         id: build_images
