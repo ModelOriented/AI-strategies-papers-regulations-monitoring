@@ -96,15 +96,20 @@ class SimilarityCalculator:
         similarity = self.calc_similarity(sent_embedding, target)
         sent[db_fields.ISSUES][self.emb_type][target] = similarity
 
-def load_deafult_issues():
+def load_default_issues():
     return targets[DocumentLevelDataset.jobin2019]
 
 def infer_issues_for_documents(
     key_min: int,
     key_max: int,
-    issue_search_method: db_fields.IssueSearchMethod,
-    issues: List[str] = load_deafult_issues(),
+    issue_search_method: db_fields.IssueSearchMethod = None,
+    issues: List[str] = load_default_issues(),
 ):
+    if issue_search_method is None:
+        for method in list(db_fields.IssueSearchMethod):
+            infer_issues_for_documents(key_min, key_max, method, issues)
+        return
+
     todo_docs = db.get_ids_of_docs_between(key_min, key_max)
 
     if issue_search_method == db_fields.IssueSearchMethod.KEYWORDS:

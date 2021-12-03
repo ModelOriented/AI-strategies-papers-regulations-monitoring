@@ -24,9 +24,7 @@ def run_sentence_embedding(doc_key):
 
 def run_issues_scoring(doc_key):
     from mars.similarity_calculation import infer_issues_for_documents
-    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.KEYWORDS)
-    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.LASER)
-    infer_issues_for_documents(doc_key, doc_key, db_fields.IssueSearchMethod.LABSE)
+    infer_issues_for_documents(doc_key, doc_key)
 
 steps = [
         { 'name': 'Segmentation', 'method': run_segmentation },
