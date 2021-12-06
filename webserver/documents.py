@@ -86,22 +86,19 @@ def get_definitions(key: int):
 
 @blueprint.route("/<int:key>/issues/models")
 def get_issues_models(key: int):
-    # get first sentence for given document
-    # if exists return keys of fields "issues"
-    # Example: ["labse", "laser", "keywords"]
-    # if not exist then return []
-
     query = (
         f"FOR u IN {collections.SENTENCES} "
         f'FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, "/")[1]) == {key} '
         f"LIMIT 1"
         f"RETURN u"
     )
-    sentence = mars.db.database.AQLQuery(query, 1)[0].getStore()
-    if sentence[ISSUES]:
-        issues = list(sentence[ISSUES].keys())
-    else:
-        issues = []
+    sentence = mars.db.database.AQLQuery(query, 1)
+
+    issues = []
+    if len(sentence) >= 1:
+        sentence = sentence[0].getStore()
+        if sentence.get(ISSUES):
+            issues = list(sentence[ISSUES].keys())
 
     return Response(json.dumps(issues), mimetype="application/json")
 
@@ -116,12 +113,16 @@ def get_issues(key: int, model: str):
     sentences = load_sentences(key)
     issues = {}
 
-    # prepere dicts for all issues
-    for issue in sentences[0][ISSUES].getStore()[model].keys():
-        issues[issue] = []
-
     for sentence in sentences:
+        if sentence.get(ISSUES) is None:
+            continue
+
+        if model not in sentence[ISSUES].getStore().keys():
+            continue
+
         for issue, value in sentence[ISSUES].getStore()[model].items():
+            if issue not in issues.keys():
+                issues[issue] = []
             issues[issue].append(
                 {
                     "segment": sentence[SEQUENCE_NUMBER],
