@@ -15,7 +15,11 @@ logger = logging.new_logger(__name__)
 
 def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float:
     """Calculates similarity between single sentence and query (both provided as embeddings)."""
-    return np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
+    return (
+        1
+        + np.matmul(np.array(sent_embedding), np.transpose(query_embedding))
+        / (np.linalg.norm(sent_embedding) * np.linalg.norm(query_embedding))
+    ) / 2
 
 
 def calculate_similarities_to_targets(
@@ -59,8 +63,6 @@ def calculate_similarities_to_targets(
     return all_similarities
 
 
-
-
 class SimilarityCalculator:
     def __init__(self, emb_type: db_fields.IssueSearchMethod):
         assert emb_type != db_fields.IssueSearchMethod.KEYWORDS
@@ -96,8 +98,10 @@ class SimilarityCalculator:
         similarity = self.calc_similarity(sent_embedding, target)
         sent[db_fields.ISSUES][self.emb_type][target] = similarity
 
+
 def load_default_issues():
     return targets[DocumentLevelDataset.jobin2019]
+
 
 def infer_issues_for_documents(
     key_min: int,
