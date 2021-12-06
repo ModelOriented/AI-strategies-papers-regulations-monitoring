@@ -22,47 +22,6 @@ def similarity(sent_embedding: np.ndarray, query_embedding: np.ndarray) -> float
     ) / 2
 
 
-def calculate_similarities_to_targets(
-    queries: List[str],
-    emb_type: db_fields.EmbeddingType = db_fields.EmbeddingType.LABSE,
-    key=db_fields.FILENAME,
-    filter=dict(),
-) -> Dict[str, Dict[str, float]]:
-    """Calculate similarities of all sentences from all processed texts to given targets.
-    Returns mapping: filename (or other choosen key) -> query -> list of similarities of all sentences in text.
-    Filters processed texts using filter parameter."""
-    target_embeddings = sentence_embeddings.get_sentence_to_embedding_mapping(
-        queries, emb_type
-    )
-    all_similarities = defaultdict(dict)
-    logging.debug("Loading targets similarities...")
-    for processed_text in tqdm(
-        db.collections.processed_texts.fetchByExample(filter, batchSize=100)
-    ):
-        if (
-            processed_text[db_fields.EMBEDDINGS] is None
-            or processed_text[db_fields.EMBEDDINGS][emb_type] is None
-        ):
-            logging.error(
-                f"Missing sentences embedding ({emb_type}) in {processed_text['_id']}"
-            )
-        else:
-            for (target_sentence, target_embedding) in target_embeddings.items():
-                try:
-                    scores = list(
-                        np.matmul(
-                            np.array(processed_text[db_fields.EMBEDDINGS][emb_type]),
-                            np.transpose(target_embedding),
-                        )
-                    )
-                    all_similarities[processed_text[key]][target_sentence] = scores
-                except Exception as e:
-                    logging.exception(e)
-    all_similarities = dict(all_similarities)
-
-    return all_similarities
-
-
 class SimilarityCalculator:
     def __init__(self, emb_type: db_fields.IssueSearchMethod):
         assert emb_type != db_fields.IssueSearchMethod.KEYWORDS
