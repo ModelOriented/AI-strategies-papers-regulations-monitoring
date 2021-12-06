@@ -123,10 +123,14 @@ def get_issues(key: int, model: str):
         for issue, value in sentence[ISSUES].getStore()[model].items():
             if issue not in issues.keys():
                 issues[issue] = []
+
+            if value <= threshold:
+                continue
+
             issues[issue].append(
                 {
                     "segment": sentence[SEQUENCE_NUMBER],
-                    "sentence": sentence[SENTENCE],
+                    "sentence": sentence[SENTENCE_NUMBER],
                     "probability": value,
                 }
             )
