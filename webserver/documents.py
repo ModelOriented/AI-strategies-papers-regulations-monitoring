@@ -10,29 +10,38 @@ from mars.db.db_fields import (
     SENTENCE_DOC_ID,
     SENTENCE_NUMBER,
     SEQUENCE_NUMBER,
-    IS_DEFINITION
+    IS_DEFINITION,
+    ISSUES,
 )
 
-blueprint = Blueprint('documents', __name__)
+blueprint = Blueprint("documents", __name__)
 
 
 def load_sentences(key: int) -> List:
     big_number = 1000000
 
-    query = f"FOR u IN {collections.SENTENCES} " \
-            f"FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, \"/\")[1]) == {key} " \
-            f"RETURN u"
+    query = (
+        f"FOR u IN {collections.SENTENCES} "
+        f'FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, "/")[1]) == {key} '
+        f"RETURN u"
+    )
 
     sentences = mars.db.database.AQLQuery(query, big_number)
     sentences_in_segment = []
     for j, sentence in enumerate(sentences):
         sentences_in_segment.append(
-            {SEQUENCE_NUMBER: sentence[SEQUENCE_NUMBER], SENTENCE_NUMBER: sentence[SENTENCE_NUMBER],
-             SENTENCE: sentence[SENTENCE], IS_DEFINITION: sentence[IS_DEFINITION]})
+            {
+                SEQUENCE_NUMBER: sentence[SEQUENCE_NUMBER],
+                SENTENCE_NUMBER: sentence[SENTENCE_NUMBER],
+                SENTENCE: sentence[SENTENCE],
+                IS_DEFINITION: sentence[IS_DEFINITION],
+                ISSUES: sentence[ISSUES],
+            }
+        )
     return sentences_in_segment
 
 
-@blueprint.route('/<int:key>/sentences')
+@blueprint.route("/<int:key>/sentences")
 def get_sentences(key: int):
     result = load_sentences(key)
     result.sort(key=lambda x: (x[SEQUENCE_NUMBER], x[SENTENCE_NUMBER]))
@@ -46,57 +55,83 @@ def get_sentences(key: int):
             d[s[SEQUENCE_NUMBER]].append(s[SENTENCE])
 
     d = list(map(list, d.values()))
-    return Response(json.dumps(d), mimetype='application/json')
+    return Response(json.dumps(d), mimetype="application/json")
 
 
-@blueprint.route('/<int:key>/definitions')
+@blueprint.route("/<int:key>/definitions")
 def get_definitions(key: int):
-    n = int(request.args.get('n') or 10)
-    threshold = float(request.args.get('threshold') or 0.5)
+    n = int(request.args.get("n") or 10)
+    threshold = float(request.args.get("threshold") or 0.5)
     result = load_sentences(key)
 
     dict_list = []
     for sentence in result:
-        if type(sentence[IS_DEFINITION]) is float and sentence[IS_DEFINITION] > threshold:  # ensure that it is a float
-            dict_list.append({'segment': sentence[SEQUENCE_NUMBER],
-                              'sentence': sentence[SENTENCE_NUMBER],
-                              'probability': sentence[IS_DEFINITION]})
+        if (
+            type(sentence[IS_DEFINITION]) is float
+            and sentence[IS_DEFINITION] > threshold
+        ):  # ensure that it is a float
+            dict_list.append(
+                {
+                    "segment": sentence[SEQUENCE_NUMBER],
+                    "sentence": sentence[SENTENCE_NUMBER],
+                    "probability": sentence[IS_DEFINITION],
+                }
+            )
     if len(dict_list) > 0:
-        dict_list.sort(key=lambda x: x['probability'], reverse=True)
-        return Response(json.dumps(dict_list[:n]), mimetype='application/json')
+        dict_list.sort(key=lambda x: x["probability"], reverse=True)
+        return Response(json.dumps(dict_list[:n]), mimetype="application/json")
     else:
         return Response(json.dumps([]))
 
 
-@blueprint.route('/<int:key>/issues/models')
+@blueprint.route("/<int:key>/issues/models")
 def get_issues_models(key: int):
     # get first sentence for given document
     # if exists return keys of fields "issues"
     # Example: ["labse", "laser", "keywords"]
     # if not exist then return []
-    return Response(json.dumps([]), mimetype='application/json')
+
+    query = (
+        f"FOR u IN {collections.SENTENCES} "
+        f'FILTER TO_NUMBER(SPLIT(u.{SENTENCE_DOC_ID}, "/")[1]) == {key} '
+        f"LIMIT 1"
+        f"RETURN u"
+    )
+    sentence = mars.db.database.AQLQuery(query, 1)[0].getStore()
+    if sentence[ISSUES]:
+        issues = list(sentence[ISSUES].keys())
+    else:
+        issues = []
+
+    return Response(json.dumps(issues), mimetype="application/json")
 
 
-@blueprint.route('/<int:key>/issues/<string:model>')
+@blueprint.route("/<int:key>/issues/<string:model>")
 def get_issues(key: int, model: str):
     # Upper limit of sentences for each issue
-    n = int(request.args.get('n') or 10)
+    n = int(request.args.get("n") or 10)
     # Minimum probability for each sentence
-    threshold = float(request.args.get('threshold') or 0.5)
+    threshold = float(request.args.get("threshold") or 0.5)
 
     sentences = load_sentences(key)
     issues = {}
 
-    for sentence in sentences:
-        # TODO
-        # ex.
-        # issues['Fairness'] = []
-        # issues['Fairness'].append({'segment': ..., 'sentence': ..., 'probability': ...})
-        pass
+    # prepere dicts for all issues
+    for issue in sentences[0][ISSUES].getStore()[model].keys():
+        issues[issue] = []
 
+    for sentence in sentences:
+        for issue, value in sentence[ISSUES].getStore()[model].items():
+            issues[issue].append(
+                {
+                    "segment": sentence[SEQUENCE_NUMBER],
+                    "sentence": sentence[SENTENCE],
+                    "probability": value,
+                }
+            )
     for issue, values in issues.items():
         if len(values) > 0:
-            values.sort(key=lambda x: x['probability'], reverse=True)
+            values.sort(key=lambda x: x["probability"], reverse=True)
             issues[issue] = values[:n]
 
-    return Response(json.dumps(issues), mimetype='application/json')
+    return Response(json.dumps(issues), mimetype="application/json")
