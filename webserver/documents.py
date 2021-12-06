@@ -66,3 +66,37 @@ def get_definitions(key: int):
         return Response(json.dumps(dict_list[:n]), mimetype='application/json')
     else:
         return Response(json.dumps([]))
+
+
+@blueprint.route('/<int:key>/issues/models')
+def get_issues_models(key: int):
+    # get first sentence for given document
+    # if exists return keys of fields "issues"
+    # Example: ["labse", "laser", "keywords"]
+    # if not exist then return []
+    return Response(json.dumps([]), mimetype='application/json')
+
+
+@blueprint.route('/<int:key>/issues/<string:model>')
+def get_issues(key: int, model: str):
+    # Upper limit of sentences for each issue
+    n = int(request.args.get('n') or 10)
+    # Minimum probability for each sentence
+    threshold = float(request.args.get('threshold') or 0.5)
+
+    sentences = load_sentences(key)
+    issues = {}
+
+    for sentence in sentences:
+        # TODO
+        # ex.
+        # issues['Fairness'] = []
+        # issues['Fairness'].append({'segment': ..., 'sentence': ..., 'probability': ...})
+        pass
+
+    for issue, values in issues.items():
+        if len(values) > 0:
+            values.sort(key=lambda x: x['probability'], reverse=True)
+            issues[issue] = values[:n]
+
+    return Response(json.dumps(issues), mimetype='application/json')
