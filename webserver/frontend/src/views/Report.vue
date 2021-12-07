@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Report',
   label: 'Report',
@@ -46,6 +48,7 @@ export default {
     defaultVisibleSegments () {
       return [...new Set(this.definitions.map(d => d.segment).map(x => [x - 1, x, x + 1]).flat())].sort()
     }
+    ...mapGetters(['api'])
   },
   methods: {
     updateCount (v) {
@@ -73,13 +76,13 @@ export default {
     loadData () {
       const docKey = this.$route.query.document
       if (!docKey) return
-      fetch('/api/documents/' + docKey + '/sentences', { method: 'GET' })
+      fetch(this.api + '/documents/' + docKey + '/sentences', { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.segments = response
         })
         .catch(console.error)
-      fetch('/api/documents/' + docKey + '/definitions?n=' + this.count, { method: 'GET' })
+      fetch(this.api + '/documents/' + docKey + '/definitions?n=' + this.count, { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.definitions = response

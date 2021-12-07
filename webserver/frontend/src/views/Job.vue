@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Job',
   label: 'Processing status',
@@ -34,11 +36,12 @@ export default {
       }
     }
   },
+  computed: mapGetters(['api']),
   methods: {
     update () {
       const docKey = this.$route.query.document
       if (!docKey) return
-      fetch('/api/jobs/' + docKey + '/status', { method: 'GET' })
+      fetch(this.api + '/jobs/' + docKey + '/status', { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.data = response
