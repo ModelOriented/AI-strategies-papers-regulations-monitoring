@@ -1,6 +1,6 @@
 <template>
   <div class="document-viewer">
-    <div class="menu">
+    <div class="menu" v-if="menu">
       <span @click="scrollToHighlight">Find highlighted</span>
       <span @click="$emit('exit')">Exit</span>
     </div>
@@ -20,7 +20,8 @@ export default {
   props: {
     segments: Array,
     highlighted: Array,
-    scroll: Boolean
+    scroll: Boolean,
+    menu: Boolean
   },
   computed: {
     highlightedKeys () {

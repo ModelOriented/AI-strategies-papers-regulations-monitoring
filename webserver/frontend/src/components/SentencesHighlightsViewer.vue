@@ -6,7 +6,7 @@
         <span class="sentence-highlighted" v-for="s, i in frag.highlighted" :key="'h_' + i">{{ s }}</span>
         <span class="sentence-after" v-for="s, i in frag.after" :key="'a_' + i">{{ s }}</span>
       </div>
-      <DocumentViewer v-else :segments="segments" :highlighted="[frag.original]" scroll @exit="opened[frag.index] = false" />
+      <DocumentViewer v-else :segments="segments" :highlighted="[frag.original]" scroll menu @exit="opened[frag.index] = false" />
     </div>
   </div>
 </template>
