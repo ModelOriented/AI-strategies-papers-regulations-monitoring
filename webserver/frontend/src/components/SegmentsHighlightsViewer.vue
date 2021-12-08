@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     defaultVisibleSegments () {
-      return [...new Set(this.highlighted.map(this.getVisibleRangeForSentence).flat())].sort()
+      return [...new Set(this.highlighted.map(this.getVisibleRangeForSentence).flat())].sort((a, b) => a - b)
     },
     highlightedKeys () {
       return this.highlighted.map(d => d.segment + '_' + d.sentence).reduce((agg, v) => ({ ...agg, [v]: true }), {})
@@ -49,7 +49,7 @@ export default {
       if (sentence === this.segments[segment].length - 1 && segment < this.segments.length - 1) {
         range.push(segment + 1)
       }
-      range.sort()
+      range.sort((a, b) => a - b)
       return range
     },
     updateGroups () {

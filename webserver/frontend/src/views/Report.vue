@@ -9,13 +9,15 @@
       </div>
       <span class="col-md-4 test-start">definitions</span>
     </div>
-    <SegmentsHighlightsViewer :segments="segments" :highlighted="definitions" />
+    <SentencesHighlightsViewer v-if="viewer==='sentences'" :segments="segments" :highlighted="definitions" />
+    <SegmentsHighlightsViewer v-else :segments="segments" :highlighted="definitions" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import SegmentsHighlightsViewer from '@/components/SegmentsHighlightsViewer.vue'
+import SentencesHighlightsViewer from '@/components/SentencesHighlightsViewer.vue'
 
 export default {
   name: 'Report',
@@ -24,7 +26,8 @@ export default {
     return {
       segments: [],
       definitions: [],
-      count: 10
+      count: 10,
+      viewer: 'sentences'
     }
   },
   watch: {
@@ -59,7 +62,7 @@ export default {
   created () {
     this.loadData()
   },
-  components: { SegmentsHighlightsViewer }
+  components: { SegmentsHighlightsViewer, SentencesHighlightsViewer }
 }
 </script>
 <style lang="sass">
