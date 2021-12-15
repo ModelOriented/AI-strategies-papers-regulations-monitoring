@@ -13,3 +13,5 @@ rm chromedriver.zip
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
 dpkg -i chrome.deb
 rm chrome.deb
+# gi
+apt-get install -y python3-gi python3-gi-cairo gir1.2-secret-1 pkg-config libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
