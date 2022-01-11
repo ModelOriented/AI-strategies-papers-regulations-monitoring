@@ -2,3 +2,6 @@
     remote = gc
 ['remote "gc"']
     url = gs://mair-dvc-storage/MARS
+['remote "azure"']
+    url = azure://dvcartifacts/1
+    account_name = dvcartifacts
