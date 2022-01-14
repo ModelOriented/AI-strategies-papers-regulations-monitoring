@@ -8,10 +8,12 @@ conn = Connection(
     password=config.arango_password,
     arangoURL=config.arango_url,
 )
+
+
 try:
-    database = conn.databases["mars"]  # type: Database
+    database = conn.databases[config.arango_db_name]  # type: Database
 except KeyError:
-    database = conn.createDatabase("mars")  # type: Database
+    database = conn.createDatabase(config.arango_db_name)  # type: Database
 
 
 def get_collection_or_create(
