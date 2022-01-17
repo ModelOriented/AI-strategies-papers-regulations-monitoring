@@ -1,5 +1,5 @@
 from enum import Enum
-
+from mars.config import data_dir
 import pandas as pd
 
 
@@ -9,8 +9,8 @@ class DocumentLevelDataset(Enum):
 
 
 labels_paths = {
-    DocumentLevelDataset.ethics_ai_ethics: "data/labels_hagendorffEthicsAIEthics2020.csv",
-    DocumentLevelDataset.jobin2019: "data/jobin2019.csv",
+    DocumentLevelDataset.ethics_ai_ethics: data_dir + "/labels_hagendorffEthicsAIEthics2020.csv",
+    DocumentLevelDataset.jobin2019: data_dir + "/jobin2019.csv",
 }
 
 labels = {

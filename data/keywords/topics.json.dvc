@@ -1,0 +1,5 @@
+outs:
+- md5: ba7bf706a33158fe3e704e7fe780cb07
+  size: 1220
+  path: topics.json
+  isexec: true
