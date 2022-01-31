@@ -32,6 +32,7 @@ for doc in list(
         doc[db_fields.COUNTRY] = root.find(".//CREATED_BY/PREFLABEL").text
         doc[db_fields.TITLE] = root.find(".//EXPRESSION_TITLE/VALUE").text
         doc[db_fields.START_DATE] = root.find(".//WORK_DATE_DOCUMENT/VALUE").text
+        doc["legal_type"] = root.find(".//WORK_HAS_RESOURCE-TYPE/PREFLABEL")
         doc.patch()
 
     except Exception as e:
