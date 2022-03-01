@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Upload',
   label: 'Upload your document',
@@ -34,6 +36,7 @@ export default {
       errors: { name: undefined, file: undefined }
     }
   },
+  computed: mapGetters(['api']),
   methods: {
     validateName () {
       const name = this.$refs.inputName.value
@@ -72,7 +75,7 @@ export default {
       const data = new FormData()
       data.append('file', this.$refs.inputFile.files[0])
       data.append('name', this.$refs.inputName.value)
-      fetch('/api/jobs/', { method: 'POST', body: data })
+      fetch(this.api + '/jobs/', { method: 'POST', body: data })
         .then(response => {
           if (response.status === 413) return { error: 'File too large' }
           return response.json()
