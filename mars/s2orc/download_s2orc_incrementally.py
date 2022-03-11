@@ -1,22 +1,15 @@
 """
-
-
-Example of how one would download & process a single batch of S2ORC to filter to specific field of study.
-Can be useful for those who can't store the full dataset onto disk easily.
-Please adapt this to your own field of study.
-
-
 Creates directory structure:
 
 |-- metadata/
     |-- raw/
         |-- metadata_0.jsonl.gz      << input; deleted after processed
-    |-- medicine/
+    |-- ai/
         |-- metadata_0.jsonl         << output
 |-- pdf_parses/
     |-- raw/
         |-- pdf_parses_0.jsonl.gz    << input; deleted after processed
-    |-- medicine/
+    |-- a/
         |-- pdf_parses_0.jsonl       << output
 
 """
@@ -73,7 +66,6 @@ def process_batch(batch: dict, matcher):
             if paper_id in paper_ids_to_keep:
                 f_out.write(line)
 
-    # now delete the raw files to clear up space for other shards
     os.remove(batch['input_metadata_path'])
     os.remove(batch['input_pdf_parses_path'])
 
@@ -91,13 +83,12 @@ if __name__ == '__main__':
     os.makedirs(PDF_PARSES_INPUT_DIR, exist_ok=True)
     os.makedirs(PDF_PARSES_OUTPUT_DIR, exist_ok=True)
 
-    # TODO: make sure to put the links we sent to you here
+    # make sure to put the links s2orc sent to you here
     # there are 100 shards with IDs 0 to 99. make sure these are paired correctly.
     download_linkss = [
         {'metadata': '<link to metadata>','pdf_parses': '<link pdfs>'},
         ]
-    # turn these into batches of work
-    # TODO: feel free to come up with your own naming convention for 'input_{metadata|pdf_parses}_path'
+
     batches = [{
         'input_metadata_url': download_links['metadata'],
         'input_metadata_path': os.path.join(METADATA_INPUT_DIR,
