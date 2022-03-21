@@ -1,0 +1,4 @@
+outs:
+- md5: 221206ff2eacb5f34fb5f0d719cf13cc
+  size: 91605448
+  path: s2orc_citations_filtered_with_mag_id.csv
