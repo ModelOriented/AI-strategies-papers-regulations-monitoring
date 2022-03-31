@@ -1,0 +1,1 @@
+This folder contains Notebooks concentrated around Have Your Say consultation about White Paper and AI ACT. To know more detailed information visit https://www.notion.so/sgizinski/Have-your-say-41ea9034b7d743b19b971a7f187337e7
