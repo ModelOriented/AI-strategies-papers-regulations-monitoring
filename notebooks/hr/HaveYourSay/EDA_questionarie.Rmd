@@ -1,0 +1,370 @@
+---
+title: "EDA"
+author: "Hubert Ruczyński"
+date: "9 01 2022"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r eval = TRUE, results='hide', imports, include=FALSE}
+#setwd("C:/Users/Hubert/Dropbox/DarlingProject")
+setwd("C:/Users/hrucz/Dropbox/DarlingProject")
+contr <- read.csv("contributions-AIConsult2020.csv", sep=";")
+library(ggplot2)
+library(DALEX)
+library(ztable)
+library(magrittr)
+```
+
+# Languages
+Almost 800 out of 1217 questionnaires were answered in English.
+
+```{r}
+Languages <- as.data.frame(table(contr$Language))
+Languages
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(Languages, aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Document Language") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Language") + 
+  ylab("Frequency")
+```
+
+# User Type
+Despite anonymous users, most interested faction were people connected to business (organization + association), Academic/Research Institutions, Non governmental organisations and regular EU Citizens.
+
+```{r}
+UType <- as.data.frame(table(contr$User.type))
+UType
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(UType, aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("User Type") +
+  ggtitle("User Types") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("User Type") + 
+  ylab("Frequency")
+```
+
+# Organization size
+Large organisations were the most interested, however the medium ones were  the least interested group with small and micro almost doubling their frequency.
+
+```{r}
+OrgSize <- as.data.frame(table(contr$Organisation.size))
+OrgSize
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(OrgSize[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Organization Size") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Size") + 
+  ylab("Frequency")
+```
+
+# Country of origin
+The most interested countries were the leading European countries such as Belgium, Germany and France. One of the biggest faction were also people from the USA and surprisingly even people outside of Europe were involved in this questionnaire.
+
+```{r}
+Country <- as.data.frame(table(contr$Country))
+Country
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(Country[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Origin Country") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Country") + 
+  ylab("Frequency")
+```
+
+# Privacy
+About 60% of correspondents agreed to use their personal information.
+
+```{r}
+Privacy <- as.data.frame(table(contr$Publication.privacy.settings))
+Privacy
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(Privacy, aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Privacy settings") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Privacy") + 
+  ylab("Frequency")
+```
+
+# Importance Questions
+During 1-5 questions analysis we found out which questions are most commonly supported and which ones are more disagreed upon. To make a brief selection we counted sum of agreement points (1-5) and focused on top 3 questions in each category. 
+
+```{r}
+Questions <- contr[,-c(1,2,3,4,5,6,7,8,9,10,11,12,19,26,30,36,43,45,47,49,56,57,
+                       58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73)]
+Questions <- Questions[,-c(27,28,29,30)]
+Q <- as.data.frame(Questions)
+colnames(Q) <- 1:31
+Q[Q == "5 - Very important"] <- 5
+Q[Q == "4 - Important"] <- 4
+Q[Q == "3 - Neutral"] <- 3
+Q[Q == "2 - Not important"] <- 2
+Q[Q == "1 - Not important at all"] <- 1
+Q[Q == "No opinion"] <- ""
+Q[Q == ""] <- ""
+Q <- as.data.frame(Q)
+Qmat <- matrix(as.integer(unlist(Q)), ncol = 31)
+namez <- 1:31
+Mean <- colMeans(Qmat,na.rm = TRUE)
+Mean
+```
+
+The most disagreeable statements were mentioned in questions number 20,13 and 16 These questions are: 
+
+In your opinion  how important are each of these tasks of the specialised Digital  Innovation Hubs mentioned in section 4 D of the White Paper in relation to SMEs Provide information about equity financing for AI startups
+
+In your opinion how important are the three actions proposed in sections 4 B  4 C  and 4 E of the White Paper on AI  1 5  Support the establishment of a lighthouse  research centre that is world class and able to attract the best minds
+
+In your opinion  how important are each of these tasks of the specialised Digital  Innovation Hubs mentioned in section 4 D of the White Paper in relation to SMEs   Help to raise SME s awareness about potential benefits of AI
+
+
+The most agreeable statements were mentioned in questions number 29,30 and 7
+
+In your opinion  how important are the following mandatory requirements of a  possible future regulatory framework for AI  as section 5 D of the White Paper  Information on the purpose and the nature of AI systems
+
+In your opinion  how important are the following mandatory requirements of a 
+possible future regulatory framework for AI  as section 5 D of the White Paper 
+Robustness and accuracy of AI systems
+
+In your opinion  how important is it in each of these areas to align policies  and strengthen coordination as described in section 4 A of the White Paper  Strengthen excellence in research
+
+```{r}
+df <- data.frame(Mean,namez)
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df, aes(x=namez,y=Mean)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Document Language") +
+  xlab("Question number") + 
+  ylab("Mean importance")
+```
+
+From second part of this analysis we can see that if we look at % distribution of given rating our assumptions were quiet accurate. We can see big difference between highest importance in this two groups. Although most of the respondents generally thought that the discussed issues are important, we can see that in the less important matter groups they were quiet close to being neutral / slightly important. The heatmap also provides us some information about the importance.
+
+```{r}
+Q <- as.data.frame(Qmat)
+Occurances <- rbind(table(Q$V1),table(Q$V2),table(Q$V3),table(Q$V4),table(Q$V5),table(Q$V6),
+      table(Q$V7),table(Q$V8),table(Q$V9),table(Q$V10),table(Q$V11),table(Q$V12),
+      table(Q$V13),table(Q$V14),table(Q$V15),table(Q$V16),table(Q$V17),table(Q$V18),
+      table(Q$V19),table(Q$V20),table(Q$V21),table(Q$V22),table(Q$V23),table(Q$V24),
+      table(Q$V25),table(Q$V26),table(Q$V27),table(Q$V28),table(Q$V29),table(Q$V30),
+      table(Q$V31))
+Occurances <- as.data.frame(Occurances)
+Occurances$sum <- rowSums(Occurances)
+Oc_perc <- Occurances/Occurances$sum
+Oc_perc <- round(Oc_perc[,c(1,2,3,4,5)]*100,1)
+
+# Percentages of how important are these topics
+#Oc_perc
+
+# Most disagreeable
+Oc_perc[c(20,13,16),]
+# Most agreeable
+Oc_perc[c(29,30,7),]
+
+heatmap(as.matrix(Oc_perc),keep.dendro = FALSE, margins = c(5,5))
+```
+
+# Pytania otwarte
+## Do you think that the concerns expressed above can be addressed by applicable EU legislation   If not  do you think that there should be specific new rules for AI systems 
+
+Respondents clearly see the need for a new legislation specific for AI systems
+
+```{r}
+df <- as.data.frame(table(contr[,44]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Do you think that the concerns expressed above can be addressed by applicable 
+  EU legislation  If not  do you think that there should be specific new rules for AI systems ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "If you think that new rules are necessary for AI system  do you agree that  the introduction of new compulsory requirements should be limited to high risk  applications  where the possible harm caused by the AI system is particularly  high  "
+
+Respondents are divided with tendency towards the support of the statement that new compulsory requirements should be limited to high risk applications
+
+```{r}
+df2 <- as.data.frame(table(contr[,46]))
+df2
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df2[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("If you think that new rules are necessary for AI system  do you agree 
+  that the introduction of new compulsory requirements should be limited to high 
+  risk applications  where the possible harm caused by the AI system is 
+  particularly high  ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "Do you agree with the approach to determine  high risk  AI applications  proposed in Section 5 B of the White Paper " 
+
+Respondents agree with the approach to determine high risk AI application as in Section 5B of the White Paper
+
+```{r}
+df3 <- as.data.frame(table(contr[,48]))
+df3
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df3[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Do you agree with the approach to determine  high risk  AI applications 
+  proposed in Section 5 B of the White Paper ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "Do you think that the current national liability rules should be adapted  for the operation of AI to better ensure proper compensation for damage and a fair allocation of liability   " 
+
+Respondents agree that current nation liability rules should be adapted for the operation of AI
+
+```{r}
+df <- as.data.frame(table(contr[,70]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Do you think that the current national liability rules should be adapted 
+  for the operation of AI to better ensure proper compensation for damage and a 
+  fair allocation of liability   ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+
+```
+
+## "Do you think that the current EU legislative framework for liability   Product Liability Directive  should be amended to better cover the risks engendered by certain AI applications " 
+
+Respondents agree that current EU legislative framework should cover the risks endangered by certain AI apps better
+
+
+```{r}
+df <- as.data.frame(table(contr[,68]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Do you think that the current EU legislative framework for liability  
+  Product Liability Directive  should be amended to better cover the risks 
+  engendered by certain AI applications ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "Do you think that the safety legislative framework should consider new risk  assessment procedures for products subject to important changes during their lifetime "
+
+Respondents almost totally agree that the safety legislative framework should consider new risk assessment procedures
+
+```{r}
+df <- as.data.frame(table(contr[,66]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("Do you think that the safety legislative framework should consider new 
+  risk assessment procedures for products subject to important changes during their lifetime ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+## "The current product safety legislation already supports an extended concept  of safety protecting against all kind of risks arising from the product according  to its use  However  which particular risks stemming from the use of artificial  intelligence do you think should be further spelled out to provide more legal certainty   "
+
+Respondents points out that there should be provided more legal certainty inbthe area of Mental health risks and Personal security risks
+
+```{r}
+df <- as.data.frame(table(contr[,64]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("The current product safety legislation already supports an extended concept 
+  of safety protecting against all kind of risks arising from the product according to 
+  its use  However  which particular risks stemming from the use of artificial 
+  intelligence do you think should be further spelled out to provide more legal 
+  certainty   ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "What is the best way to ensure that AI is trustworthy  secure and in respect  of European values and rules " 
+
+Vast majority agrees that a combination of ex-ante compliance and ex-post enforcement mechanisms will be enough
+
+```{r eval = TRUE, results='hide'}
+df <- as.data.frame(table(contr[,61]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("What is the best way to ensure that AI is trustworthy  secure and in 
+  respect of European values and rules ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
+
+## "In addition to the existing EU legislation  in particular the data protection  framework  including the General Data Protection Regulation and the Law Enforcement  Directive  or  where relevant  the new possibly mandatory requirements foreseen  above  see question above   do you think that the use of remote biometric  identification systems  e g  face recognition  and other technologies which may  be used in public spaces need to be subject to further EU level guidelines or  regulation "
+
+In the case of usage of remote biometric identification systems like face  recognition the respondents were pretty inconclusive. Generally they are against its overwhelming presence, but it varies from the option of total ban on it by some certain cases to other ideas.
+
+```{r eval = TRUE, results='hide'}
+df <- as.data.frame(table(contr[,57]))
+df
+```
+```{r eval = TRUE, echo=FALSE}
+ggplot(df[-1,], aes(x=Var1, y=Freq)) + 
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  ggtitle("In addition to the existing EU legislation  in particular the data 
+  protection framework  including the General Data Protection Regulation and 
+  the Law Enforcement Directive  or  where relevant  the new possibly mandatory 
+  requirements foreseen above  see question above   do you think that the use of 
+  remote biometric identification systems  e g  face recognition  and other 
+  technologies which may be used in public spaces need to be subject to further 
+  EU level guidelines or regulation ") +
+  coord_flip() + aes(stringr::str_wrap(Var1, 50), Freq) +
+  xlab("Opinion") + 
+  ylab("Frequency")
+```
