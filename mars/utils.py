@@ -1,8 +1,11 @@
 import os
+from pathlib import Path
 import re
 import time
 import semanticscholar as sch
 import pdfminer
+
+ROOT_DIR = Path(__file__).absolute().parent.parent
 
 
 def get_number_of_files(dir: str) -> int:
