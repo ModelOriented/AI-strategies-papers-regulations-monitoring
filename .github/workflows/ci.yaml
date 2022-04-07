@@ -19,8 +19,10 @@ jobs:
       - name: Pull DVC
         id: pull_dvc
         run: |
-          sudo apt-get install -y python-gi python-gi-cairo gir1.2-secret-1 pkg-config libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
-          sudo snap install dvc --classic
+          sudo wget https://dvc.org/deb/dvc.list -O /etc/apt/sources.list.d/dvc.list
+          wget -qO - https://dvc.org/deb/iterative.asc | sudo apt-key add -
+          sudo apt update
+          sudo apt install -y dvc
           dvc pull -v
       - name: Build images
         id: build_images
