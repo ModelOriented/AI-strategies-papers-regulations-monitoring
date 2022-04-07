@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'YourDocuments',
   label: 'Your documents',
@@ -33,9 +35,10 @@ export default {
       updaterId: null
     }
   },
+  computed: mapGetters(['api']),
   methods: {
     update () {
-      fetch('/api/jobs/', { method: 'GET' })
+      fetch(this.api + '/jobs/', { method: 'GET' })
         .then(response => response.json())
         .then(response => {
           this.data = response
@@ -49,7 +52,7 @@ export default {
       this.$router.push({ path: '/report', query: { document: key } })
     },
     deleteDoc (key) {
-      fetch('/api/jobs/' + key, { method: 'DELETE' }).catch(console.error)
+      fetch(this.api + '/jobs/' + key, { method: 'DELETE' }).catch(console.error)
     }
   },
   created () {

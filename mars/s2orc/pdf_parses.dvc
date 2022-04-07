@@ -1,0 +1,5 @@
+outs:
+- md5: a57b2d6161c170d87dffd08b1e509446.dir
+  size: 1203719564
+  nfiles: 100
+  path: pdf_parses
