@@ -1,0 +1,4 @@
+outs:
+- md5: 4acccde3ed166e1a01e427e9ed67a483
+  size: 56662081
+  path: doi_to_authorship.json
