@@ -7,9 +7,9 @@ stages:
     outs:
     - data/s2orc/s2orc_ai_prefiltered.csv
   process-spacy-s2orc:
-    cmd: python scripts/s2orc/proces_spacy_docs.py
+    cmd: python scripts/s2orc/process_spacy_docs.py
     deps:
     - data/s2orc/s2orc_ai_prefiltered.csv
-    - scripts/s2orc/proces_spacy_docs.py
+    - scripts/s2orc/process_spacy_docs.py
     outs:
     - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
