@@ -12,11 +12,14 @@ OUT_PATH = "data/s2orc/extracted.csv"
 
 
 def extract_noun_chunks(doc):
-    return [
-        chunk.text
-        for chunk in textacy.extract.basics.noun_chunks(doc)
-        if not len(chunk) == 1 or chunk[0].pos_ in {"PROPN", "NOUN"}
-    ]
+    try:
+        return [
+            chunk.text
+            for chunk in textacy.extract.basics.noun_chunks(doc)
+            if not len(chunk) == 1 or chunk[0].pos_ in {"PROPN", "NOUN"}
+        ]
+    except AttributeError:
+        return []
 
 
 df = joblib.load(IN_PATH)
