@@ -1,7 +1,9 @@
 import pandas as pd
 import spacy
 import joblib
+from tqdm import tqdm 
 
+tqdm.pandas()
 import mars.s2orc.loading
 
 OUT_PATH = 'data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl'
