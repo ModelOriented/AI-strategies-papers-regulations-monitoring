@@ -14,3 +14,16 @@ stages:
     - path: data/s2orc/s2orc_ai_prefiltered.csv
       md5: 372b0a56816c5ecd1086344bea24498b
       size: 90660899
+  process-spacy-s2orc:
+    cmd: python scripts/s2orc/process_spacy_docs.py
+    deps:
+    - path: data/s2orc/s2orc_ai_prefiltered.csv
+      md5: 372b0a56816c5ecd1086344bea24498b
+      size: 90660899
+    - path: scripts/s2orc/process_spacy_docs.py
+      md5: 6cdca4e9cdddb32a0626eb84a6d7a450
+      size: 509
+    outs:
+    - path: data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+      md5: 9b235ec0d22b5636aa20daa798aae9ab
+      size: 5558460169
