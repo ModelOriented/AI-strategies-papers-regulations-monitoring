@@ -17,7 +17,7 @@ def process(text):
         return en(text)
     except Exception:
         print("Error: {}".format(text))
-        return []
+        return ""
 
 df2['doc'] = df2['abstract'].progress_apply(process)
 
