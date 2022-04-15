@@ -13,3 +13,10 @@ stages:
     - scripts/s2orc/process_spacy_docs.py
     outs:
     - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+  extract-keywords-s2orc:
+    cmd: python scripts/s2orc/extract_keywords.py
+    deps:
+    - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+    - scripts/s2orc/extract_keywords.py
+    outs:
+    - data/s2orc/extracted.csv
