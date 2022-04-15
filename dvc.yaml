@@ -1,0 +1,8 @@
+stages:
+  prepare-s2orc:
+    cmd: python scripts/s2orc/prepare_full_csv.py
+    deps:
+    - mars/s2orc/metadata/ai/
+    - scripts/s2orc/prepare_full_csv.py
+    outs:
+    - data/s2orc/s2orc_ai_prefiltered.csv
