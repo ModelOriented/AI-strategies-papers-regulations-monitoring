@@ -28,9 +28,9 @@ en = spacy.load("en_core_web_md")
 
 df["noun_chunks"] = df["doc"].progress_apply(extract_noun_chunks)
 df["keywords_text_rank"] = df["doc"].progress_apply(
-    textacy.extract.keyterms.textrank.textrank
+    textacy.extract.keyterms.textrank
 )
 
 del df["doc"]
 
-pd.to_csv(OUT_PATH, index=False)
+df.to_csv(OUT_PATH, index=False)
