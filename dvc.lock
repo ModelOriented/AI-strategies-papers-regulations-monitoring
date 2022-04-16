@@ -21,9 +21,22 @@ stages:
       md5: 372b0a56816c5ecd1086344bea24498b
       size: 90660899
     - path: scripts/s2orc/process_spacy_docs.py
-      md5: 6cdca4e9cdddb32a0626eb84a6d7a450
+      md5: 58d88a3a785fd99d45feb05258bfd82f
       size: 509
     outs:
     - path: data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
-      md5: 9b235ec0d22b5636aa20daa798aae9ab
-      size: 5558460169
+      md5: ebfa849796b26e87f519e3372d811bad
+      size: 5558460171
+  extract-keywords-s2orc:
+    cmd: python scripts/s2orc/extract_keywords.py
+    deps:
+    - path: data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+      md5: ebfa849796b26e87f519e3372d811bad
+      size: 5558460171
+    - path: scripts/s2orc/extract_keywords.py
+      md5: 525a6a84dd496d9107cca48c2f7ee473
+      size: 791
+    outs:
+    - path: data/s2orc/extracted.csv
+      md5: bbbd22b86b56f7ca385f8326b52821e4
+      size: 124316244
