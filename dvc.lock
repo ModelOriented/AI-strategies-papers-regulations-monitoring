@@ -1,0 +1,42 @@
+schema: '2.0'
+stages:
+  prepare-s2orc:
+    cmd: python scripts/s2orc/prepare_full_csv.py
+    deps:
+    - path: mars/s2orc/metadata/ai/
+      md5: 1bff989bf79e7b8cedccb963caf2c284.dir
+      size: 193936339
+      nfiles: 100
+    - path: scripts/s2orc/prepare_full_csv.py
+      md5: 8d9261a81f19497ba68a1c0db1aaa4d4
+      size: 417
+    outs:
+    - path: data/s2orc/s2orc_ai_prefiltered.csv
+      md5: 372b0a56816c5ecd1086344bea24498b
+      size: 90660899
+  process-spacy-s2orc:
+    cmd: python scripts/s2orc/process_spacy_docs.py
+    deps:
+    - path: data/s2orc/s2orc_ai_prefiltered.csv
+      md5: 372b0a56816c5ecd1086344bea24498b
+      size: 90660899
+    - path: scripts/s2orc/process_spacy_docs.py
+      md5: 58d88a3a785fd99d45feb05258bfd82f
+      size: 509
+    outs:
+    - path: data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+      md5: ebfa849796b26e87f519e3372d811bad
+      size: 5558460171
+  extract-keywords-s2orc:
+    cmd: python scripts/s2orc/extract_keywords.py
+    deps:
+    - path: data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+      md5: ebfa849796b26e87f519e3372d811bad
+      size: 5558460171
+    - path: scripts/s2orc/extract_keywords.py
+      md5: 525a6a84dd496d9107cca48c2f7ee473
+      size: 791
+    outs:
+    - path: data/s2orc/extracted.csv
+      md5: bbbd22b86b56f7ca385f8326b52821e4
+      size: 124316244
