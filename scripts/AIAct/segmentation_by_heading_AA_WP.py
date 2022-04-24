@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
+#testing git
+
 white_paper_list=[['li', 'Heading1'],['li','ListParagraph']]
 
 def segments_by_class(filename,class_list=[['li', 'ManualHeading3'], ['li', 'ManualConsidrant'],['Titrearticle']]):    #default class list for AI act 
