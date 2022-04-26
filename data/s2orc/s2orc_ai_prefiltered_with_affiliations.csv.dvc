@@ -1,0 +1,4 @@
+outs:
+- md5: 9d02b26fd0c4966be054e8194966433f
+  size: 104988949
+  path: s2orc_ai_prefiltered_with_affiliations.csv
