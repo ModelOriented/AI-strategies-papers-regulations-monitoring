@@ -8,12 +8,12 @@ stages:
       size: 193936339
       nfiles: 100
     - path: scripts/s2orc/prepare_full_csv.py
-      md5: 8d9261a81f19497ba68a1c0db1aaa4d4
-      size: 417
+      md5: 3c386627441bca60dec628c877680bd9
+      size: 380
     outs:
     - path: data/s2orc/s2orc_ai_prefiltered.csv
-      md5: 372b0a56816c5ecd1086344bea24498b
-      size: 90660899
+      md5: cb3f5a7263204bd78aae379dfd9d8669
+      size: 151106297
   process-spacy-s2orc:
     cmd: python scripts/s2orc/process_spacy_docs.py
     deps:
