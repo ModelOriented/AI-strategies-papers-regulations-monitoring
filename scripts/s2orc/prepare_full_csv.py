@@ -8,7 +8,6 @@ dfs = [pd.read_json(file, lines=True, compression=None) for file in tqdm(files_t
 df = pd.concat(dfs)
 df['in_citations_count'] = df['inbound_citations'].str.len()
 
-df = df[df['in_citations_count']!=0]
 df = df[~df.abstract.isna()]
 
 df.to_csv('data/s2orc/s2orc_ai_prefiltered.csv')
