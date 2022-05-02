@@ -1,5 +1,6 @@
 [core]
     remote = azure
+    autostage = true
 ['remote "azure"']
     url = azure://dvcartifacts/1
     account_name = dvcartifacts
