@@ -8,7 +8,7 @@ import textacy.extract.keyterms
 tqdm.pandas()
 
 IN_PATH = "data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl"
-OUT_PATH = "data/s2orc/extracted.csv"
+OUT_PATH = "data/s2orc/extracted_phrases.csv"
 
 
 def extract_noun_chunks(doc):
@@ -27,10 +27,10 @@ en = spacy.load("en_core_web_md")
 
 
 df["noun_chunks"] = df["doc"].progress_apply(extract_noun_chunks)
-df["keywords_text_rank"] = df["doc"].progress_apply(
-    textacy.extract.keyterms.textrank
-)
+# df["keywords_text_rank"] = df["doc"].progress_apply(
+#     textacy.extract.keyterms.textrank
+# )
 
 del df["doc"]
 
-df.to_csv(OUT_PATH, index=False)
+df.to_parquet(OUT_PATH, index=False)
