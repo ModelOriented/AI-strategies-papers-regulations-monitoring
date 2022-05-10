@@ -25,7 +25,7 @@ stages:
   process-spacy-docs-big-s2orc:
     cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_docs.joblib --spacy-model-name en_core_web_md
     deps:
-    - python scripts/s2orc/process_spacy_docs.py
+    - scripts/s2orc/process_spacy_docs.py
     - data/s2orc/big_ai_dataset.parquet
     outs:
     - data/s2orc/big_ai_spacy_docs.joblib
