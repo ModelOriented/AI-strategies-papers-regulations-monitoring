@@ -1,7 +1,10 @@
-/ai_papers_meta.csv
 /s2orc_citations_filtered_with_mag_id.csv
 /s2orc_citations_filtered_with_mag_id_with_spacy.pkl
 /s2orc_ai_prefiltered.csv
 /extracted.csv
 /doi_to_authorship.json
 /s2orc_ai_prefiltered_with_affiliations.csv
+/big_ai_dataset.csv
+/big_ai_dataset.csv
+/big_ai_dataset.csv
+/big_ai_dataset.parquet
