@@ -7,7 +7,7 @@ stages:
     outs:
     - data/s2orc/s2orc_ai_prefiltered.csv
   process-spacy-s2orc:
-    cmd: python scripts/s2orc/process_spacy_docs.py
+    cmd: python scripts/s2orc/process_spacy_docs.py #TODO: update this 
     deps:
     - data/s2orc/s2orc_ai_prefiltered.csv
     - scripts/s2orc/process_spacy_docs.py
@@ -20,3 +20,12 @@ stages:
     - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
     outs:
     - data/s2orc/extracted_phrases.csv
+
+# big-ai-s2orc
+  process-spacy-docs-big-s2orc:
+    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_docs.joblib --spacy-model-name en_core_web_md
+    deps:
+    - python scripts/s2orc/process_spacy_docs.py
+    - data/s2orc/big_ai_dataset.parquet
+    outs:
+    - data/s2orc/big_ai_spacy_docs.joblib
