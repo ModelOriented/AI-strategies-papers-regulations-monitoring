@@ -2,23 +2,27 @@ import pandas as pd
 import spacy
 import joblib
 from tqdm import tqdm 
+import typer
 
 tqdm.pandas()
-import mars.s2orc.loading
 
-OUT_PATH = 'data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl'
 
-df = mars.s2orc.loading.load_s2orc_prefiltered()
-df2 = df[~df['doi'].isnull()]
-en = spacy.load('en_core_web_sm')
+def main(in_path: str, out_path:str, spacy_model_name: str='en_core_web_md'):
+    print("Loading data...")
+    df = pd.read_parquet(in_path)
+    print("Loading spacy model...")
+    en = spacy.load(spacy_model_name)
+    def process(text):
+        try:
+            return en(text)
+        except Exception:
+            print("Error: {}".format(text))
+            return ""
 
-def process(text):
-    try:
-        return en(text)
-    except Exception:
-        print("Error: {}".format(text))
-        return ""
+    df['doc'] = df['abstract'].progress_apply(process)
+    print("Saving...")
+    joblib.dump(df, out_path)
 
-df2['doc'] = df2['abstract'].progress_apply(process)
 
-joblib.dump(df2, OUT_PATH)
+if __name__=="__main__":
+    typer.run(main)
