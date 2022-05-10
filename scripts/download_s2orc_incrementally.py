@@ -74,9 +74,9 @@ def process_batch(batch: dict, matcher):
 if __name__ == '__main__':
 
     METADATA_INPUT_DIR = 'metadata/raw/'
-    METADATA_OUTPUT_DIR = '../metadata/ai/'
+    METADATA_OUTPUT_DIR = '../mars/s2orc/metadata/ai/'
     PDF_PARSES_INPUT_DIR = 'pdf_parses/raw/'
-    PDF_PARSES_OUTPUT_DIR = '../pdf_parses/ai/'
+    PDF_PARSES_OUTPUT_DIR = '../mars/s2orc/pdf_parses/ai/'
 
     os.makedirs(METADATA_INPUT_DIR, exist_ok=True)
     os.makedirs(METADATA_OUTPUT_DIR, exist_ok=True)
