@@ -1,19 +1,19 @@
 schema: '2.0'
 stages:
   prepare-s2orc:
-    cmd: python scripts/s2orc/prepare_full_csv.py
+    cmd: python scripts/s2orc/prepare_parquet_s2orc.py
     deps:
     - path: mars/s2orc/metadata/ai/
       md5: 1bff989bf79e7b8cedccb963caf2c284.dir
       size: 193936339
       nfiles: 100
-    - path: scripts/s2orc/prepare_full_csv.py
-      md5: 3c386627441bca60dec628c877680bd9
-      size: 380
+    - path: scripts/s2orc/prepare_parquet_s2orc.py
+      md5: 1ec9038eda1aea162af1541aa944adf6
+      size: 645
     outs:
-    - path: data/s2orc/s2orc_ai_prefiltered.csv
-      md5: cb3f5a7263204bd78aae379dfd9d8669
-      size: 151106297
+    - path: data/s2orc/s2orc_ai_prefiltered.parquet
+      md5: b7e11eba387eb511989bf74e37f9f950
+      size: 73253586
   process-spacy-s2orc:
     cmd: python scripts/s2orc/process_spacy_docs.py
     deps:
