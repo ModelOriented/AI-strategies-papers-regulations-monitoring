@@ -3,11 +3,16 @@ from tqdm import tqdm
 from glob import glob
 
 
+OUT ='data/s2orc/s2orc_ai_prefiltered.csv'
+
 files_to_read = list(glob("mars/s2orc/metadata/ai/*.jsonl.gz"))
+
 dfs = [pd.read_json(file, lines=True, compression=None) for file in tqdm(files_to_read)]
 df = pd.concat(dfs)
 df['in_citations_count'] = df['inbound_citations'].str.len()
-
+df['out_citations_count'] = df['outbound_citations'].str.len()
+print("Number of papers:", len(df))
 df = df[~df.abstract.isna()]
+print("After removing papers with missing abstracts:", len(df))
 
-df.to_csv('data/s2orc/s2orc_ai_prefiltered.csv')
+df.to_csv(OUT)
