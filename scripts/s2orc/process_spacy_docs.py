@@ -12,6 +12,7 @@ def main(in_path: str, out_path:str, spacy_model_name: str='en_core_web_md'):
     df = pd.read_parquet(in_path)
     print("Loading spacy model...")
     en = spacy.load(spacy_model_name)
+    en.remove_pipe("ner") # removing entity recognition for speed
     def process(text):
         try:
             return en(text)

@@ -29,3 +29,22 @@ stages:
     - data/s2orc/big_ai_dataset.parquet
     outs:
     - data/s2orc/big_ai_spacy_docs.joblib
+
+  process-spacy-sm-docs-big-s2orc:
+    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
+    deps:
+    - scripts/s2orc/process_spacy_docs.py
+    - data/s2orc/big_ai_dataset.parquet
+    outs:
+    - data/s2orc/big_ai_spacy_sm_docs.joblib
+
+  extract-noun-chunks-big-s2orc:
+    cmd: python scripts/s2orc/extract_phrases.py data/s2orc/big_ai_spacy_docs.joblib data/s2orc/big_ai_with_noun_chunks.parquet
+    deps:
+    - scripts/s2orc/extract_phrases.py
+    - data/s2orc/big_ai_spacy_docs.joblib
+    outs:
+    - data/s2orc/big_ai_with_noun_chunks.parquet
+
+  embedd-noun-chunks-big-s2orc:
+    cmd: python 
