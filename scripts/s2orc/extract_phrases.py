@@ -1,15 +1,10 @@
 import pandas as pd
-import spacy
 import joblib
 from tqdm import tqdm
 import textacy.extract
-import textacy.extract.keyterms
+import typer
 
 tqdm.pandas()
-
-IN_PATH = "data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl"
-OUT_PATH = "data/s2orc/extracted_phrases.parquet"
-
 
 def extract_noun_chunks(doc):
     try:
@@ -22,15 +17,17 @@ def extract_noun_chunks(doc):
         return []
 
 
-df = joblib.load(IN_PATH)
-en = spacy.load("en_core_web_md")
+def main(in_path: str, out_path: str):
+    print("Loading data...")
+    df = joblib.load(in_path)
+
+    print("Processing data...")
+    df["noun_chunks"] = df["doc"].progress_apply(extract_noun_chunks)
+
+    del df["doc"]
+    print("Saving data...")
+    df.to_parquet(out_path, index=False)
 
 
-df["noun_chunks"] = df["doc"].progress_apply(extract_noun_chunks)
-# df["keywords_text_rank"] = df["doc"].progress_apply(
-#     textacy.extract.keyterms.textrank
-# )
-
-del df["doc"]
-
-df.to_parquet(OUT_PATH, index=False)
+if __name__=='__main__':
+    typer.run(main)
