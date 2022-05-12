@@ -10,7 +10,7 @@ stages:
   process-spacy-s2orc:
     cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/s2orc_ai_prefiltered.parquet data/s2orc/small_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
     deps:
-    - data/s2orc/s2orc_ai_prefiltered.csv
+    - data/s2orc/s2orc_ai_prefiltered.parquet
     - scripts/s2orc/process_spacy_docs.py
     outs:
     - data/s2orc/small_ai_spacy_docs.joblib
