@@ -1,26 +1,41 @@
 stages:
   prepare-s2orc:
-    cmd: python scripts/s2orc/prepare_full_csv.py
+    cmd: python scripts/s2orc/prepare_parquet_s2orc.py
     deps:
     - mars/s2orc/metadata/ai/
-    - scripts/s2orc/prepare_full_csv.py
+    - scripts/s2orc/prepare_parquet_s2orc.py
     outs:
-    - data/s2orc/s2orc_ai_prefiltered.csv
+    - data/s2orc/s2orc_ai_prefiltered.parquet
+
   process-spacy-s2orc:
-    cmd: python scripts/s2orc/process_spacy_docs.py #TODO: update this 
+    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/s2orc_ai_prefiltered.parquet data/s2orc/small_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
     deps:
     - data/s2orc/s2orc_ai_prefiltered.csv
     - scripts/s2orc/process_spacy_docs.py
     outs:
-    - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
-  extract-phrases-s2orc:
-    cmd: python scripts/s2orc/extract_phrases.py
+    - data/s2orc/small_ai_spacy_docs.joblib
+
+  extract-phrases-small-s2orc:
+    cmd: python scripts/s2orc/extract_phrases.py data/s2orc/small_ai_spacy_docs.joblib data/s2orc/extracted_phrases.parquet
     deps:
     - scripts/s2orc/extract_phrases.py
-    - data/s2orc/s2orc_ai_prefiltered_processed_with_doi.pkl
+    - data/s2orc/small_ai_spacy_docs.joblib
     outs:
-    - data/s2orc/extracted_phrases.csv
+    - data/s2orc/extracted_phrases.parquet
 
+
+  embedd-noun-chunks-small-s2orc:
+    cmd: python scripts/s2orc/embedd_noun_chunkgs.py data/s2orc/extracted_phrases.parquet data/s2orc/embeddings/small_ai_all-MiniLM-L6-v2.json --sentences-embedding="all-MiniLM-L6-v2"
+    deps:
+    - scripts/s2orc/embedd_noun_chunkgs.py
+    - data/s2orc/extracted_phrases.parquet
+    outs:
+    - data/s2orc/embeddings/small_ai_all-MiniLM-L6-v2.json
+
+  # cluster-small-s2orc:
+  #   cmd: python scripts/s2orc/cluster.py data/s2orc/embeddings/small_ai_all-MiniLM-L6-v2.json data/s2orc/cluterings/ sbert1.parquet
+  #   deps:
+  #   - #TODO
 # big-ai-s2orc
   process-spacy-docs-big-s2orc:
     cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_docs.joblib --spacy-model-name en_core_web_md
@@ -31,7 +46,7 @@ stages:
     - data/s2orc/big_ai_spacy_docs.joblib
 
   process-spacy-sm-docs-big-s2orc:
-    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
+    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/big_ai_dataset.parquet data/s2orc/big_ai_spacy_sm_docs.joblib --spacy-model-name en_core_web_sm
     deps:
     - scripts/s2orc/process_spacy_docs.py
     - data/s2orc/big_ai_dataset.parquet
@@ -46,5 +61,5 @@ stages:
     outs:
     - data/s2orc/big_ai_with_noun_chunks.parquet
 
-  embedd-noun-chunks-big-s2orc:
-    cmd: python 
+  # embedd-noun-chunks-big-s2orc:
+  #   cmd: python 
