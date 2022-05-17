@@ -1,6 +1,7 @@
 from mars.utils import set_root_path
+
 set_root_path()
-from tqdm.notebook import tqdm 
+from tqdm.notebook import tqdm
 
 from collections import Counter
 
@@ -10,29 +11,32 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 import typer
+import os
 
-
-
-def main(input_path:str, output_path: str, sentences_embedding:str = 'all-MiniLM-L6-v2'):
+def main(
+    input_path: str, output_path: str, sentences_embedding: str = "all-MiniLM-L6-v2"
+):
+    os.makedirs(output_path, exist_ok=True)
     print("Loading data...")
     df = pd.read_parquet(input_path)
-    chunks_count = Counter([chunk for chunks in df['noun_chunks'] for chunk in chunks])
-    all_chunks = [chunk for chunk, count in chunks_count.items()]
+    print("Loaded data:", len(df))
+    all_chunks = list(set([chunk.lower() for chunks in df["noun_chunks"] for chunk in chunks]))
 
     print(f"There are {len(all_chunks)} unique noun chunks.")
 
     print(f"Loading model {sentences_embedding}...")
     model = SentenceTransformer(sentences_embedding)
-    def embedd(text):
-        return model.encode(text)
+
+    def embedd(texts):
+        return model.encode(texts)
 
     print("Processing data...")
+    embeddings = embedd(all_chunks)
+    chunk_to_embedding = {chunk: embeddings[i] for i, chunk in tqdm(enumerate(all_chunks))}
 
-    chunk_to_embedding = {chunk: embedd(chunk) for chunk in tqdm(all_chunks)}
-
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         json.dump(chunk_to_embedding, f)
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     typer.run(main)

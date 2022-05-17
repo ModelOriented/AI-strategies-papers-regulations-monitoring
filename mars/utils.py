@@ -6,9 +6,11 @@ import semanticscholar as sch
 
 ROOT_DIR = Path(__file__).absolute().parent.parent
 
+
 def set_root_path():
     """Sets the path of the runned code to main project path. Useful especially in notebooks."""
     os.chdir(ROOT_DIR)
+
 
 def get_number_of_files(dir: str) -> int:
     """
