@@ -3,18 +3,22 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import os
-import mars.utils
+# import mars.utils
 import json
 from tqdm import tqdm
 import numpy as np
 import multiprocessing
 
-ROOT_DIR = mars.utils.ROOT_DIR
-FILE_DIR = os.path.join(ROOT_DIR, 'data', 's2orc', 'doi_to_authorship_big_dataset.json')
+# ROOT_DIR = mars.utils.ROOT_DIR
+FILE_DIR = os.path.join( "data", "s2orc", "doi_to_authorship_big_dataset.json")
+
 
 def load_s2orc_prefiltered():
-    print(os.path.join(ROOT_DIR, 'data/s2orc/big_ai_dataset.parquet'))
-    return pd.read_parquet(os.path.join(ROOT_DIR, 'data/s2orc/big_ai_dataset.parquet'), engine='pyarrow', columns=['doi'])
+    return pd.read_parquet(
+        "data/s2orc/big_ai_dataset.parquet",
+        engine="pyarrow",
+        columns=["doi"],
+    )
 
 
 def get_response_json(doi):
@@ -25,8 +29,8 @@ def get_response_json(doi):
     session = requests.Session()
     retry = Retry(connect=3, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
 
     response = session.get(url)
 
@@ -34,6 +38,7 @@ def get_response_json(doi):
         return response.status_code
     response_json = response.json()
     return response_json
+
 
 class MultithreadDataProcessing(multiprocessing.Process):
     def __init__(self, dois):
@@ -45,7 +50,7 @@ class MultithreadDataProcessing(multiprocessing.Process):
 
 
 def get_affiliations(dois):
-    print('starting thread', os.getpid())
+    print("starting thread", os.getpid())
     i = 0
     for doi in dois:
         if doi in doi_to_authorship:
@@ -57,8 +62,8 @@ def get_affiliations(dois):
 
         response_json = get_response_json(doi)
         if type(response_json) != int:
-            if 'authorships' in response_json:
-                doi_to_authorship[doi] = response_json['authorships']
+            if "authorships" in response_json:
+                doi_to_authorship[doi] = response_json["authorships"]
             else:
                 doi_to_authorship[doi] = []
 
@@ -69,7 +74,7 @@ def get_affiliations(dois):
 def run_parse():
     df = load_s2orc_prefiltered()
     no_of_threads = multiprocessing.cpu_count()
-    dois = df['doi'].unique()
+    dois = df["doi"].unique()
     number_of_dois = len(dois)
     chunk_size = divmod(number_of_dois, no_of_threads)[0]
     split_array = list(range(chunk_size, chunk_size * no_of_threads, chunk_size))
@@ -87,21 +92,22 @@ def run_parse():
     print("Finished main thread")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     doi_to_authorship = {}
     # doi_to_concepts = {}
     # doi_to_counts = {}
     try:
-        f = open(FILE_DIR, 'r')
+        f = open(FILE_DIR, "r")
         doi_to_authorship = json.load(f)
         f.close()
     except FileNotFoundError:
         pass
 
     run_parse()
-    with open(os.path.join(ROOT_DIR, 'data/s2orc/doi_to_authorship_big_dataset.json'), 'w') as fp:
+    with open(
+        os.path.join("data/s2orc/doi_to_authorship_big_dataset.json"), "w"
+    ) as fp:
         json.dump(doi_to_authorship, fp)
-
 
     # if 'concepts' in response_json:
     #     doi_to_concepts[row['doi']] = response_json['concepts']
