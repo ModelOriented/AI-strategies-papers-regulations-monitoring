@@ -1,3 +1,8 @@
+vars:
+  - s2orc:
+      prefiltered_small: "data/s2orc/s2orc_ai_prefiltered.parquet"
+
+
 stages:
   prepare-s2orc:
     cmd: python scripts/s2orc/prepare_parquet_s2orc.py
@@ -5,12 +10,12 @@ stages:
     - mars/s2orc/metadata/ai/
     - scripts/s2orc/prepare_parquet_s2orc.py
     outs:
-    - data/s2orc/s2orc_ai_prefiltered.parquet
+    - ${s2orc.prefiltered_small}
 
   process-spacy-s2orc:
-    cmd: python scripts/s2orc/process_spacy_docs.py data/s2orc/s2orc_ai_prefiltered.parquet data/s2orc/small_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
+    cmd: python scripts/s2orc/process_spacy_docs.py ${s2orc.prefiltered_small} data/s2orc/small_ai_spacy_docs.joblib --spacy-model-name en_core_web_sm
     deps:
-    - data/s2orc/s2orc_ai_prefiltered.parquet
+    - ${s2orc.prefiltered_small}
     - scripts/s2orc/process_spacy_docs.py
     outs:
     - data/s2orc/small_ai_spacy_docs.joblib
