@@ -10,7 +10,7 @@ import os
 
 def main(
     input_path: str, output_path: str, sentences_embedding: str = "all-MiniLM-L6-v2"):
-    os.makedirs(output_path, exist_ok=True)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     print("Loading data...")
     df = pd.read_parquet(input_path)
     print("Loaded data:", len(df))
