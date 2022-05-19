@@ -26,7 +26,7 @@ def main(
 
     print("Processing data...")
     embeddings = embedd(all_chunks)
-    chunk_to_embedding = {chunk: embeddings[i] for i, chunk in tqdm(enumerate(all_chunks))}
+    chunk_to_embedding = {chunk: list(embeddings[i]) for i, chunk in tqdm(enumerate(all_chunks))}
 
     with open(output_path, "w") as f:
         json.dump(chunk_to_embedding, f)
