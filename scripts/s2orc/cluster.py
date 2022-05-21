@@ -1,7 +1,7 @@
 import pandas as pd
 import hdbscan
 import typer
-import json
+import ujson as json
 
 import os
 
