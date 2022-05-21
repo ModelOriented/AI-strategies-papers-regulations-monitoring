@@ -74,6 +74,7 @@ def main(in_path: str, out_path:str, batch_size=1000, spacy_model_name: str='en_
         out_df = pd.concat([out_df, pd.DataFrame(b_results, columns=COLNAMES)])
         out_df.to_parquet(out_path)
         b_results = []
+    out_df.to_parquet(out_path)
 
     print("Processed all successfully!")    
 

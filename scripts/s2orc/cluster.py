@@ -3,6 +3,7 @@ import joblib
 from tqdm import tqdm
 from typing import List
 import sklearn.cluster
+import hdbscan
 import typer
 from collections import Counter
 import json
@@ -24,7 +25,7 @@ def main(in_json_path: str, out_path: str, n_jobs:int = -1, epsilons:str=".5"):
     print(len(chunk_to_embedding))
     
     for eps in epsilons:
-        model = sklearn.cluster.DBSCAN(n_jobs=n_jobs, eps=eps)
+        model = hdbscan.HDBCAN(n_jobs=n_jobs, eps=eps)
         print("epsilon = ", eps)
         # print("Clutering chunks...")
         clusters = model.fit_predict(list(chunk_to_embedding.values()))
