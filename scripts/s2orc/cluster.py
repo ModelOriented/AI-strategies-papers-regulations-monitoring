@@ -1,11 +1,7 @@
 import pandas as pd
-import joblib
 from tqdm import tqdm
-from typing import List
-import sklearn.cluster
 import hdbscan
 import typer
-from collections import Counter
 import json
 
 import os
@@ -15,8 +11,6 @@ tqdm.pandas()
 
 def main(in_json_path: str, out_path: str, n_jobs:int = -1, epsilons:str=".5"):
     print("Loading data...")
-    # df = pd.read_parquet(in_table_path)
-    # print(len(df))
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     epsilons = [float(epsilon) for epsilon in epsilons.split(",")]
     print("Will process epsilons:", epsilons)
