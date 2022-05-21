@@ -1,10 +1,8 @@
 import pandas as pd
 import hdbscan
 import typer
-import ujson as json
-
+import orjson as json
 import os
-
 
 
 def main(in_json_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0"):
@@ -12,7 +10,7 @@ def main(in_json_path: str, out_path: str, n_jobs:int = -1, cluster_selection_ep
     epsilons = [float(epsilon) for epsilon in cluster_selection_epsilons.split(",")]
     print("Will process epsilons:", epsilons)
     print("Loading json...")
-    chunk_to_embedding = json.load(open(in_json_path))
+    chunk_to_embedding = json.loads(open(in_json_path).read())
     print(len(chunk_to_embedding))
     
     for eps in epsilons:
