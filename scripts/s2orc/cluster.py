@@ -9,7 +9,7 @@ import os
 
 def main(in_json_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0"):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    epsilons = [float(epsilon) for epsilon in cluster_selection_epsilon.split(",")]
+    epsilons = [float(epsilon) for epsilon in cluster_selection_epsilons.split(",")]
     print("Will process epsilons:", epsilons)
     print("Loading json...")
     chunk_to_embedding = json.load(open(in_json_path))
