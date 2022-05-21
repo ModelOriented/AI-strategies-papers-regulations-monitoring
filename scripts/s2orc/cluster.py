@@ -7,17 +7,16 @@ import os
 
 
 
-def main(in_json_path: str, out_path: str, n_jobs:int = -1, epsilons:str=".5"):
-    print("Loading data...")
+def main(in_json_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0"):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    epsilons = [float(epsilon) for epsilon in epsilons.split(",")]
+    epsilons = [float(epsilon) for epsilon in cluster_selection_epsilon.split(",")]
     print("Will process epsilons:", epsilons)
     print("Loading json...")
     chunk_to_embedding = json.load(open(in_json_path))
     print(len(chunk_to_embedding))
     
     for eps in epsilons:
-        model = hdbscan.HDBSCAN(n_jobs=n_jobs, eps=eps)
+        model = hdbscan.HDBSCAN(core_dist_n_jobs=n_jobs, cluster_selection_epsilon=eps)
         print("epsilon = ", eps)
         # print("Clutering chunks...")
         clusters = model.fit_predict(list(chunk_to_embedding.values()))
