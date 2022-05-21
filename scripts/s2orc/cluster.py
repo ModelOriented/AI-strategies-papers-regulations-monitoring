@@ -1,12 +1,10 @@
 import pandas as pd
-from tqdm import tqdm
 import hdbscan
 import typer
 import json
 
 import os
 
-tqdm.pandas()
 
 
 def main(in_json_path: str, out_path: str, n_jobs:int = -1, epsilons:str=".5"):
@@ -19,7 +17,7 @@ def main(in_json_path: str, out_path: str, n_jobs:int = -1, epsilons:str=".5"):
     print(len(chunk_to_embedding))
     
     for eps in epsilons:
-        model = hdbscan.HDBCAN(n_jobs=n_jobs, eps=eps)
+        model = hdbscan.HDBSCAN(n_jobs=n_jobs, eps=eps)
         print("epsilon = ", eps)
         # print("Clutering chunks...")
         clusters = model.fit_predict(list(chunk_to_embedding.values()))
