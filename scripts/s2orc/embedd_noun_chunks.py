@@ -1,6 +1,6 @@
 from tqdm.notebook import tqdm
 
-import json
+import orjson as json
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
@@ -26,10 +26,9 @@ def main(
 
     print("Processing data...")
     embeddings = embedd(all_chunks)
-    chunk_to_embedding = {chunk: list(embeddings[i].astype(float)) for i, chunk in tqdm(enumerate(all_chunks))}
-
-    with open(output_path, "w") as f:
-        json.dump(chunk_to_embedding, f)
+    chunk_to_embedding = [(chunk, list(embeddings[i].astype(float))) for i, chunk in tqdm(enumerate(all_chunks))]
+    
+    pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"]).to_parquet(output_path)
 
 
 if __name__ == "__main__":
