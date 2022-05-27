@@ -9,7 +9,7 @@ import typer
 import os
 
 def main(
-    input_path: str, output_path: str, sentences_embedding: str = "all-MiniLM-L6-v2"):
+    input_path: str, output_path: str, sentences_embedding: str = "all-MiniLM-L6-v2", batch_size:int=32, multiprocess:bool=False):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     print("Loading data...")
     df = pd.read_parquet(input_path)
@@ -20,9 +20,14 @@ def main(
 
     print(f"Loading model {sentences_embedding}...")
     model = SentenceTransformer(sentences_embedding)
+    
 
     def embedd(texts):
-        return model.encode(texts)
+        if multiprocess:
+            pool = model.start_multi_process_pool()
+            return model.encode_multi_process(texts, pool=pool, batch_size=batch_size)
+        else:
+            return model.encode(texts, batch_size=batch_size)
 
     print("Processing data...")
     embeddings = embedd(all_chunks)
