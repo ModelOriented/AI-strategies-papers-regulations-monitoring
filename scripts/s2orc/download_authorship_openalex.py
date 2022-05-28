@@ -5,12 +5,14 @@ from requests.packages.urllib3.util.retry import Retry
 import os
 # import mars.utils
 import json
-from tqdm import tqdm
 import numpy as np
 import multiprocessing
-
+from tqdm import tqdm
 # ROOT_DIR = mars.utils.ROOT_DIR
 FILE_DIR = os.path.join( "data", "s2orc", "doi_to_authorship_big_dataset.json")
+
+def batch(sequence, batch_size):
+    return [sequence[i*batch_size:(i+1)*batch_size] for i in range(len(sequence)//batch_size+1)]
 
 
 def load_s2orc_prefiltered():
@@ -21,11 +23,9 @@ def load_s2orc_prefiltered():
     )
 
 
-def get_response_json(doi):
-    if pd.isnull(doi):
-        return []
-
-    url = "https://api.openalex.org/works/doi:" + str(doi)
+def call_api(dois:list)->list:
+    url = "https://api.openalex.org/works?filter=doi:" + "|".join(dois)
+    print(url)
     session = requests.Session()
     retry = Retry(connect=3, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retry)
@@ -33,11 +33,12 @@ def get_response_json(doi):
     session.mount("https://", adapter)
 
     response = session.get(url)
-
+    
     if response.status_code != 200:
-        return response.status_code
+        raise Exception(response.status_code)
+    
     response_json = response.json()
-    return response_json
+    return response_json['results']
 
 
 class MultithreadDataProcessing(multiprocessing.Process):
@@ -50,31 +51,32 @@ class MultithreadDataProcessing(multiprocessing.Process):
 
 
 def get_affiliations(dois):
-    print("starting thread", os.getpid())
+    # print("starting thread", os.getpid())
     i = 0
-    for doi in dois:
-        if doi in doi_to_authorship:
-            continue
-
-        response_json = get_response_json(doi)
-        if response_json != []:
-            doi_to_authorship[doi] = response_json
-
-        response_json = get_response_json(doi)
-        if type(response_json) != int:
-            if "authorships" in response_json:
-                doi_to_authorship[doi] = response_json["authorships"]
-            else:
-                doi_to_authorship[doi] = []
-
-        # print(f'{os.getpid()}: {i} / {len(dois)}')
+    errors=0
+    dois = [doi for doi in dois if not doi in doi_to_authorship]
+    print("Will download:", len(dois))
+    batches = batch(dois, 50)
+    for doi_batch in tqdm(batches):
+        try:
+            response = call_api(doi_batch)
+            for r in response:
+                doi = r['doi']
+                doi_to_authorship[doi] = r["authorships"]
+        except Exception as e:
+            tqdm.write("Error: "+ str(e))
+            errors+=1
         i += 1
+        if i%100==0:
+            with open(
+                os.path.join("data/s2orc/doi_to_authorship_big_dataset.json"), "w"
+            ) as fp:
+                json.dump(doi_to_authorship, fp)
+            tqdm.write("saving")
 
 
-def run_parse():
-    df = load_s2orc_prefiltered()
+def run_parse(dois):
     no_of_threads = multiprocessing.cpu_count()
-    dois = df["doi"].unique()
     number_of_dois = len(dois)
     chunk_size = divmod(number_of_dois, no_of_threads)[0]
     split_array = list(range(chunk_size, chunk_size * no_of_threads, chunk_size))
@@ -94,27 +96,19 @@ def run_parse():
 
 if __name__ == "__main__":
     doi_to_authorship = {}
-    # doi_to_concepts = {}
-    # doi_to_counts = {}
+    failed_doi = {}
+
     try:
         f = open(FILE_DIR, "r")
         doi_to_authorship = json.load(f)
         f.close()
     except FileNotFoundError:
         pass
-
-    run_parse()
+    df = load_s2orc_prefiltered()
+    dois = df["doi"].unique()
+    get_affiliations(dois)
+    run_parse(dois)
     with open(
-        os.path.join("data/s2orc/doi_to_authorship_big_dataset.json"), "w"
+        os.path.join("data/s2orc/doi_to_authorship_big.json"), "w"
     ) as fp:
         json.dump(doi_to_authorship, fp)
-
-    # if 'concepts' in response_json:
-    #     doi_to_concepts[row['doi']] = response_json['concepts']
-    # else:
-    #     doi_to_concepts[row['doi']] = []
-    #
-    # if 'counts_by_year' in response_json:
-    #     doi_to_counts[row['doi']] = response_json['counts_by_year']
-    # else:
-    #     doi_to_counts[row['doi']] = []
