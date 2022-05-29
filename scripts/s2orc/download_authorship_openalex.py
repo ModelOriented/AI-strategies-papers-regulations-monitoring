@@ -29,8 +29,8 @@ def load_s2orc_prefiltered():
 
 
 def call_api(dois: list) -> list:
+    dois = [doi for doi in dois if doi is not None]
     url = "https://api.openalex.org/works?filter=doi:" + "|".join(dois)
-    print(url)
     session = requests.Session()
     retry = Retry(connect=3, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retry)
