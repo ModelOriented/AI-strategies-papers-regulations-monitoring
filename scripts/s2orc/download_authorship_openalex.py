@@ -104,6 +104,7 @@ if __name__ == "__main__":
         f = open(OUT_PATH, "r")
         doi_to_authorship = json.load(f)
         f.close()
+        print(f"Loaded {len(doi_to_authorship)} records from checkpoint")
     except FileNotFoundError:
         print("No checkpoint file found!")
     df = load_s2orc_prefiltered()
