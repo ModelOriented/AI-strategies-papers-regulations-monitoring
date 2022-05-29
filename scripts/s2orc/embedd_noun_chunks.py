@@ -27,11 +27,11 @@ def main(
             pool = model.start_multi_process_pool()
             return model.encode_multi_process(texts, pool=pool, batch_size=batch_size)
         else:
-            return model.encode(texts, batch_size=batch_size)
+            return model.encode(texts, batch_size=batch_size, show_progress_bar=True, convert_to_numpy=False)
 
     print("Processing data...")
     embeddings = embedd(all_chunks)
-    chunk_to_embedding = [(chunk, list(embeddings[i].astype(float))) for i, chunk in tqdm(enumerate(all_chunks))]
+    chunk_to_embedding = [(chunk, list(embeddings[i].astype(float))) for i, chunk in enumerate(all_chunks)]
     
     pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"]).to_parquet(output_path)
 
