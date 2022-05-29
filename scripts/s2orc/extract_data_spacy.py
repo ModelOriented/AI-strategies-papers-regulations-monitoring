@@ -44,7 +44,7 @@ def get_nouns(doc)->List[str]:
     return nouns
 
 
-def main(in_path: str, out_path:str, batch_size=1000, spacy_model_name: str='en_core_web_md'):
+def main(in_path: str, out_path:str, batch_size=1000:int, spacy_model_name: str='en_core_web_md'):
     print("Loading data...")
     df = pd.read_parquet(in_path)
     print("Loaded data:", len(df))
