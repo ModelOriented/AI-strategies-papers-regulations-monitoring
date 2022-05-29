@@ -3,16 +3,21 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import os
+
 # import mars.utils
 import json
 import numpy as np
 import multiprocessing
 from tqdm import tqdm
-# ROOT_DIR = mars.utils.ROOT_DIR
-FILE_DIR = os.path.join( "data", "s2orc", "doi_to_authorship_big_dataset.json")
+
+OUT_PATH = os.path.join("data", "s2orc", "doi_to_authorship_big.json")
+
 
 def batch(sequence, batch_size):
-    return [sequence[i*batch_size:(i+1)*batch_size] for i in range(len(sequence)//batch_size+1)]
+    return [
+        sequence[i * batch_size : (i + 1) * batch_size]
+        for i in range(len(sequence) // batch_size + 1)
+    ]
 
 
 def load_s2orc_prefiltered():
@@ -23,7 +28,7 @@ def load_s2orc_prefiltered():
     )
 
 
-def call_api(dois:list)->list:
+def call_api(dois: list) -> list:
     url = "https://api.openalex.org/works?filter=doi:" + "|".join(dois)
     print(url)
     session = requests.Session()
@@ -33,12 +38,12 @@ def call_api(dois:list)->list:
     session.mount("https://", adapter)
 
     response = session.get(url)
-    
+
     if response.status_code != 200:
         raise Exception(response.status_code)
-    
+
     response_json = response.json()
-    return response_json['results']
+    return response_json["results"]
 
 
 class MultithreadDataProcessing(multiprocessing.Process):
@@ -53,7 +58,7 @@ class MultithreadDataProcessing(multiprocessing.Process):
 def get_affiliations(dois):
     # print("starting thread", os.getpid())
     i = 0
-    errors=0
+    errors = 0
     dois = [doi for doi in dois if not doi in doi_to_authorship]
     print("Will download:", len(dois))
     batches = batch(dois, 50)
@@ -61,18 +66,16 @@ def get_affiliations(dois):
         try:
             response = call_api(doi_batch)
             for r in response:
-                doi = r['doi']
+                doi = r["doi"]
                 doi_to_authorship[doi] = r["authorships"]
         except Exception as e:
-            tqdm.write("Error: "+ str(e))
-            errors+=1
+            tqdm.write("Error: " + str(e))
+            errors += 1
         i += 1
-        if i%100==0:
-            with open(
-                os.path.join("data/s2orc/doi_to_authorship_big_dataset.json"), "w"
-            ) as fp:
+        if i % 100 == 0:
+            with open(OUT_PATH, "w") as fp:
                 json.dump(doi_to_authorship, fp)
-            tqdm.write("saving")
+            tqdm.write("Checkpoint saved!")
 
 
 def run_parse(dois):
@@ -97,18 +100,17 @@ def run_parse(dois):
 if __name__ == "__main__":
     doi_to_authorship = {}
     failed_doi = {}
-
     try:
-        f = open(FILE_DIR, "r")
+        f = open(OUT_PATH, "r")
         doi_to_authorship = json.load(f)
         f.close()
     except FileNotFoundError:
-        pass
+        print("No checkpoint file found!")
     df = load_s2orc_prefiltered()
     dois = df["doi"].unique()
     get_affiliations(dois)
-    run_parse(dois)
-    with open(
-        os.path.join("data/s2orc/doi_to_authorship_big.json"), "w"
-    ) as fp:
+    # run_parse(dois)
+    print("Saving results...")
+    with open(OUT_PATH, "w") as fp:
         json.dump(doi_to_authorship, fp)
+    print("Done!")
