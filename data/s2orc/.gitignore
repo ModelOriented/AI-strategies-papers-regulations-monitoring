@@ -7,3 +7,5 @@
 /big_ai_dataset.parquet
 /s2orc_ai_prefiltered.parquet
 /processed_big.parquet
+/doi_to_authorship_big_dataset.json
+/doi_to_authorship_big.json
