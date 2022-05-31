@@ -14,7 +14,7 @@ def main(
     print("Loading data...")
     df = pd.read_parquet(input_path)
     print("Loaded data:", len(df))
-    all_chunks = list(set([chunk.lower() for chunks in df["noun_chunks"] for chunk in chunks]))
+    all_chunks = list(set([chunk.lower() for chunks in df["noun_chunks_cleaned"] for chunk in chunks]))
 
     print(f"There are {len(all_chunks)} unique noun chunks.")
 
@@ -31,7 +31,7 @@ def main(
 
     print("Processing data...")
     embeddings = embedd(all_chunks)
-    chunk_to_embedding = [(chunk, list(embeddings[i].astype(float))) for i, chunk in enumerate(all_chunks)]
+    chunk_to_embedding = [(chunk, list(embeddings[i].tolist())) for i, chunk in enumerate(all_chunks)]
     
     pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"]).to_parquet(output_path)
 
