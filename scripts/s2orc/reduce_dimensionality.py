@@ -3,7 +3,7 @@ import umap
 import typer
 
 
-
+import numpy as np
 
 def main(n_components:int):
     print("Reducing dimensionality to {} components".format(n_components))
@@ -12,11 +12,11 @@ def main(n_components:int):
     out = f'data/s2orc/embeddings/reduced_{n_components}_big_cleaned_mini_all-MiniLM-L6-v2.parquet'
 
 
-    emb = df['embedding']
+    emb = df['embedding'][:100]
 
     reducer = umap.UMAP(n_components=n_components, random_state=42)
     print("Reducing...")
-    reduced_embeddings = reducer.fit_transform(emb)
+    reduced_embeddings = reducer.fit_transform(np.stack(emb))
 
     df['embedding_reduced'] = reduced_embeddings
     del df['embedding']
