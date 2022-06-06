@@ -11,8 +11,8 @@ def main(n_components:int):
     df = pd.read_parquet('data/s2orc/embeddings/big_cleaned_mini_all-MiniLM-L6-v2.parquet')
     out = f'data/s2orc/embeddings/reduced_{n_components}_big_cleaned_mini_all-MiniLM-L6-v2.parquet'
 
-
-    emb = df['embedding'][:100]
+    df = df[:100]
+    emb = df['embedding']
 
     reducer = umap.UMAP(n_components=n_components, random_state=42)
     print("Reducing...")
