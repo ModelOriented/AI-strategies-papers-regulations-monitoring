@@ -15,9 +15,9 @@ def main(n_components:int):
 
     reducer = umap.UMAP(n_components=n_components, random_state=42)
     print("Reducing...")
-    reduced_embeddings = reducer.fit_transform(np.stack(emb))
+    reduced_embeddings = reducer.fit_transform(list(emb))
 
-    df['embedding_reduced'] = reduced_embeddings
+    df['embedding_reduced'] = list(reduced_embeddings)
     del df['embedding']
     print("Saving...")
     df.to_parquet(out)
