@@ -1,5 +1,4 @@
 import pandas as pd
-import umap
 import typer
 
 
@@ -14,6 +13,7 @@ def main(n_components:int, gpu:bool=False):
         reducer = cuml.UMAP(n_components=n_components, random_state=42)
     else:
         print("Using CPU")
+        import umap
         reducer = umap.UMAP(n_components=n_components, random_state=42)
 
     df = pd.read_parquet('data/s2orc/embeddings/big_cleaned_mini_all-MiniLM-L6-v2.parquet')
@@ -22,7 +22,7 @@ def main(n_components:int, gpu:bool=False):
     emb = df['embedding']
 
     print("Reducing...")
-    reduced_embeddings = reducer.fit_transform(list(emb))
+    reduced_embeddings = reducer.fit_transform(np.stack(emb))
 
     df['embedding_reduced'] = list(reduced_embeddings)
     del df['embedding']
