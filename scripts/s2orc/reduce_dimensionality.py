@@ -24,7 +24,7 @@ def main(n_components:int, gpu:bool=False):
     print("Reducing...")
     reduced_embeddings = reducer.fit_transform(np.stack(emb))
 
-    df['embedding_reduced'] = list(reduced_embeddings)
+    df['embedding'] = list(reduced_embeddings)
     del df['embedding']
     print("Saving...")
     df.to_parquet(out)
