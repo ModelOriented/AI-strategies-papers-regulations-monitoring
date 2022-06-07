@@ -16,7 +16,10 @@ def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection
     print(len(chunk_to_embedding))
     
     for eps in epsilons:
-        model = HDBSCAN(core_dist_n_jobs=n_jobs, cluster_selection_epsilon=eps)
+        if gpu:
+            model = HDBSCAN(cluster_selection_epsilon=eps)
+        else:
+            model = HDBSCAN(core_dist_n_jobs=n_jobs, cluster_selection_epsilon=eps)
         print("epsilon = ", eps)
         print("Clutering chunks...")
         clusters = model.fit_predict(np.stack(chunk_to_embedding['embedding']))
