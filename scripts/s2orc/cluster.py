@@ -3,8 +3,8 @@ import typer
 import os
 import numpy as np
 
-def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0", use_gpu:bool=False):
-    if use_gpu:
+def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0", gpu:bool=False):
+    if gpu:
         from cuml.cluster import HDBSCAN
     else:
         from hdbscan import HDBSCAN
