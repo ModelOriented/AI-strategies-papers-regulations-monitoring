@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 
-def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0", gpu:bool=False, min_clust_size:int=5, min_samples:str="5,7,9,11,13,15"):
+def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection_epsilons:str=".0", gpu:bool=False, min_clust_size:int=5, min_samples:str="15"):
     if gpu:
         from cuml.cluster import HDBSCAN
     else:
