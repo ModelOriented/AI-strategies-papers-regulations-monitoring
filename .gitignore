@@ -140,3 +140,4 @@ secrets/*
 !secrets/*.example
 
 chromedriver
+jobs/
