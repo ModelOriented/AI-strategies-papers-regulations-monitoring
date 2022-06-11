@@ -7,7 +7,7 @@ import plotly.express as px
 
 import umap.umap_ as umap
 
-def main(input_path:str,output_path='clusters_plot'):
+def main(input_path:str,output_path:str):
     #reading in data
     df = pd.read_parquet(input_path)
     #clearing data - in current dataset also 35 cluster with perccentages
