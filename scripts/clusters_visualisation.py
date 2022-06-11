@@ -5,7 +5,7 @@ import typer
 
 import plotly.express as px
 
-import umap.umap_ as umap
+import cuml
 
 def main(input_path:str,output_path:str):
     #reading in data
@@ -33,7 +33,7 @@ def main(input_path:str,output_path:str):
     df2 = pd.DataFrame(final_rows)
 
     #UMAP
-    reducer = umap.UMAP(
+    reducer = cuml.UMAP(
         n_neighbors=20, n_components=2, min_dist=0.0, metric="cosine"
     )
     umap_data = reducer.fit_transform(df2)
