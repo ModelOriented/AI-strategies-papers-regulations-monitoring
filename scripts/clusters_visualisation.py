@@ -44,8 +44,8 @@ def main(input_path:str,output_path:str):
     df_clear['y'] = umap_data[:,1] 
     print('Ploting ...')
     # Visualize clusters
-    fig = px.scatter(df_clear, x='x', y='y', color='cluster_name', hover_data=['chunk'],
-                    hover_name='cluster_name')
+    fig = px.scatter(df_clear, x='x', y='y', color='cluster', hover_data=['chunk'],
+                    hover_name='cluster')
     print('Saving ...')
     fig.write_html(output_path+'.html')
     fig.show()
