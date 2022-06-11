@@ -38,7 +38,7 @@ def main(input_path:str,output_path:str):
     print('UMAP ...')
     reducer = umap.UMAP(
         n_neighbors=20, n_components=2, min_dist=0.0)
-    umap_data = reducer.fit_transform(df2)
+    umap_data = reducer.fit_transform(np.stack(df2))
     result = pd.DataFrame(umap_data, columns=["x", "y"])
     df_clear['x'] = umap_data[:,0]
     df_clear['y'] = umap_data[:,1]
