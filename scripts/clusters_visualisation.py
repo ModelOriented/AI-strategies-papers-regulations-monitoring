@@ -17,7 +17,7 @@ def main(input_path:str,output_path:str):
     clusters=df_clear.groupby(by=['cluster'])['chunk'].count().reset_index()
 
     #getting clusters' names
-    '''clusters['name']=['none' for _ in range(clusters.shape[0])]
+    clusters['name']=['none' for _ in range(clusters.shape[0])]
     for _, row in df_clear.iterrows():
         if clusters.loc[row['cluster']]['name'] != 'none':
             if len(row['chunk'])<len(clusters.loc[row['cluster']]['name']):
@@ -25,7 +25,7 @@ def main(input_path:str,output_path:str):
         else:
             clusters.at[row['cluster'],'name'] = row['chunk']
     df_clear['cluster_name'] = [clusters.loc[(int(row['cluster'])),'name'] for i, row in df_clear.iterrows()]
-'''
+
     #getting the embedding to a Dataframe
     # final_rows = []
     # for _, row in df_clear.iterrows():
@@ -44,8 +44,8 @@ def main(input_path:str,output_path:str):
     df_clear['y'] = umap_data[:,1] 
     print('Ploting ...')
     # Visualize clusters
-    fig = px.scatter(df_clear, x='x', y='y', color='cluster', hover_data=['chunk'],
-                    hover_name='cluster')
+    fig = px.scatter(df_clear, x='x', y='y', color='cluster_name', hover_data=['chunk'],
+                    hover_name='cluster_name')
     print('Saving ...')
     fig.write_html(output_path+'.html')
     fig.show()
