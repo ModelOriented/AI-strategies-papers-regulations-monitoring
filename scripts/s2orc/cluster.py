@@ -20,7 +20,7 @@ def main(in_parquet_path: str, out_path: str, n_jobs:int = -1, cluster_selection
     for eps in epsilons:
         for min_s in min_samp:
             if gpu:
-                model = HDBSCAN(cluster_selection_epsilon=eps, min_cluster_size=min_clust_size, min_samples=min_s)
+                model = HDBSCAN(cluster_selection_epsilon=eps, min_cluster_size=min_clust_size, min_samples=min_s, metric='cosine')
             else:
                 model = HDBSCAN(core_dist_n_jobs=n_jobs, cluster_selection_epsilon=eps,min_cluster_size=min_clust_size,min_samples=min_s)
             print("epsilon = ", eps)
