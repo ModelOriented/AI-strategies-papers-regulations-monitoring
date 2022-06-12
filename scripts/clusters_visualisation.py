@@ -29,6 +29,7 @@ def main(input_path:str,output_path:str, min_cluster_size:int=15):
     print('Ploting ...')
     # Visualize clusters
     fig = px.scatter(df_clear, x='x', y='y', color='chunk_y', hover_data=['chunk_x'], hover_name='chunk_y')
+    df_clear.to_parquet(output_path+'.parquet')
     print('Saving ...')
     fig.write_html(output_path+'.html')
     fig.show()
