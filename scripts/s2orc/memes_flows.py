@@ -8,7 +8,7 @@ def main(filename:str,output_path:str):
     print("Data loading ...")
     df_chunks = pd.read_parquet('data/s2orc/chunk_meme_mappings/'+filename)
     df = pd.read_parquet('data/s2orc/results/'+filename)
-
+    print("Looking for outliers ...")
     meme_to_cluster_size = df_chunks.groupby('meme_id').count()['chunk']
 
     all_memes = df['memes'].explode()
@@ -34,14 +34,15 @@ def main(filename:str,output_path:str):
     df_outliers = df_chunks[df_chunks['meme_id'].isin(outliers)]
     df_outliers_to_remove = df_outliers[df_outliers['chunk'].str.split(' ').str.len() < 2]
     memes_to_remove = df_outliers_to_remove['meme_id']
-
+    print("Explode no 1 ...")
     df2 = df.explode("memes")
     df2 = df2[['memes', 'inbound_memes']]
     df2.dropna(subset=['memes'], inplace=True)
 
     df2 = df2[~df2['memes'].isin(memes_to_remove)]
     df2 = df2[df2['inbound_memes'].str.len() != 0]
-
+    print("Explode no 2 ...")
     df3 = df2.explode("inbound_memes")
     out = df3.value_counts()
+    print("Saving ...")
     out.reset_index(name='count').to_parquet(output_path+"/memes_edges.parquet")
