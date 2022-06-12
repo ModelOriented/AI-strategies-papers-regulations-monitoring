@@ -1,0 +1,4 @@
+outs:
+- md5: adfb961ecec6583d8ced26cc39d12247
+  size: 6566502340
+  path: s2orc_citations_filtered_with_mag_id_with_spacy.pkl
