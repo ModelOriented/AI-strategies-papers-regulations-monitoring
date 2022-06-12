@@ -1,0 +1,4 @@
+outs:
+- md5: d136381fbf83848bb3d4ea3046ec6285
+  size: 2453624473
+  path: memes_edges.parquet
