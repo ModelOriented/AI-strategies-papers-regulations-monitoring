@@ -46,3 +46,6 @@ def main(filename:str,output_path:str):
     out = df3.value_counts()
     print("Saving ...")
     out.reset_index(name='count').to_parquet(output_path+"/memes_edges.parquet")
+
+if __name__ == "__main__":
+    typer.run(main)
