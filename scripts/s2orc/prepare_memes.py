@@ -42,7 +42,7 @@ def main(clusters_file_name: str): #reduced_300_big_cleaned_mini_all-MiniLM-L6-v
     print("loaded!")
     chunk_to_meme = make_chunk_to_meme_id(df_clusters)
     print("processing...")
-    memes_df['memes'] = memes_df['noun_chunks_cleaned'].apply(lambda chunks: list(map(chunk_to_meme.get, chunks)))
+    memes_df['memes'] = memes_df['noun_chunks_cleaned'].apply(lambda chunks: list(set(list(map(chunk_to_meme.get, chunks)))))
 
     memes_df.index = memes_df['paper_id']
 
