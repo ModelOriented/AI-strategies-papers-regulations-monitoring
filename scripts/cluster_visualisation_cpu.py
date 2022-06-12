@@ -8,7 +8,7 @@ import plotly.express as px
 import umap.umap_ as umap
 
 
-def main(input_path:str,output_path:str):
+def main(input_path:str, output_path:str, min_cluster_size:int=15):
     print("Data loading ...")
     # reading in data
     df = pd.read_parquet(input_path)
@@ -17,6 +17,9 @@ def main(input_path:str,output_path:str):
     clusters = df_clear.groupby(by=['cluster'])['chunk'].first().reset_index()
     print('Labels ...')
     df_clear = pd.merge(df_clear, clusters, on='cluster', how='left')
+    df_cluster_sizes = df_clear['cluster'].value_counts().sort_values(ascending=False)
+    indexes_to_plot = list(df_cluster_sizes[df_cluster_sizes > min_cluster_size].index.values)
+    df_clear = df_clear[df_clear['cluster'].isin(indexes_to_plot)]
     # UMAP
     print('UMAP ...')
     df2 = df_clear['embedding']
