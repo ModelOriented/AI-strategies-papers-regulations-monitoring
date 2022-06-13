@@ -50,7 +50,7 @@ def main(df: pd.DataFrame, delta=0.0001):
     spark2 = cited_memes_enc.shape[1] - c1#(1-cited_memes_enc).sum(axis=1)
     p = memes_enc.multiply(cited_memes_enc)
     stick1 = p.sum(axis=0)
-    spark1 = memes_enc.sum(axis=0)*memes_enc.shape[1]-stick1#(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
+    spark1 = memes_enc.sum()-stick1#(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
 
     frequency = memes_enc.sum(axis=0)
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
