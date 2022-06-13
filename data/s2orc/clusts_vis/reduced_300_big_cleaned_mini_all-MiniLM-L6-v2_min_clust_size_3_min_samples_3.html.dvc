@@ -1,0 +1,4 @@
+outs:
+- md5: 1ad0de585bd9c67ee73b4e0701d037c6
+  size: 121395919
+  path: reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_min_clust_size_3_min_samples_3.html

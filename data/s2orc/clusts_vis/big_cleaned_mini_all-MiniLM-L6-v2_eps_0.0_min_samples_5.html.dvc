@@ -1,0 +1,4 @@
+outs:
+- md5: c63f3ded6d0858704ef02ff488bd1eda
+  size: 34572228
+  path: big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0_min_samples_5.html

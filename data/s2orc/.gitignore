@@ -10,3 +10,5 @@
 /doi_to_authorship_big_dataset.json
 /doi_to_authorship_big.json
 /big_ai_dataset_with_affiliations.parquet
+/clean_merged.parquet
+/memes_edges.parquet
