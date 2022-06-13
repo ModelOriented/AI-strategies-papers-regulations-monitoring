@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 
 
-def main(df: pd.DataFrame, delta=0.0001):
+def meme_score(df: pd.DataFrame, delta=0.0001):
     #the columns of citations inside graph
     inc=[]
     out=[]
