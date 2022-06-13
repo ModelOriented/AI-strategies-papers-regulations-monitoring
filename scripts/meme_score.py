@@ -54,4 +54,4 @@ def main(df: pd.DataFrame, delta=0.0001):
 
     frequency = memes_enc.sum(axis=0)
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
-    return frequency.multiply(propagation_factor)
+    return np.multiply(propagation_factor,frequency)
