@@ -1,0 +1,4 @@
+outs:
+- md5: a7b9dc0eb6701d766d22f75e5c263ed0
+  size: 13277083
+  path: big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0_min_samples_13.parquet
