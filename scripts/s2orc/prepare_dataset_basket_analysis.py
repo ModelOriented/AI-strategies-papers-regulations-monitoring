@@ -62,11 +62,12 @@ def main(input_path:str, output_path:str):
 
     df['baskets_inbound'] = baskets_inbound_all
     df = df[df['institutions'].map(lambda d: len(d)) > 0]
+    print("Transaction encoding ...")
     te = TransactionEncoder()
     te_ary = te.fit(df['baskets_inbound']).transform(df['baskets_inbound'])
     transactions_df = pd.DataFrame(te_ary, columns=te.columns_)
-
-    transactions_df.to_parquet(output_path)
+    print("Saving ...")
+    transactions_df.to_csv(output_path)
 
 if __name__ == "__main__":
     typer.run(main)
