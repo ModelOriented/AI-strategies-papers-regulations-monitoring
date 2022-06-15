@@ -1,0 +1,4 @@
+outs:
+- md5: 6b9d83a1b056c7a75cbc96a4fec0c89b
+  size: 18338036961
+  path: big_cleaned_phrase-bert.parquet
