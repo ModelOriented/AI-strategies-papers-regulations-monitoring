@@ -3,9 +3,10 @@ import typer
 import os
 import numpy as np
 
+OUT_DIR_PATH = 'data/s2orc/clusterings'
+IN_DIR_PATH = 'data/s2orc/embeddings'
 
-def main(in_parquet_path: str,
-         out_path: str,
+def main(in_parquet_name: str,
          n_jobs: int = -1,
          cluster_selection_epsilons: str = ".0",
          gpu: bool = False,
@@ -16,7 +17,10 @@ def main(in_parquet_path: str,
         from cuml.cluster import HDBSCAN
     else:
         from hdbscan import HDBSCAN
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+
+    in_parquet_path = os.path.join(IN_DIR_PATH, in_parquet_name)
+    out_path = os.path.join(OUT_DIR_PATH, in_parquet_name)
+    os.makedirs(OUT_DIR_PATH, exist_ok=True)
     epsilons = [
         float(epsilon) for epsilon in cluster_selection_epsilons.split(",")
     ]
