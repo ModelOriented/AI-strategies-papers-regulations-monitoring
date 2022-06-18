@@ -73,7 +73,7 @@ def main(input_path:str, output_path:str):
                        use_colnames=True,
                        verbose=1,
                        low_memory=True,
-                       min_support=0.0005
+                       min_support=0.5
                        )
     print('Association rules ...')
     rules = association_rules(itemsets, metric="lift", min_threshold=0.5)
