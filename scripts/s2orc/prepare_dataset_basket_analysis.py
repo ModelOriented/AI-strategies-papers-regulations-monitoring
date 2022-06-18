@@ -65,7 +65,7 @@ def main(input_path:str, output_path:str):
     print('Transaction encoding ...')
     te = TransactionEncoder()
     te_ary = te.fit_transform(df['baskets_inbound'], sparse=True)
-    transactions_df = pd.DataFrame(te_ary, columns=te.columns_)
+    transactions_df = pd.DataFrame.sparse.from_spmatrix(te_ary, columns=te.columns_)
     print("Droping columns ...")
     counts = transactions_df.sum(axis=0)
     columns_to_drop = counts[counts == 1].index
