@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
+import typer
 
-
-def meme_score(df: pd.DataFrame, delta=0.0001):
+def adding_outbound_memes(df):
     #the columns of citations inside graph
     inc=[]
     out=[]
@@ -20,26 +20,34 @@ def meme_score(df: pd.DataFrame, delta=0.0001):
             if citing in df['paper_id']:
                 cit.append(citing)
         inc.append(cit)
-    df['inbound_citations_clear']=inc
-    df['outbound_citations_clear']=out
-
-    #OneHotEncoding of memes
-    enc = MultiLabelBinarizer(sparse_output=True)
-    memes_enc = enc.fit_transform(df['noun_chunks_cleaned'])
-
+    df['inbound_citations']=inc
+    df['outbound_citations']=out
 
     #new column of unique noun chunks in all cited papers
     memes_in_cited = []
     for i,paper in df.iterrows():
         if paper['outbound_citations_clear'].size>0:
             #only memes in cited papers:
-            c = df.iloc[paper['outbound_citations_clear']]['noun_chunks_cleaned']
+            c = df.iloc[paper['outbound_citations']]['noun_chunks_cleaned']
             
             memes_in_cited.append(list(set(c.explode())))
         else:
             memes_in_cited.append(list(set()))
 
-    df['memes_in_cited']=memes_in_cited
+    df['outbound_memes']=memes_in_cited
+
+    return df
+
+
+
+def meme_score(df: pd.DataFrame, delta=0.0001):
+
+    if 'outbound_memes' not in df.columns:
+        df = adding_outbound_memes(df)
+
+    #OneHotEncoding of memes
+    enc = MultiLabelBinarizer(sparse_output=True)
+    memes_enc = enc.fit_transform(df['noun_chunks_cleaned'])
 
     #OneHotEncoding of memes in cited papers
     c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
@@ -54,4 +62,14 @@ def meme_score(df: pd.DataFrame, delta=0.0001):
 
     frequency = memes_enc.sum(axis=0)
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
-    return np.multiply(propagation_factor,frequency)
+    df_memes = pd.DataFrame({'meme_names': enc.classes_, 'meme_score': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
+    return df_memes
+
+
+def main(path:str):
+    df= pd.read_parquet(path)
+    return meme_score(df)
+
+
+if __name__ == "__main__":
+    typer.run(main)
