@@ -72,7 +72,7 @@ def main(input_path:str, output_path:str):
     itemsets = apriori(transactions_df,
                        use_colnames=True,
                        verbose=1,
-                       low_memory=False,
+                       low_memory=True,
                        min_support=0.0005
                        )
     print('Association rules ...')
