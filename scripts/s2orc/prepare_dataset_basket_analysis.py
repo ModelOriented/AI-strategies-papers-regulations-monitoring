@@ -71,7 +71,7 @@ def main(input_path:str, output_path:str):
     columns_to_drop = counts[counts == 1].index
     transactions_df.drop(list(columns_to_drop), axis=1, inplace=True)
     print('Saving ...')
-    transactions_df.to_parquet(output_path)
+    transactions_df.to_dense().to_parquet(output_path)
 
 if __name__ == "__main__":
     typer.run(main)
