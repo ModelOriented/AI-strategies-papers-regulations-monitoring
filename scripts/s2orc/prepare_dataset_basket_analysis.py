@@ -2,6 +2,8 @@ import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 import typer
 from tqdm import tqdm
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
 
 def main(input_path:str, output_path:str):
     print("Data loading ...")
@@ -66,12 +68,23 @@ def main(input_path:str, output_path:str):
     te = TransactionEncoder()
     te_ary = te.fit_transform(df['baskets_inbound'], sparse=True)
     transactions_df = pd.DataFrame.sparse.from_spmatrix(te_ary, columns=te.columns_)
-    print("Droping columns ...")
-    counts = transactions_df.sum(axis=0)
-    columns_to_drop = counts[counts == 1].index
-    transactions_df.drop(list(columns_to_drop), axis=1, inplace=True)
+    print('Aprori ...')
+    itemsets = apriori(transactions_df,
+                       use_colnames=True,
+                       verbose=1,
+                       low_memory=False,
+                       min_support=0.0005
+                       )
+    print('Association rules ...')
+    rules = association_rules(itemsets, metric="lift", min_threshold=0.5)
     print('Saving ...')
-    transactions_df.to_dense().to_parquet(output_path)
+    rules.to_csv(output_path)
+    # print("Droping columns ...")
+    # counts = transactions_df.sum(axis=0)
+    # columns_to_drop = counts[counts == 1].index
+    # transactions_df.drop(list(columns_to_drop), axis=1, inplace=True)
+    # print('Saving ...')
+    # transactions_df.to_dense().to_parquet(output_path)
 
 if __name__ == "__main__":
     typer.run(main)
