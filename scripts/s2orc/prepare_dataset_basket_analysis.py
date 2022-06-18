@@ -1,6 +1,7 @@
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 import typer
+from tqdm import tqdm
 
 def main(input_path:str, output_path:str):
     print("Data loading ...")
@@ -64,10 +65,11 @@ def main(input_path:str, output_path:str):
     print("Droping columns ...")
     counts = df.sum(axis=0)
     columns_to_drop = counts[counts == 1].index
-    df_small = df[df.columns.difference(list(columns_to_drop))]
+    for col in tqdm(list(columns_to_drop)):
+        df.drop(col, axis=1, inplace=True)
     print('Transaction encoding ...')
     te = TransactionEncoder()
-    te_ary = te.fit(df_small['baskets_inbound']).transform(df_small['baskets_inbound'])
+    te_ary = te.fit(df['baskets_inbound']).transform(df['baskets_inbound'])
     transactions_df = pd.DataFrame(te_ary, columns=te.columns_)
     print('Saving ...')
     transactions_df.to_parquet(output_path)
