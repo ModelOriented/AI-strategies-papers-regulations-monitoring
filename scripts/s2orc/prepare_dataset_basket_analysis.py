@@ -69,8 +69,7 @@ def main(input_path:str, output_path:str):
     print("Droping columns ...")
     counts = transactions_df.sum(axis=0)
     columns_to_drop = counts[counts == 1].index
-    for col in tqdm(list(columns_to_drop)):
-        transactions_df.drop(col, axis=1, inplace=True)
+    transactions_df.drop(list(columns_to_drop), axis=1, inplace=True)
     print('Saving ...')
     transactions_df.to_parquet(output_path)
 
