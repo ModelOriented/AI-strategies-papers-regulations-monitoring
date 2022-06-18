@@ -64,7 +64,7 @@ def main(input_path:str, output_path:str):
     # df = df[df['institutions'].map(lambda d: len(d)) > 0]
     print('Transaction encoding ...')
     te = TransactionEncoder()
-    te_ary = te.fit(df['baskets_inbound']).transform(df['baskets_inbound'])
+    te_ary = te.fit_transform(df['baskets_inbound'], sparse=True)
     transactions_df = pd.DataFrame(te_ary, columns=te.columns_)
     print("Droping columns ...")
     counts = transactions_df.sum(axis=0)
