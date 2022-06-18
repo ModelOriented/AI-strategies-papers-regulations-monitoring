@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
+import typer
 
-
-def meme_score(df: pd.DataFrame, delta=0.0001):
+def adding_outbound_memes(df):
     #the columns of citations inside graph
     inc=[]
     out=[]
@@ -20,36 +20,52 @@ def meme_score(df: pd.DataFrame, delta=0.0001):
             if citing in df['paper_id']:
                 cit.append(citing)
         inc.append(cit)
-    df['inbound_citations_clear']=inc
-    df['outbound_citations_clear']=out
-
-    #OneHotEncoding of memes
-    enc = MultiLabelBinarizer(sparse_output=True)
-    memes_enc = enc.fit_transform(df['noun_chunks_cleaned'])
-
+    df['inbound_citations']=inc
+    df['outbound_citations']=out
 
     #new column of unique noun chunks in all cited papers
     memes_in_cited = []
     for i,paper in df.iterrows():
         if paper['outbound_citations_clear'].size>0:
             #only memes in cited papers:
-            c = df.iloc[paper['outbound_citations_clear']]['noun_chunks_cleaned']
+            c = df.iloc[paper['outbound_citations']]['noun_chunks_cleaned']
             
             memes_in_cited.append(list(set(c.explode())))
         else:
             memes_in_cited.append(list(set()))
 
-    df['memes_in_cited']=memes_in_cited
+    df['outbound_memes']=memes_in_cited
+
+    return df
+
+
+
+def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
+
+    if 'outbound_memes' not in df.columns:
+        df = adding_outbound_memes(df)
+
+    #OneHotEncoding of memes
+    enc = MultiLabelBinarizer(sparse_output=True)
+    memes_enc = enc.fit_transform(df['memes'])
 
     #OneHotEncoding of memes in cited papers
     c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
-    cited_memes_enc = c_enc.fit_transform(a)
-
+    cited_memes_enc = c_enc.fit_transform(df['outbound_memes'])
     #factors for meme score
-    stick2 = cited_memes_enc.sum(axis=0)
-    spark2 = cited_memes_enc.shape[1] - c1#(1-cited_memes_enc).sum(axis=1)
-    p = memes_enc.multiply(cited_memes_enc)
-    stick1 = p.sum(axis=0)
+    if conditioning == None: 
+        stick2 = cited_memes_enc.sum(axis=0)
+        p = memes_enc.multiply(cited_memes_enc)
+        stick1 = p.sum(axis=0)
+    elif conditioning == 'is_big_tech':
+        is_BT = np.broadcast_to(np.expand_dims(np.array(df['is_big_tech']),axis = 1),np.shape(cited_memes_enc))
+        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0)
+        p = memes_enc.multiply(cited_memes_enc.multiply(is_BT))
+        stick1 = p.sum(axis=0)
+    #elif conditioning == 'not_big_tech':
+
+    spark2 = cited_memes_enc.shape[1] - stick2#(1-cited_memes_enc).sum(axis=1)
+    
     spark1 = memes_enc.sum()-stick1#(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
 
     frequency = memes_enc.sum(axis=0)
@@ -64,5 +80,4 @@ def main(path:str):
 
 
 if __name__ == "__main__":
-
-    main()
+    typer.run(main)

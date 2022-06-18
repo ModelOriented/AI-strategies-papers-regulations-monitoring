@@ -40,24 +40,32 @@ def adding_outbound_memes(df):
 
 
 
-def meme_score(df: pd.DataFrame, delta=0.0001):
+def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
 
     if 'outbound_memes' not in df.columns:
         df = adding_outbound_memes(df)
 
     #OneHotEncoding of memes
     enc = MultiLabelBinarizer(sparse_output=True)
-    memes_enc = enc.fit_transform(df['noun_chunks_cleaned'])
+    memes_enc = enc.fit_transform(df['memes'])
 
     #OneHotEncoding of memes in cited papers
     c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
-    cited_memes_enc = c_enc.fit_transform(a)
-
+    cited_memes_enc = c_enc.fit_transform(df['outbound_memes'])
     #factors for meme score
-    stick2 = cited_memes_enc.sum(axis=0)
-    spark2 = cited_memes_enc.shape[1] - c1#(1-cited_memes_enc).sum(axis=1)
-    p = memes_enc.multiply(cited_memes_enc)
-    stick1 = p.sum(axis=0)
+    if conditioning == None: 
+        stick2 = cited_memes_enc.sum(axis=0)
+        p = memes_enc.multiply(cited_memes_enc)
+        stick1 = p.sum(axis=0)
+    elif conditioning == 'is_big_tech':
+        is_BT = np.broadcast_to(np.expand_dims(np.array(df['is_big_tech']),axis = 1),np.shape(cited_memes_enc))
+        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0)
+        p = memes_enc.multiply(cited_memes_enc.multiply(is_BT))
+        stick1 = p.sum(axis=0)
+    #elif conditioning == 'not_big_tech':
+
+    spark2 = cited_memes_enc.shape[1] - stick2#(1-cited_memes_enc).sum(axis=1)
+    
     spark1 = memes_enc.sum()-stick1#(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
 
     frequency = memes_enc.sum(axis=0)
