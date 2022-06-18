@@ -64,7 +64,7 @@ def main(input_path:str, output_path:str):
     print("Droping columns ...")
     counts = df.sum(axis=0)
     columns_to_drop = counts[counts == 1].index
-    df_small = df.drop(list(columns_to_drop), axis=1)
+    df_small = df[df.columns.difference(list(columns_to_drop))]
     print('Transaction encoding ...')
     te = TransactionEncoder()
     te_ary = te.fit(df_small['baskets_inbound']).transform(df_small['baskets_inbound'])
