@@ -5,7 +5,7 @@ from tqdm import tqdm
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 
-def main(input_path:str, output_path:str, min_support:int):
+def main(input_path:str, output_path:str, min_support:float):
     print("Data loading ...")
     df = pd.read_parquet(input_path)
     print("Preparing dataset ...")
