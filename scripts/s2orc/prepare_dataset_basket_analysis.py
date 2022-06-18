@@ -61,7 +61,7 @@ def main(input_path:str, output_path:str):
             baskets_inbound.append('company')
         baskets_inbound_all.append(baskets_inbound)
     df['baskets_inbound'] = baskets_inbound_all
-    df = df[df['institutions'].map(lambda d: len(d)) > 0]
+    # df = df[df['institutions'].map(lambda d: len(d)) > 0]
     print('Transaction encoding ...')
     te = TransactionEncoder()
     te_ary = te.fit(df['baskets_inbound']).transform(df['baskets_inbound'])
