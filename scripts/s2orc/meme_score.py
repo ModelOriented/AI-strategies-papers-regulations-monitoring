@@ -38,8 +38,6 @@ def adding_outbound_memes(df):
 
     return df
 
-
-
 def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
 
     if 'outbound_memes' not in df.columns:
@@ -54,19 +52,19 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     cited_memes_enc = c_enc.fit_transform(df['outbound_memes'])
     #factors for meme score
     if conditioning == None: 
-        stick2 = cited_memes_enc.sum(axis=0)
-        p = memes_enc.multiply(cited_memes_enc)
+        stick2 = cited_memes_enc.sum(axis=0) #sum of papers, that cite paper with this meme
+        p = memes_enc.multiply(cited_memes_enc) #papers that cite paper with this meme AND have this meme themselves
         stick1 = p.sum(axis=0)
     elif conditioning == 'is_big_tech':
         is_BT = np.broadcast_to(np.expand_dims(np.array(df['is_big_tech']),axis = 1),np.shape(cited_memes_enc))
-        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0)
+        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0) 
         p = memes_enc.multiply(cited_memes_enc.multiply(is_BT))
         stick1 = p.sum(axis=0)
     #elif conditioning == 'not_big_tech':
 
-    spark2 = cited_memes_enc.shape[1] - stick2#(1-cited_memes_enc).sum(axis=1)
+    spark2 = cited_memes_enc.shape[1] - stick2#sum of papers that DO NOT cite papers with this meme
     
-    spark1 = memes_enc.sum()-stick1#(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
+    spark1 = memes_enc.sum()-stick1#sum of papers that DO NOT cite papers with this meme AND have this meme
 
     frequency = memes_enc.sum(axis=0)
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
