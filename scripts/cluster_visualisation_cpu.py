@@ -30,9 +30,13 @@ def main(input_path:str, output_path:str, min_cluster_size:int=15):
     df_clear['y'] = umap_data[:,1]
     print('Ploting ...')
     # Visualize clusters
-    fig = px.scatter(df_clear, x='x', y='y', color='chunk_y', hover_data=['chunk_x'], hover_name='chunk_y')
+    df_clear['cluster_name'] = df_clear['chunk_y']
+    df_clear['noun_chunk'] = df_clear['chunk_x']
+
+    df_clear = df_clear[['x', 'y', 'cluster_name', 'noun_chunk']]
+    fig = px.scatter(df_clear, x='x', y='y', color='cluster_name', hover_data=['noun_chunk'], hover_name='cluster_name')
     print('Saving ...')
-    fig.write_html(output_path+'.html')
+    df_clear.to_parquet(output_path+'.parquet')
 
 
 if __name__ == "__main__":
