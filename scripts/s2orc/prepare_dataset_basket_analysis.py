@@ -5,7 +5,7 @@ from tqdm import tqdm
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 
-def main(input_path:str, output_path:str, min_support:float):
+def main(input_path:str, output_path:str, min_support:float, only_aff:bool):
     print("Data loading ...")
     df = pd.read_parquet(input_path)
     print("Preparing dataset ...")
@@ -63,7 +63,8 @@ def main(input_path:str, output_path:str, min_support:float):
             baskets_inbound.append('company')
         baskets_inbound_all.append(baskets_inbound)
     df['baskets_inbound'] = baskets_inbound_all
-    # df = df[df['institutions'].map(lambda d: len(d)) > 0]
+    if only_aff:
+        df = df[df['institutions'].map(lambda d: len(d)) > 0]
     print('Transaction encoding ...')
     te = TransactionEncoder()
     te_ary = te.fit_transform(df['baskets_inbound'], sparse=True)
