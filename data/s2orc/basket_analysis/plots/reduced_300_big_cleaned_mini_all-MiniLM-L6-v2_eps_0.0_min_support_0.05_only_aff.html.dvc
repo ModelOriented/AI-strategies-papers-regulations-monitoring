@@ -1,0 +1,4 @@
+outs:
+- md5: 8f16fb4cd9dbfba9fa71fc69904db6ce
+  size: 35700
+  path: reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0_min_support_0.05_only_aff.html
