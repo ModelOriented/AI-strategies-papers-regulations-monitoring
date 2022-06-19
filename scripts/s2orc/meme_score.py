@@ -35,6 +35,11 @@ def adding_outbound_memes(df):
             memes_in_cited.append(list(set()))
 
     df['outbound_memes']=memes_in_cited
+    return df
+
+def adding_outbound_memes(df):
+    #the one hot of memes in BT-affiliated papers+ OH of memes in nBT affiliated papers
+    # outbound memes with BT affiliation
 
     return df
 
@@ -55,11 +60,11 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         stick2 = cited_memes_enc.sum(axis=0) #sum of papers, that cite paper with this meme
         p = memes_enc.multiply(cited_memes_enc) #papers that cite paper with this meme AND have this meme themselves
         stick1 = p.sum(axis=0)
-    elif conditioning == 'is_big_tech':
-        is_BT = np.broadcast_to(np.expand_dims(np.array(df['is_big_tech']),axis = 1),np.shape(cited_memes_enc))
-        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0) 
+    elif conditioning == 'is_big_tech':#UNCORRECT!!!
+        is_BT = np.broadcast_to(np.expand_dims(np.array(df['is_big_tech']),axis = 1),np.shape(cited_memes_enc))#mask of big tech affiliations with the size of one hot encodings
+        stick2 = cited_memes_enc.multiply(is_BT).sum(axis=0) #sum of papers that are affiliated with BT AND cite papers with this meme 
         p = memes_enc.multiply(cited_memes_enc.multiply(is_BT))
-        stick1 = p.sum(axis=0)
+        stick1 = p.sum(axis=0)#sum of papers that are affiliated with BT AND cite papers with this meme AND have this meme
     #elif conditioning == 'not_big_tech':
 
     spark2 = cited_memes_enc.shape[1] - stick2#sum of papers that DO NOT cite papers with this meme
