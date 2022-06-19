@@ -77,5 +77,5 @@ def main(input_path:str, names_path:str, output_path:str):
     net.show_buttons(filter_=['nodes', 'edges', 'physics'])
     net.save_graph(output_path)
 
-if __name__ == 'main':
-    typer(main)
+if __name__ == "__main__":
+    typer.run(main)
