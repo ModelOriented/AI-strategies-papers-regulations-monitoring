@@ -1,0 +1,4 @@
+outs:
+- md5: b9555712e158541cc1200a427c74acfe
+  size: 9874551
+  path: meme_score_academia.parquet
