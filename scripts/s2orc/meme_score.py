@@ -42,6 +42,8 @@ def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
 
 def clean_outbound_citations(df:pd.DataFrame):
     def get_affiliated_memes(list_cit):
+        tmp = [df.loc[cit]['institutions'] for cit in list_cit if cit in df.index]
+        print(tmp)
         tmp = [df.loc[cit]['memes'] for cit in list_cit if cit in df.index and df.loc[cit]['institutions'].str.len > 0]
         if len(tmp)>0:
             tmp = np.concatenate(tmp).ravel().tolist()
