@@ -41,7 +41,7 @@ def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
     return aff_memes
 
 def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
-
+    print('OneHot Encoding ..')
     #OneHotEncoding of memes
     enc = MultiLabelBinarizer(sparse_output=True)
     memes_enc = enc.fit_transform(df['memes'])
@@ -49,7 +49,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     #OneHotEncoding of memes in cited papers
     c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
     cited_memes_enc = c_enc.fit_transform(df['outbound_memes'])
-
+    print('Meme score ...')
     #factors for meme score
     if conditioning == None: 
         stick2 = cited_memes_enc.sum(axis=0) #sum of papers, that cite paper with this meme
