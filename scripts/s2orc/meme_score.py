@@ -88,10 +88,10 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
     elif conditioning == 'is_big_tech':
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
-    elif conditioning == 'is_company:':
+    elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
-    elif conditioning == 'is_academia:':
+    elif conditioning == 'is_academia':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
     return df_memes
