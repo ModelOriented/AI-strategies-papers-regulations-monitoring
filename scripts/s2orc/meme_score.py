@@ -7,7 +7,9 @@ import itertools
 def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
     def get_affiliated_memes(list_cit):
         tmp = [df.loc[cit]['memes'] for cit in list_cit if cit in df.index and df.loc[cit][affiliation]]
-        return [y for x in tmp for y in x]
+        if len(tmp)>0:
+            tmp = np.concatenate(tmp).ravel().tolist()
+        return tmp
     aff_memes = df['outbound_citations'].apply(get_affiliated_memes)
     #aff_memes = [[df.loc[cit]['memes']*df.loc[cit]['is_big_tech'] for cit in list_cit if cit in df.index] for list_cit in df['outbound_citations']]
 
