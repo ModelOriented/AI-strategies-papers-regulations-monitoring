@@ -105,7 +105,7 @@ def main(path: str, output_path: str, conditioning: str):
     if conditioning in set(['is_company', 'is_academia']):
         df = add_columns(df)
     if conditioning is not None:
-        df = clean_outbound_citations(df)
+        df['outbound_memes'] = clean_outbound_citations(df)
     meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
 
 
