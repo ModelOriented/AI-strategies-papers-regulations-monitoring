@@ -1,0 +1,4 @@
+outs:
+- md5: 500385070881e217071788ef42faf4c6
+  size: 10057456
+  path: meme_score.parquet
