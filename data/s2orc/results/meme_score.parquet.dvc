@@ -1,4 +1,4 @@
 outs:
-- md5: 500385070881e217071788ef42faf4c6
-  size: 10057456
+- md5: 10f0a6bfb2e4f31ca245b85afe9d40c8
+  size: 3876347
   path: meme_score.parquet
