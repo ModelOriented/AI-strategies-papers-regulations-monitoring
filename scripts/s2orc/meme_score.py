@@ -87,10 +87,10 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
 
 
 def main(path: str, output_path: str, conditioning: str):
-    if conditioning not in set('is_big_tech', 'is_company', 'is_academia'):
+    if conditioning not in set(['is_big_tech', 'is_company', 'is_academia']):
         raise KeyError
     df = pd.read_parquet(path)
-    if conditioning in set('is_company', 'is_academia'):
+    if conditioning in set(['is_company', 'is_academia']):
         df = add_columns(df)
     meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
 
