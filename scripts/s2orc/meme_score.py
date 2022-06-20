@@ -93,7 +93,7 @@ def main(path: str, output_path: str, conditioning: str):
     if conditioning in set(['is_company', 'is_academia']):
         df = add_columns(df)
     if conditioning is not None:
-        df = df[df['institutions'].str.len > 0]
+        df = df[df['institutions'].map(lambda d: len(d)) > 0]
     meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
 
 
