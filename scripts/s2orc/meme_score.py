@@ -4,6 +4,31 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import typer
 import itertools
 
+def add_columns(df: pd.DataFrame):
+    is_academia = []
+    is_company = []
+    for index, paper in df.iterrows():
+        if len(paper['types']) == 0:
+            is_academia.append(0)
+            is_company.append(0)
+        else:
+            paper_types = set()
+            for author in paper['types']:
+                for aff in author:
+                    paper_types.add(aff)
+            if 'company' in paper_types:
+                is_company.append(1)
+            else:
+                is_company.append(0)
+            if 'education' in paper_types or 'facility' in paper_types or 'government' in paper_types:
+                is_academia.append(1)
+            else:
+                is_academia.append(0)
+
+    df['is_academia'] = is_academia
+    df['is_company'] = is_company
+    return df
+
 def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
     def get_affiliated_memes(list_cit):
         tmp = [df.loc[cit]['memes'] for cit in list_cit if cit in df.index and df.loc[cit][affiliation]]
@@ -51,14 +76,23 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
     elif conditioning == 'is_big_tech':
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
-
+    elif conditioning == 'is_company:':
+        df_memes = pd.DataFrame({'meme_id': enc.classes_,
+                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
+    elif conditioning == 'is_academia:':
+        df_memes = pd.DataFrame({'meme_id': enc.classes_,
+                                 'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
     return df_memes
 
 
-def main(path:str,output_path:str):
-    df= pd.read_parquet(path)
 
-    meme_score(df).merge(meme_score(df,conditioning='is_big_tech')).to_parquet(output_path)
+def main(path: str, output_path: str, conditioning: str):
+    if conditioning not in set('is_big_tech', 'is_company', 'is_academia'):
+        raise KeyError
+    df = pd.read_parquet(path)
+    if conditioning in set('is_company', 'is_academia'):
+        df = add_columns(df)
+    meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
 
 
 if __name__ == "__main__":
