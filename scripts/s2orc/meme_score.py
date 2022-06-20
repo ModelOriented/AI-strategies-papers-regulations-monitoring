@@ -40,6 +40,18 @@ def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
 
     return aff_memes
 
+def clean_outbound_citations(df:pd.DataFrame):
+    def get_affiliated_memes(list_cit):
+        tmp = [df.loc[cit]['memes'] for cit in list_cit if cit in df.index and df.loc[cit]['institutions'].map(lambda d: len(d)) > 0]
+        if len(tmp)>0:
+            tmp = np.concatenate(tmp).ravel().tolist()
+        return tmp
+    aff_memes = df['outbound_citations'].apply(get_affiliated_memes)
+    #aff_memes = [[df.loc[cit]['memes']*df.loc[cit]['is_big_tech'] for cit in list_cit if cit in df.index] for list_cit in df['outbound_citations']]
+
+    return aff_memes
+
+
 def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     print('OneHot Encoding ..')
     #OneHotEncoding of memes
@@ -93,7 +105,7 @@ def main(path: str, output_path: str, conditioning: str):
     if conditioning in set(['is_company', 'is_academia']):
         df = add_columns(df)
     if conditioning is not None:
-        df = df[df['institutions'].map(lambda d: len(d)) > 0]
+        df = clean_outbound_citations(df)
     meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
 
 
