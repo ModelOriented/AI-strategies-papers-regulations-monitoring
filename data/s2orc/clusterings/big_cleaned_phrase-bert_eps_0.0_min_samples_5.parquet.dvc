@@ -1,0 +1,4 @@
+outs:
+- md5: 8630941d66d35bdc6ee8d779d2fabf7c
+  size: 18338339487
+  path: big_cleaned_phrase-bert_eps_0.0_min_samples_5.parquet
