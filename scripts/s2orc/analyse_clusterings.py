@@ -4,8 +4,6 @@ import pandas as pd
 from glob import glob
 import os.path
 
-
-
 rows = []
 for path in glob('data/s2orc/clusterings/*.parquet'):
     print(path)
@@ -17,4 +15,4 @@ for path in glob('data/s2orc/clusterings/*.parquet'):
 
 print(rows)
 
-pd.DataFrame(rows).to_csv('cluster_stats.csv')
+pd.DataFrame(rows).to_csv('cluster_stats.csv', index=False)
