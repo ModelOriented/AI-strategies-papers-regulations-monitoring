@@ -86,18 +86,20 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
     if conditioning == None:
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_vanilla': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
-                                 'sticking_factor_vanilla': np.divide(stick1,stick2+delta), 'sparking_factor_vanilla': np.divide(spark1+delta,spark2+delta)})
+                                 'sticking_factor_vanilla': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
+                                 'sparking_factor_vanilla': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta)))})
     elif conditioning == 'is_big_tech':
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
-                                 'sticking_factor_BT': np.divide(stick1,stick2+delta), 'sparking_factor_BT': np.divide(spark1+delta,spark2+delta)})
+                                 'sticking_factor_BT': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
+                                 'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta)))})
     elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
-                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
-                                 'sticking_factor_C': np.divide(stick1,stick2+delta), 'sparking_factor_C': np.divide(spark1+delta,spark2+delta)})
+                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
     elif conditioning == 'is_academia':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
-                                 'sticking_factor_A': np.divide(stick1,stick2+delta), 'sparking_factor_A': np.divide(spark1+delta,spark2+delta)})
+                                 'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
+                                 'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta)))})
     return df_memes
 
 
