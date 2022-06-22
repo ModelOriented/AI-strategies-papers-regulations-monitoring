@@ -12,3 +12,7 @@
 /reduced_100_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet
 /reduced_200_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet
 /reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.5_min_clust_size_3.parquet
+/reduced_300_big_cleaned_phrase-bert_eps_0.4_min_clust_size_3.parquet
+/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.4_min_clust_size_2.parquet
+/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.3_min_clust_size_2.parquet
+/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.5_min_clust_size_2.parquet
