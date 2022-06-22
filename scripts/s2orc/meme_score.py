@@ -85,28 +85,35 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     frequency = memes_enc.sum(axis=0)
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
     if conditioning == None:
-        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
+        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_vanilla': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
+                                 'sticking_factor_vanilla': np.divide(stick1,stick2+delta), 'sparking_factor_vanilla': np.divide(spark1+delta,spark2+delta)})
     elif conditioning == 'is_big_tech':
-        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency)))})
+        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
+                                 'sticking_factor_BT': np.divide(stick1,stick2+delta), 'sparking_factor_BT': np.divide(spark1+delta,spark2+delta)})
     elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
-                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
+                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
+                                 'sticking_factor_C': np.divide(stick1,stick2+delta), 'sparking_factor_C': np.divide(spark1+delta,spark2+delta)})
     elif conditioning == 'is_academia':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
-                                 'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
+                                 'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
+                                 'sticking_factor_A': np.divide(stick1,stick2+delta), 'sparking_factor_A': np.divide(spark1+delta,spark2+delta)})
     return df_memes
 
 
 
 def main(path: str, output_path: str, conditioning: str):
-    if conditioning not in set(['is_big_tech', 'is_company', 'is_academia']):
+    if conditioning not in set(['is_big_tech', 'is_company', 'is_academia', 'summary']):
         raise KeyError
     df = pd.read_parquet(path)
-    if conditioning in set(['is_company', 'is_academia']):
+    if conditioning in set(['is_company', 'is_academia', 'summary']):
         df = add_columns(df)
     if conditioning is not None:
         df['outbound_memes'] = clean_outbound_citations(df)
-    meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
+    if conditioning != 'summary':
+        meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
+    else:
+        meme_score(df).join(meme_score(df, conditioning='is_big_tech'), on='meme_id').join(meme_score(df, conditioning='is_academia'), on='meme_id').to_parquet(output_path)
 
 
 if __name__ == "__main__":
