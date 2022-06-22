@@ -115,7 +115,7 @@ def main(path: str, output_path: str, conditioning: str):
     if conditioning != 'summary':
         meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
     else:
-        meme_score(df).join(meme_score(df, conditioning='is_big_tech'), on='meme_id').join(meme_score(df, conditioning='is_academia'), on='meme_id').to_parquet(output_path)
+        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(output_path)
 
 
 if __name__ == "__main__":
