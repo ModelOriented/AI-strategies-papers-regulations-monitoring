@@ -99,6 +99,10 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
                                  'sticking_factor_BT': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
                                  'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
+                                 'stick1_BT': np.squeeze(np.array(stick1)),
+                                 'stick2_BT': np.squeeze(np.array(stick2)),
+                                 'spark1_BT': np.squeeze(np.array(spark1)),
+                                 'spark2_BT': np.squeeze(np.array(spark2))
                                  })
         df_memes = df_memes.merge(frequency_bt, how='left', on='meme_id')
     elif conditioning == 'is_company':
@@ -114,6 +118,10 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
                                  'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
                                  'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
                                  'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta))),
+                                 'stick1_A': np.squeeze(np.array(stick1)),
+                                 'stick2_A': np.squeeze(np.array(stick2)),
+                                 'spark1_A': np.squeeze(np.array(spark1)),
+                                 'spark2_A': np.squeeze(np.array(spark2))
                                  })
         df_memes = df_memes.merge(frequency_a, how='left', on='meme_id')
     return df_memes
