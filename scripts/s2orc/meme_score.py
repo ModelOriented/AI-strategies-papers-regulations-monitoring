@@ -94,7 +94,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_bt = df[df['is_big_tech'] == 1]
         enc = MultiLabelBinarizer(sparse_output=True)
         memes_enc_bt = enc.fit_transform(df_bt['memes'])
-        frequency_bt = memes_enc_bt.sum(axis=0)
+        frequency_bt = pd.DataFrame(memes_enc_bt.sum(axis=0), columns=['frequency_bt'])
         frequency_bt = frequency_bt.T
         frequency_bt.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
@@ -102,9 +102,6 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
                                  'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),\
                                  })
         df_memes.merge(frequency_bt, left_on='meme_id', right_on='index')
-        print(df_memes.columns)
-        df_memes['frequency_bt'] = df_memes['sum']
-        df_memes.drop(columns=['sum'], inplace=True)
     elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
@@ -112,7 +109,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_a = df[df['is_academia'] == 1]
         enc = MultiLabelBinarizer(sparse_output=True)
         memes_enc_a = enc.fit_transform(df_a['memes'])
-        frequency_a = memes_enc_a.sum(axis=0)
+        frequency_a = pd.DataFrame(memes_enc_a.sum(axis=0), columns=['frequency_a'])
         frequency_a = frequency_a.T
         frequency_a.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
@@ -121,9 +118,6 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
                                  'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta))),
                                  })
         df_memes.merge(frequency_a, left_on='meme_id', right_on='index')
-        print(df_memes.columns)
-        df_memes['frequency_bt'] = df_memes['sum']
-        df_memes.drop(columns=['sum'], inplace=True)
     return df_memes
 
 
