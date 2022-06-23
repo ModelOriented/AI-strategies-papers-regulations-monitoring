@@ -131,15 +131,15 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
 def main(filename:str, conditioning: str):
     if conditioning not in set(['is_big_tech', 'is_company', 'is_academia', 'summary']):
         raise KeyError
-    df = pd.read_parquet(os.join('data/s2orc/results',filename))
+    df = pd.read_parquet(os.path.join('data/s2orc/results',filename))
     if conditioning in set(['is_company', 'is_academia', 'summary']):
         df = add_columns(df)
     if conditioning is not None:
         df['outbound_memes'] = clean_outbound_citations(df)
     if conditioning != 'summary':
-        meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(os.join('data/s2orc/meme_score',filename))
+        meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(os.path.join('data/s2orc/meme_score',filename))
     else:
-        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.join('data/s2orc/results',filename))
+        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.path.join('data/s2orc/results',filename))
 
 
 if __name__ == "__main__":
