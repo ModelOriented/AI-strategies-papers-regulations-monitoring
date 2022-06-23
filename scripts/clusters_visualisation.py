@@ -7,7 +7,7 @@ import plotly.express as px
 import cuml
 
 
-def main(input_path:str,output_path:str, min_cluster_size:int=15):
+def main(input_path:str, output_path:str, min_cluster_size:int=15):
     print("Data loading ...")
     # reading in data
     df = pd.read_parquet(input_path)

@@ -29,6 +29,7 @@ def add_columns(df: pd.DataFrame):
     df['is_company'] = is_company
     return df
 
+
 def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
     def get_affiliated_memes(list_cit):
         tmp = [df.loc[cit]['memes'] for cit in list_cit if cit in df.index and df.loc[cit][affiliation]]

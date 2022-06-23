@@ -141,3 +141,4 @@ secrets/*
 
 chromedriver
 jobs/
+**/.DS_Store
