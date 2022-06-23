@@ -1,7 +1,7 @@
 import pandas as pd
 import typer
 import os
-
+import joblib
 
 EMBEDDINGS_DIR_PATH = "data/s2orc/embeddings/"
 import numpy as np
@@ -13,6 +13,7 @@ def main(file_name:str,n_components:int, gpu:bool=False):
         print("Using GPU")
         import cuml
         reducer = cuml.UMAP(n_components=n_components, random_state=42)
+        joblib.dump(reducer, os.path.join(EMBEDDINGS_DIR_PATH, 'umap_reducers', file_name))
     else:
         print("Using CPU")
         import umap
