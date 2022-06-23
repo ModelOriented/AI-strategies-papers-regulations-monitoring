@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import typer
-import itertools
+import os
 
 def add_columns(df: pd.DataFrame):
     is_academia = []
@@ -39,6 +39,7 @@ def get_memes_with_aff(df:pd.DataFrame,affiliation:str):
     #aff_memes = [[df.loc[cit]['memes']*df.loc[cit]['is_big_tech'] for cit in list_cit if cit in df.index] for list_cit in df['outbound_citations']]
 
     return aff_memes
+
 
 def clean_outbound_citations(df:pd.DataFrame):
     def get_affiliated_memes(list_cit):
@@ -87,35 +88,58 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
     if conditioning == None:
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_vanilla': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
                                  'sticking_factor_vanilla': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
-                                 'sparking_factor_vanilla': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta)))})
+                                 'sparking_factor_vanilla': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
+                                 'frequency': np.squeeze(np.array(frequency))})
     elif conditioning == 'is_big_tech':
+        df_bt = df[df['is_big_tech'] == 1]
+        enc = MultiLabelBinarizer(sparse_output=True)
+        memes_enc_bt = enc.fit_transform(df_bt['memes'])
+        frequency_bt = memes_enc_bt.sum(axis=0)
+        frequency_bt = frequency_bt.T
+        frequency_bt.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
                                  'sticking_factor_BT': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
-                                 'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta)))})
+                                 'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),\
+                                 })
+        df_memes.merge(frequency_bt, left_on='meme_id', right_on='index')
+        print(df_memes.columns)
+        df_memes['frequency_bt'] = df_memes['sum']
+        df_memes.drop(columns=['sum'], inplace=True)
     elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
     elif conditioning == 'is_academia':
+        df_a = df[df['is_academia'] == 1]
+        enc = MultiLabelBinarizer(sparse_output=True)
+        memes_enc_a = enc.fit_transform(df_a['memes'])
+        frequency_a = memes_enc_a.sum(axis=0)
+        frequency_a = frequency_a.T
+        frequency_a.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
                                  'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
-                                 'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta)))})
+                                 'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta))),
+                                 })
+        df_memes.merge(frequency_a, left_on='meme_id', right_on='index')
+        print(df_memes.columns)
+        df_memes['frequency_bt'] = df_memes['sum']
+        df_memes.drop(columns=['sum'], inplace=True)
     return df_memes
 
 
 
-def main(path: str, output_path: str, conditioning: str):
+def main(filename:str, conditioning: str):
     if conditioning not in set(['is_big_tech', 'is_company', 'is_academia', 'summary']):
         raise KeyError
-    df = pd.read_parquet(path)
+    df = pd.read_parquet(os.join('data/s2orc/results',filename))
     if conditioning in set(['is_company', 'is_academia', 'summary']):
         df = add_columns(df)
     if conditioning is not None:
         df['outbound_memes'] = clean_outbound_citations(df)
     if conditioning != 'summary':
-        meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(output_path)
+        meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(os.join('data/s2orc/meme_score',filename))
     else:
-        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(output_path)
+        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.join('data/s2orc/results',filename))
 
 
 if __name__ == "__main__":
