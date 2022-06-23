@@ -109,7 +109,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         enc_a = MultiLabelBinarizer(sparse_output=True)
         memes_enc_a = enc_a.fit_transform(df_a['memes'])
         frequency_a = pd.DataFrame(
-            {'meme_id': enc_a.classes_, 'frequency_bt': np.squeeze(np.array(memes_enc_a.sum(axis=0)))})
+            {'meme_id': enc_a.classes_, 'frequency_a': np.squeeze(np.array(memes_enc_a.sum(axis=0)))})
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
                                  'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
