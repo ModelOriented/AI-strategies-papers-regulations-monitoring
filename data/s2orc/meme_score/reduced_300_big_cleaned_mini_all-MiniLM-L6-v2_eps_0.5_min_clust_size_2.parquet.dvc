@@ -1,0 +1,4 @@
+outs:
+- md5: 822d944980e5365d4cd864fca836d77d
+  size: 560133
+  path: reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.5_min_clust_size_2.parquet
