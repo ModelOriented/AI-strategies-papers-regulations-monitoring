@@ -99,7 +99,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
                                  'sticking_factor_BT': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
                                  'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
                                  })
-        df_memes.merge(frequency_bt, how='left', on='meme_id')
+        df_memes = df_memes.merge(frequency_bt, how='left', on='meme_id')
     elif conditioning == 'is_company':
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
                                  'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
@@ -114,7 +114,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
                                  'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
                                  'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta))),
                                  })
-        df_memes.merge(frequency_a, how='left', on='meme_id')
+        df_memes = df_memes.merge(frequency_a, how='left', on='meme_id')
     return df_memes
 
 
@@ -130,7 +130,9 @@ def main(filename:str, conditioning: str):
     if conditioning != 'summary':
         meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(os.path.join('data/s2orc/meme_score',filename))
     else:
-        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.path.join('data/s2orc/meme_score',filename))
+        res = meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left')
+        print(f'Saving in {os.path.join("data/s2orc/meme_score",filename)}')
+        res.to_parquet(os.path.join('data/s2orc/meme_score',filename))
 
 
 if __name__ == "__main__":
