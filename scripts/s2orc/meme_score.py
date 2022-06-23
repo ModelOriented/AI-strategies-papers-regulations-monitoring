@@ -130,7 +130,7 @@ def main(filename:str, conditioning: str):
     if conditioning != 'summary':
         meme_score(df).merge(meme_score(df, conditioning=conditioning)).to_parquet(os.path.join('data/s2orc/meme_score',filename))
     else:
-        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.path.join('data/s2orc/results',filename))
+        meme_score(df).merge(meme_score(df, conditioning='is_big_tech'), on='meme_id', how='left').merge(meme_score(df, conditioning='is_academia'), on='meme_id', how='left').to_parquet(os.path.join('data/s2orc/meme_score',filename))
 
 
 if __name__ == "__main__":
