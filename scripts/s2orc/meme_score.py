@@ -94,7 +94,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_bt = df[df['is_big_tech'] == 1]
         enc = MultiLabelBinarizer(sparse_output=True)
         memes_enc_bt = enc.fit_transform(df_bt['memes'])
-        frequency_bt = pd.DataFrame(memes_enc_bt.sum(axis=0), columns=['frequency_bt'])
+        frequency_bt = pd.DataFrame(memes_enc_bt.sum(axis=0).transpose(), columns=['frequency_bt'])
         frequency_bt = frequency_bt.T
         frequency_bt.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
@@ -109,7 +109,7 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
         df_a = df[df['is_academia'] == 1]
         enc = MultiLabelBinarizer(sparse_output=True)
         memes_enc_a = enc.fit_transform(df_a['memes'])
-        frequency_a = pd.DataFrame(memes_enc_a.sum(axis=0), columns=['frequency_a'])
+        frequency_a = pd.DataFrame(memes_enc_a.sum(axis=0).transpose(), columns=['frequency_a'])
         frequency_a = frequency_a.T
         frequency_a.reset_index(inplace=True)
         df_memes = pd.DataFrame({'meme_id': enc.classes_,
