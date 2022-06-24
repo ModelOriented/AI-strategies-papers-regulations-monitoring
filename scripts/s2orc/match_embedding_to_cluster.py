@@ -9,7 +9,7 @@ import typer
 
 
 def main(sentences_embedding:str, multiprocess:bool, batch_size:int):
-    ai_act_chunks = pd.read_csv('data/s2orc/chunks_from_ai_act1.csv.dvc')
+    ai_act_chunks = pd.read_csv('data/s2orc/chunks_from_ai_act1.csv')
     all_chunks = list(set(ai_act_chunks['chunk']))
 
     print('Embedding ...')
