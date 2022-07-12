@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import requests
 
-from mars.db import db_fields
+from mair.db import db_fields
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 

@@ -3,7 +3,7 @@ import os
 import spacy
 from spacy.lang.en import English
 from pathlib import Path
-from mars.definition_extraction import task1_converter
+from mair.definition_extraction import task1_converter
 
 
 class DeftCorpusLoader(object):

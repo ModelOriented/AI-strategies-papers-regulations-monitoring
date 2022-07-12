@@ -3,7 +3,7 @@ import traceback
 from logging import *
 from logging import Logger, basicConfig, getLevelName, getLogger
 
-import mars.config
+import mair.config
 
 
 def log_exception(text: str, exception: Exception, logger: Logger) -> None:
@@ -13,7 +13,7 @@ def log_exception(text: str, exception: Exception, logger: Logger) -> None:
 
 def new_logger(name: str) -> Logger:
     logger = getLogger(name)
-    level = getLevelName(mars.config.logging_level)
+    level = getLevelName(mair.config.logging_level)
     logger.setLevel(level)
     basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S")
     return logger

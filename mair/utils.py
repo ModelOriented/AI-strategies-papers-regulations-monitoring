@@ -40,9 +40,6 @@ def split_on_words(text: str, split_words: list) -> dict:
     return threads
 
 
-# extract text from PDF
-
-
 def search_for_url(string: str):
     """
     Searches for url in a string. If a string has query inside than returns aforementioned url. If not than

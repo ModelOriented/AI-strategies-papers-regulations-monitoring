@@ -1,9 +1,7 @@
 import unittest
-import os
-from mars.utils import search_for_url, fetch_paper_information
-import undetected_chromedriver as uc
+from mair.utils import search_for_url, fetch_paper_information
 
-from mars.web_search import get_duckduckgo_first_result, initiate_driver
+from mair.web_search import get_duckduckgo_first_result, initiate_driver
 
 
 class SearchMethods(unittest.TestCase):

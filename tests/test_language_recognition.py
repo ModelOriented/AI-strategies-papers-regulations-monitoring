@@ -1,6 +1,6 @@
 import unittest
 
-from mars import language_recognition
+from mair import language_recognition
 
 EN_SENTENCE = "This is a test sentence."
 FR_SENTENCE = "Ceci est une phrase de test."

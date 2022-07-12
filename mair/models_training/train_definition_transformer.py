@@ -14,8 +14,8 @@ from tqdm import tqdm
 from transformers import AutoTokenizer
 from transformers import TFRobertaForSequenceClassification
 
-from mars.definition_extraction import DeftCorpusLoader
-from mars.config import models_dir
+from mair.definition_extraction import DeftCorpusLoader
+from mair.config import models_dir
 
 def transform_to_spacy3(frame: pd.DataFrame, cats: list) -> List[Tuple]:
     """
