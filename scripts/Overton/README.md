@@ -2,18 +2,31 @@ To use both scripts one has to place them in a separate folder with xlsx file (e
 Firstly you have to download pdfs then run the script with preparing table. Whilst running scripts one has to provide (full) paths to requested folders. In the end folder structure should look like this:
 
 example_folder
+
   **paragraphs**
+  
     0.pdf
+    
     1.pdf
+    
   **pdfs**
+  
     0.pdf
+    
     1.pdf
+    
     ...
+    
     38.pdf
+    
   missing.txt
+  
   *Overton_download_pdf.py*
+  
   *Overton_prepare_whole_table.pdf*
+  
   *Overton_scripts_test.xlsx*
+  
   progress.txt
 
 *Italics* are necessery files
