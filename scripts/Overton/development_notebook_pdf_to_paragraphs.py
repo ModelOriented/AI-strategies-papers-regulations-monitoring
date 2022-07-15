@@ -1,18 +1,18 @@
 # %% 
 # Imports
-from matplotlib.pyplot import close
-import pandas as pd
-import requests
+import copy
 import os
-import PyPDF2
-import joblib
 import re
 import string
-import copy
 
+import joblib
+import pandas as pd
+import PyPDF2
+import requests
+from matplotlib.pyplot import close
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTTextBoxHorizontal
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 
 # %% 

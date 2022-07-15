@@ -1,9 +1,10 @@
-import pandas as pd
-import typer
-import joblib
+import copy
 import re
 import string
-import copy
+
+import joblib
+import pandas as pd
+import typer
 
 
 def main(out_path : str,pdfs_in_paragraphs_path : str,pdfs_internal_names_path : str,overton_table_path: str):
