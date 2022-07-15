@@ -5,8 +5,8 @@ import typer
 import os
 
 def main(
-    input_path: str, output_path: str, sentences_embedding: str = "all-MiniLM-L6-v2", batch_size:int=32, multiprocess:bool=False):
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    input_path: str, sentences_embedding: str = "all-MiniLM-L6-v2", batch_size:int=32, multiprocess:bool=False):
+
     print("Loading data...")
     df = pd.read_parquet(input_path)
     print("Loaded data:", len(df))
@@ -29,8 +29,8 @@ def main(
     embeddings = embedd(all_chunks)
     chunk_to_embedding = [(chunk, list(embeddings[i].tolist())) for i, chunk in enumerate(all_chunks)]
     
-    pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"]).to_parquet(output_path)
-
+    #pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"]).to_parquet(output_path)
+    return pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"])
 
 if __name__ == "__main__":
     typer.run(main)
