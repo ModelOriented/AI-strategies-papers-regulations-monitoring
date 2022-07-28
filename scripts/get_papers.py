@@ -3,7 +3,7 @@ import jsonlines
 import pandas as pd
 import typer
 
-ROOT_DIR = 'openalex-snapshot/works'
+ROOT_DIR = 'openalex-snapshot/data/works'
 
 ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 'expert system',
                'natural language processing', 'deep learning', 'reinforcement learning', 'learning algorithm',
@@ -28,6 +28,7 @@ def main(output_dir: str):
     ml_papers = []
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
+            print(file)
             with jsonlines.open(file) as reader:
                 for object in reader:
                     for keyword in ML_KEYWORDS:
