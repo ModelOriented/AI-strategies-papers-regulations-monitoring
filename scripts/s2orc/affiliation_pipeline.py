@@ -15,7 +15,7 @@ def main(condition_list,category):
 
     df = all_pd[~((all_pd['in_citations_count'] == 0) & (all_pd['out_citations_count'] == 0))]
 
-    file = open('doi_to_authorship_big.json')
+    file = open(r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json')
     doi_to_authorship_big = json.load(file)
 
     print(f'Number of dois: {len(doi_to_authorship_big.keys())}')
@@ -26,9 +26,9 @@ def main(condition_list,category):
         doi_to_authorship_big[new_key] = doi_to_authorship_big.pop(key)
 
     df['open_alex'] = df['doi'].map(doi_to_authorship_big)
+    df = df.dropna()
 
-    print(f'Afiliacji wszystkich mamy: {number_of_openalex_mapping / len(df) * 100} %, afiliacji, które mają DOI mamy: {number_of_openalex_mapping / df["doi"].nunique() * 100} %')
-
+   
     institutions = []
     countries = []
     types = []
@@ -37,6 +37,7 @@ def main(condition_list,category):
         countries_per_paper = []
         types_per_paper = []
         if row['open_alex'] != '':
+            print(row['open_alex'])
             for author in row['open_alex']:
                 try:
                     institution_per_author = []
@@ -165,7 +166,7 @@ def main(condition_list,category):
 
     df['condition'] = is_X
     df.drop(columns='open_alex', inplace=True)
-    df.to_parquet('big_ai_dataset_with_affiliations.parquet')
+    df.to_parquet('data/s2orc/big_ai_dataset_with_affiliations.parquet')
 
 #if __name__ == '__main__':
 #    typer.run(main)
