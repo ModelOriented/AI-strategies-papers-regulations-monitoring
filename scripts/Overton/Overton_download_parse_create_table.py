@@ -48,7 +48,7 @@ def main(pdfs_path : str,project_path : str,txt_path : str,overton_table_path: s
                 with open('progress.txt', 'w') as f: # actualize progress
                     f.write(str(i))
             except:
-                url = data['PDF URL'][i]
+                url = data['Document URL'][i]
                 if(url == 'nan'):
                     with open('missing.txt', 'r') as f: # actualize number of missing pdfs
                         miss = int(f.readline())
