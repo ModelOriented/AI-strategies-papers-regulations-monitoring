@@ -40,7 +40,7 @@ def main(pdfs_path : str,project_path : str,txt_path : str,overton_table_path: s
 
         for i in range(k, len(data)): # try downloading pdfs
             try:
-                url = data['PDF URL'][i]
+                url = data['Document URL'][i]
                 r = requests.get(url, allow_redirects=True)
                 st = pdfs_path + '/' + str(i) + '.pdf'
                 open(st, 'wb').write(r.content)
