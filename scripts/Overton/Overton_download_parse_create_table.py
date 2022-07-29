@@ -155,7 +155,7 @@ def main(pdfs_path : str,project_path : str,txt_path : str,overton_table_path: s
         print('Structure already exists!')
 
     print('Reading XLS file...')
-    data = pd.read_excel(overton_table_path)
+    data = pd.read_csv(overton_table_path)
 
     print("Downloading pdfs...")
     missing = download(pdfs_path,data)
@@ -254,7 +254,7 @@ def main(pdfs_path : str,project_path : str,txt_path : str,overton_table_path: s
     subtable = pd.DataFrame(list(zip(paragraph_df['Name'],clean_paragraphs,np,nw)),columns = ['Name','Text','n_paragraphs','n_words'])
 
     print('Reading XLS file...')
-    data = pd.read_excel(overton_table_path)
+    data = pd.read_csv(overton_table_path)
 
     print('Preparing final table...')
     final_table = merge_tables(data,subtable)
