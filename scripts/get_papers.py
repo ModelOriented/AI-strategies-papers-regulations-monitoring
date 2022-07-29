@@ -34,13 +34,13 @@ def main(output_dir: str):
         for file in files:
             if file != 'manifest':
                 with open(os.path.join(ROOT_DIR, file)) as f:
-                data = [json.loads(line) for line in f]
-                for object in data:
-                    for keyword in ML_KEYWORDS:
-                        words = keyword.split()
-                        if all(word in object['abstract_inverted_index'] for word in words):
-                            ml_papers.append(object)
-                            break
+                    data = [json.loads(line) for line in f]
+                    for object in data:
+                        for keyword in ML_KEYWORDS:
+                            words = keyword.split()
+                            if all(word in object['abstract_inverted_index'] for word in words):
+                                ml_papers.append(object)
+                                break
 
     df = pd.DataFrame(ml_papers)
     df.to_parquet(output_dir)
