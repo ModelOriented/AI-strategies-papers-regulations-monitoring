@@ -32,7 +32,8 @@ def main(output_dir: str):
     ml_papers = []
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
-            with open(os.path.join(ROOT_DIR, file)) as f:
+            if file != 'manifest':
+                with open(os.path.join(ROOT_DIR, file)) as f:
                 data = [json.loads(line) for line in f]
                 for object in data:
                     for keyword in ML_KEYWORDS:
