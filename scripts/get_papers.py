@@ -33,7 +33,7 @@ def main(output_dir: str):
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             if file != 'manifest':
-                with open(os.path.join(ROOT_DIR, file)) as f:
+                with open(os.path.join(ROOT_DIR, os.path.join(subdir, file))) as f:
                     data = [json.loads(line) for line in f]
                     for object in data:
                         for keyword in ML_KEYWORDS:
