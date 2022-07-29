@@ -38,7 +38,7 @@ def main(output_dir: str):
                     for object in data:
                         for keyword in ML_KEYWORDS:
                             words = keyword.split()
-                            if object['abstract'] is not None:
+                            if object['abstract_inverted_index'] is not None:
                                 if all(word in object['abstract_inverted_index'] for word in words):
                                     ml_papers.append(object)
                                     break
