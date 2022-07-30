@@ -1,5 +1,4 @@
 import os
-import jsonlines
 import pandas as pd
 import typer
 import json
@@ -27,19 +26,25 @@ def get_abstract(abstract_inverted_index: dict) -> str:
 
 def main(output_dir: str):
     ml_papers = []
+    errors = 0
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             if file != 'manifest':
                 with open(os.path.join(subdir, file)) as f:
-                    data = [json.loads(line) for line in f]
-                    for object in data:
-                        for keyword in ML_KEYWORDS:
-                            words = keyword.split()
-                            if object['abstract_inverted_index'] is not None:
-                                if all(word in object['abstract_inverted_index'] for word in words):
-                                    ml_papers.append(object)
-                                    break
+                    for line in f:
+                        try:
+                            paper = json.loads(line)
+                            for keyword in ML_KEYWORDS:
+                                words = keyword.split()
+                                if paper['abstract_inverted_index'] is not None:
+                                    if all(word in paper['abstract_inverted_index'] for word in words):
+                                        ml_papers.append(paper)
+                                        break
+                        except:
+                            errors += 1
+                            pass
 
+    print('Errors:', errors)
     df = pd.DataFrame(ml_papers)
     df.to_parquet(output_dir)
 
