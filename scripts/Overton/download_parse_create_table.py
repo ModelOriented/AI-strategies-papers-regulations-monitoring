@@ -5,7 +5,6 @@ import pandas as pd
 import requests
 import os
 import PyPDF2
-import joblib
 import typer
 
 from pdfminer.converter import PDFPageAggregator
@@ -260,7 +259,7 @@ def main(pdfs_path : str,project_path : str,txt_path : str,overton_table_path: s
     final_table = merge_tables(data,subtable)
 
     print('Saving final table')
-    final_table.to_parquet(str(project_path) + "/Final_table.parquet", index=False)
+    final_table.to_parquet(str(project_path) + "/processed.parquet", index=False)
 
 if __name__=="__main__":
     typer.run(main)
