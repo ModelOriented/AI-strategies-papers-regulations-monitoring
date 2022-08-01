@@ -28,6 +28,7 @@ def main(output_dir: str):
     ml_papers = []
     errors = 0
     n_files_processed = 0
+    n_ml_papers = 0
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             if file != 'manifest':
@@ -41,12 +42,13 @@ def main(output_dir: str):
                                 if paper['abstract_inverted_index'] is not None:
                                     if all(word in paper['abstract_inverted_index'] for word in words):
                                         ml_papers.append(paper)
+                                        n_ml_papers += 1
                                         break
                         except:
                             errors += 1
                             pass
                         n_lines += 1
-                        print(f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors')
+                        print(f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers')
 
             n_files_processed += 1
             print('Processed {} files'.format(n_files_processed))
