@@ -45,10 +45,10 @@ def main(output_dir: str):
                                         os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
-                                            with jsonlines.open(filename, mode='w', encoding='utf-8') as f:
+                                            with jsonlines.open(filename, mode='w') as f:
                                                 f.write(paper)
                                         else:
-                                            with jsonlines.open(filename, mode='a', encoding='utf-8') as output_f:
+                                            with jsonlines.open(filename, mode='a') as output_f:
                                                 output_f.write(paper)
                                         n_ml_papers += 1
                                         break
