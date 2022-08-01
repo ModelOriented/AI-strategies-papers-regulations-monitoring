@@ -6,7 +6,7 @@ import typer
 tqdm.pandas()
 
 
-def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='en_core_web_md', sentences_embedding:str = 'all-MiniLM-L6-v2'):
+def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='en_core_web_md'):
     """
     This script takes output of overton preprocessing and prasing and creates basic spacy objects: nouns, noun chunks and lemmas for documents and paragraphs
     """
@@ -50,7 +50,6 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
             else:
               noun_chunks.append(chunk.text)
         return noun_chunks
-
 
     print("Loading data...")
     df = pd.read_parquet(in_path)
