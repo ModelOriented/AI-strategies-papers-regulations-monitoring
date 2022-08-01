@@ -242,6 +242,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     n_jobs              : int, number of jobs for downloading
     """
     # Process
+    os.makedirs(project_path, exist_ok=True)
     os.chdir(project_path)
     print('Preparing file structre...')
     os.makedirs(pdfs_path, exist_ok=True)
