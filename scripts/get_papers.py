@@ -22,7 +22,7 @@ def get_abstract(abstract_inverted_index: dict) -> str:
 
     abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
     return abstract
-    
+
 
 def main(output_dir: str):
     ml_papers = []
