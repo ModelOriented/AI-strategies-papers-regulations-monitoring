@@ -28,41 +28,49 @@ def main(output_dir: str):
     errors = 0
     n_files_processed = 0
     n_ml_papers = 0
+    with open(os.path.join(output_dir, 'already_processed.txt')) as file:
+        lines = file.readlines()
+        already_processed = [line.rstrip() for line in lines]
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
-            if file != 'manifest':
-                full_path = os.path.join(subdir, file)
-                with open(full_path) as f:
-                    n_lines = 0
-                    for line in f:
-                        try:
-                            paper = json.loads(line)
-                            for keyword in ML_KEYWORDS:
-                                words = keyword.split()
-                                if paper['abstract_inverted_index'] is not None:
-                                    if all(word in paper['abstract_inverted_index'] for word in words):
-                                        update_dir = subdir.split('/')[-1]
-                                        os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
-                                        filename = os.path.join(output_dir, update_dir, file)
-                                        if not os.path.exists(filename):
-                                            with jsonlines.open(filename, mode='w') as f:
-                                                f.write(paper)
-                                        else:
-                                            with jsonlines.open(filename, mode='a') as output_f:
-                                                output_f.write(paper)
-                                        n_ml_papers += 1
-                                        break
-                        except Exception as e:
-                            print(f'Error: {e}', flush=True)
-                            errors += 1
-                            pass
-                        n_lines += 1
-                        print(
-                            f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
-                            flush=True)
+            if file in already_processed:
+                continue
+            else:
+                update_dir = subdir.split('/')[-1]
+                if file != 'manifest':
+                    full_path = os.path.join(subdir, file)
+                    with open(full_path) as f:
+                        n_lines = 0
+                        for line in f:
+                            try:
+                                paper = json.loads(line)
+                                for keyword in ML_KEYWORDS:
+                                    words = keyword.split()
+                                    if paper['abstract_inverted_index'] is not None:
+                                        if all(word in paper['abstract_inverted_index'] for word in words):
+                                            os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
+                                            filename = os.path.join(output_dir, update_dir, file)
+                                            if not os.path.exists(filename):
+                                                with jsonlines.open(filename, mode='w') as f:
+                                                    f.write(paper)
+                                            else:
+                                                with jsonlines.open(filename, mode='a') as output_f:
+                                                    output_f.write(paper)
+                                            n_ml_papers += 1
+                                            break
+                            except Exception as e:
+                                print(f'Error: {e}', flush=True)
+                                errors += 1
+                                pass
+                            n_lines += 1
+                            print(
+                                f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
+                                flush=True)
 
-            n_files_processed += 1
-            print('Processed {} files'.format(n_files_processed), flush=True)
+                n_files_processed += 1
+                print('Processed {} files'.format(n_files_processed), flush=True)
+                with open(os.path.join(output_dir, 'already_processed.txt'), 'a') as f:
+                    f.write(os.path.join(subdir, file) + '\n')
 
     print(f'Errors: {errors}', flush=True)
 
