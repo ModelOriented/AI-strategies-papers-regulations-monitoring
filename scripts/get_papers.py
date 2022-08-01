@@ -27,6 +27,7 @@ def get_abstract(abstract_inverted_index: dict) -> str:
 def main(output_dir: str):
     ml_papers = []
     errors = 0
+    n_files_processed = 0
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             if file != 'manifest':
@@ -43,6 +44,9 @@ def main(output_dir: str):
                         except:
                             errors += 1
                             pass
+
+            n_files_processed += 1
+            print('Processed {} files'.format(n_files_processed))
 
     print('Errors:', errors)
     df = pd.DataFrame(ml_papers)
