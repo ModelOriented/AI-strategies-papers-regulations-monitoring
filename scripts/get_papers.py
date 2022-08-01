@@ -42,8 +42,13 @@ def main(output_dir: str):
                                     if all(word in paper['abstract_inverted_index'] for word in words):
                                         os.makedirs(os.path.join(output_dir, subdir), exist_ok=True)
                                         update_dir = subdir.split('/')[-1]
-                                        with open(os.path.join(output_dir, update_dir, file), mode='a+', encoding='utf-8') as output_f:
-                                            output_f.write(paper)
+                                        filename = os.path.join(output_dir, update_dir, file)
+                                        if not os.path.exists(filename):
+                                            with open(filename, mode='w', encoding='utf-8') as f:
+                                                f.write(paper)
+                                        else:
+                                            with open(filename, mode='a', encoding='utf-8') as output_f:
+                                                output_f.write(paper)
                                         n_ml_papers += 1
                                         break
                         except Exception as e:
