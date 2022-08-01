@@ -32,6 +32,7 @@ def main(output_dir: str):
         for file in files:
             if file != 'manifest':
                 with open(os.path.join(subdir, file)) as f:
+                    n_lines = 0
                     for line in f:
                         try:
                             paper = json.loads(line)
@@ -44,6 +45,8 @@ def main(output_dir: str):
                         except:
                             errors += 1
                             pass
+                        n_lines += 1
+                        print(f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors')
 
             n_files_processed += 1
             print('Processed {} files'.format(n_files_processed))
