@@ -233,6 +233,7 @@ def merge_tables(meta, subtable):
 
     return huge_table
 
+
 def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int):
     """
     pdfs_path           : path to pdf folder
@@ -245,21 +246,21 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     print('Preparing file structre...')
     os.makedirs(pdfs_path, exist_ok=True)
 
-    print('Reading XLS file...')
+    print('Reading XLS file...', flush=True)
     data = pd.read_csv(overton_table_path)
 
-    print("Downloading pdfs...")
+    print("Downloading pdfs...", flush=True)
     missing = download_parallel(pdfs_path, data, n_jobs=n_jobs)
     print(str(missing) + ' files are missing')
 
     print('Removing corrupted files')
     remove_corrupted_files(pdfs_path)
 
-    print("Converting to raw paragraphs...")
+    print("Converting to raw paragraphs...", flush=True)
     names = ['paragraphs_for_pdfs', 'pdf_internal_name']
     convert_pdf_folder_to_paragraphs(pdfs_path, project_path, names)
 
-    print("Loading paragraphs files...")
+    print("Loading paragraphs files...", flush=True)
     paragraph_df = pd.read_parquet(os.path.join(str(project_path),TEXT_COL))
 
     print("Merging paragraphs...")
@@ -271,7 +272,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     print("Preparing statistics...")
     np, nw = prepare_stats(clean_paragraphs)
 
-    print("Creating subtable...")
+    print("Creating subtable...", flush=True)
     subtable = pd.DataFrame(list(zip(paragraph_df['Name'], clean_paragraphs, np, nw)), columns=[
                             'Name', 'Text', 'n_paragraphs', 'n_words'])
 
