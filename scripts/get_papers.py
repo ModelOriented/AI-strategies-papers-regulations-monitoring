@@ -30,6 +30,7 @@ def main(output_dir: str):
     n_ml_papers = 0
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
+            print(dirs)
             if file != 'manifest':
                 full_path = os.path.join(subdir, file)
                 with open(full_path) as f:
