@@ -7,7 +7,7 @@ ROOT_DIR = 'openalex-snapshot/data/works'
 
 ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 'expert system',
                'natural language processing', 'deep learning', 'reinforcement learning', 'learning algorithm',
-               'supervised learning', 'unsupervised learning' , 'intelligent agent', 'backpropagation learning',
+               'supervised learning', 'unsupervised learning', 'intelligent agent', 'backpropagation learning',
                'backpropagation algorithm', 'long short term memory', 'autoencoder', 'q learning', 'feedforward net',
                'xgboost', 'transfer learning', 'gradient boosting', 'generative adversarial network',
                'representation learning', 'random forest', 'support vector machine', 'multiclass classification',
@@ -25,14 +25,14 @@ def get_abstract(abstract_inverted_index: dict) -> str:
 
 
 def main(output_dir: str):
-    ml_papers = []
     errors = 0
     n_files_processed = 0
     n_ml_papers = 0
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             if file != 'manifest':
-                with open(os.path.join(subdir, file)) as f:
+                full_path = os.path.join(subdir, file)
+                with open(full_path) as f:
                     n_lines = 0
                     for line in f:
                         try:
@@ -41,21 +41,23 @@ def main(output_dir: str):
                                 words = keyword.split()
                                 if paper['abstract_inverted_index'] is not None:
                                     if all(word in paper['abstract_inverted_index'] for word in words):
-                                        ml_papers.append(paper)
+                                        os.makedirs(os.path.join(output_dir, subdir), exist_ok=True)
+                                        with open(os.path.join(output_dir, full_path), mode='w', encoding='utf-8') as output_f:
+                                            json.dump(paper, output_f)
                                         n_ml_papers += 1
                                         break
                         except:
                             errors += 1
                             pass
                         n_lines += 1
-                        print(f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers')
+                        print(
+                            f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
+                            flush=True)
 
             n_files_processed += 1
-            print('Processed {} files'.format(n_files_processed))
+            print('Processed {} files'.format(n_files_processed), flush=True)
 
-    print('Errors:', errors)
-    df = pd.DataFrame(ml_papers)
-    df.to_parquet(output_dir)
+    print(f'Errors: {errors}', flush=True)
 
 
 if __name__ == '__main__':
