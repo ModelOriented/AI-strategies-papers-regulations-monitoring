@@ -28,7 +28,7 @@ def main(output_dir: str):
     errors = 0
     n_files_processed = 0
     n_ml_papers = 0
-    for subdir, dirs, files in os.walk(ROOT_DIR):
+    for subdir, dirs, files in os.walk(ROOT_DIR, topdown=True):
         for file in files:
             if file != 'manifest':
                 full_path = os.path.join(subdir, file)
