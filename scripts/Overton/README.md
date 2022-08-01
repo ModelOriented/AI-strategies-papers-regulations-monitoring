@@ -5,8 +5,8 @@ Unnecessary files:
 * development_notebook_pdf_to_paragraphs.py - notebook with experiments
 
 Crucial files:
-* Overton_download_parse_create_table.py - script that downloads pdfs mentioned in Overton xlsx file, parses them into paragraphed and cleaned text and saves all into .parquet file
-* Overton_Spacy.py - script that takes the output of the aforementioned file, prepares basic spacy objects: nouns, nounchunks and lemmas and saves it into .parquet file
+* download_parse_create_table.py - script that downloads pdfs mentioned in Overton xlsx file, parses them into paragraphed and cleaned text and saves all into .parquet file
+* process_spacy.py - script that takes the output of the aforementioned file, prepares basic spacy objects: nouns, nounchunks and lemmas and saves it into .parquet file
 
 Testing file:
 * Overton_scripts_test.xlsx - small subset with 40 rows used for testing
