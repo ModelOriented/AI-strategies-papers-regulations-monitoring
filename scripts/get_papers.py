@@ -42,7 +42,7 @@ def main(output_dir: str):
                                 if paper['abstract_inverted_index'] is not None:
                                     if all(word in paper['abstract_inverted_index'] for word in words):
                                         os.makedirs(os.path.join(output_dir, subdir), exist_ok=True)
-                                        print(os.path.join(output_dir, dir, file))
+                                        print(os.path.join(output_dir, dirs, file))
                                         with jsonlines.open(os.path.join(output_dir, subdir, file), mode='w+', encoding='utf-8') as output_f:
                                             output_f.write(paper)
                                         n_ml_papers += 1
