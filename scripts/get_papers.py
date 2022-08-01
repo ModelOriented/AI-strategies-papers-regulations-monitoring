@@ -40,8 +40,8 @@ def main(output_dir: str):
                                 words = keyword.split()
                                 if paper['abstract_inverted_index'] is not None:
                                     if all(word in paper['abstract_inverted_index'] for word in words):
-                                        os.makedirs(os.path.join(output_dir, subdir), exist_ok=True)
                                         update_dir = subdir.split('/')[-1]
+                                        os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
                                             with open(filename, mode='w', encoding='utf-8') as f:
