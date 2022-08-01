@@ -17,7 +17,7 @@ from pdfminer.pdfpage import PDFPage
 PROGRESS = 'progress.txt'
 MISSING = 'missing.txt'
 TO_DOWNLOAD = 'to_download.txt'
-TEXT_COL = "/Text_col.parquet"
+TEXT_COL = "text_col.parquet"
 
 
 def download_parallel(pdfs_path, data, n_jobs):
@@ -121,7 +121,7 @@ def convert_pdf_folder_to_paragraphs(path, project_path, names):
     df = pd.DataFrame(list(zip(names, list_of_lists)), columns=['Name', 'Text', ])
     listdir = os.listdir()
     try:
-        df = pd.read_parquet(str(project_path) + TEXT_COL)
+        df = pd.read_parquet(os.path.join(str(project_path),TEXT_COL))
         k = len(df) - 1
         print('Loaded previous dataframe')
         print(df)
@@ -143,9 +143,9 @@ def convert_pdf_folder_to_paragraphs(path, project_path, names):
             df.index = df.index + 1  # shifting index
             df = df.sort_index()  # sorting by index
         except:
-            df.to_parquet(str(project_path) + TEXT_COL)
+            df.to_parquet(os.path.join(str(project_path), TEXT_COL))
 
-    df.to_parquet(str(project_path) + TEXT_COL)
+    df.to_parquet(os.path.join(str(project_path),TEXT_COL))
     os.chdir(project_path)
 
 def remove_corrupted_files(path):
@@ -233,22 +233,17 @@ def merge_tables(meta, subtable):
 
     return huge_table
 
-def main(pdfs_path: str, project_path: str, txt_path: str, overton_table_path: str, n_jobs: int):
+def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int):
     """
     pdfs_path           : path to pdf folder
     project_path        : path to script folder
-    txt_path            : path where txt joblib dumps are stored
     overton_table_path  : path to overton table with pdf links and meta data
     n_jobs              : int, number of jobs for downloading
     """
     # Process
     os.chdir(project_path)
     print('Preparing file structre...')
-    try:
-        os.mkdir(pdfs_path)
-        os.mkdir(txt_path)
-    except:
-        print('Structure already exists!')
+    os.makedirs(pdfs_path, exist_ok=True)
 
     print('Reading XLS file...')
     data = pd.read_csv(overton_table_path)
@@ -265,7 +260,7 @@ def main(pdfs_path: str, project_path: str, txt_path: str, overton_table_path: s
     convert_pdf_folder_to_paragraphs(pdfs_path, project_path, names)
 
     print("Loading paragraphs files...")
-    paragraph_df = pd.read_parquet(str(project_path) + TEXT_COL)
+    paragraph_df = pd.read_parquet(os.path.join(str(project_path),TEXT_COL))
 
     print("Merging paragraphs...")
     merged_paragraphs = paragraph_management(paragraph_df)
@@ -287,7 +282,7 @@ def main(pdfs_path: str, project_path: str, txt_path: str, overton_table_path: s
     final_table = merge_tables(data, subtable)
 
     print('Saving final table')
-    final_table.to_parquet(str(project_path) + "/processed.parquet", index=False)
+    final_table.to_parquet(os.path.join(str(project_path),"processed.parquet"), index=False)
 
 
 if __name__ == "__main__":
