@@ -46,7 +46,8 @@ def main(output_dir: str):
                                             output_f.write(paper)
                                         n_ml_papers += 1
                                         break
-                        except:
+                        except Exception as e:
+                            print(f'Error: {e}', flush=True)
                             errors += 1
                             pass
                         n_lines += 1
