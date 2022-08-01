@@ -45,10 +45,10 @@ def main(output_dir: str):
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
                                             with open(filename, mode='w', encoding='utf-8') as f:
-                                                f.write(paper)
+                                                f.dump(paper)
                                         else:
                                             with open(filename, mode='a', encoding='utf-8') as output_f:
-                                                output_f.write(paper)
+                                                output_f.dump(paper)
                                         n_ml_papers += 1
                                         break
                         except Exception as e:
