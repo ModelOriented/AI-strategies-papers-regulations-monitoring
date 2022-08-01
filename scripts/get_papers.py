@@ -42,7 +42,7 @@ def main(output_dir: str):
                                 if paper['abstract_inverted_index'] is not None:
                                     if all(word in paper['abstract_inverted_index'] for word in words):
                                         os.makedirs(os.path.join(output_dir, subdir), exist_ok=True)
-                                        with open(os.path.join(output_dir, full_path), mode='w', encoding='utf-8') as output_f:
+                                        with open(os.path.join(output_dir, full_path), mode='a+', encoding='utf-8') as output_f:
                                             json.dump(paper, output_f)
                                         n_ml_papers += 1
                                         break
