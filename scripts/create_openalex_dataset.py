@@ -17,9 +17,10 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                         paper = json.loads(line)
                         jsons.append(paper)
                         i += 1
-            if i % 1000 == 0:
+            if i != 1:
                 df = pd.DataFrame(jsons)
                 df.to_parquet(os.path.join(output_dir, 'openalex_ml_dataset.parquet'))
+    df.to_parquet(os.path.join(output_dir, 'openalex_ml_dataset.parquet'))
 
 
 if __name__ == '__main__':
