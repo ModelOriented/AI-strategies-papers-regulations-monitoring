@@ -1,7 +1,7 @@
 import os
 import typer
 import json
-import pandas as pd
+import jsonlines
 
 ROOT_DIR = 'openalex-snapshot/data/works'
 
@@ -28,75 +28,49 @@ def main(output_dir: str):
     errors = 0
     n_files_processed = 0
     n_ml_papers = 0
-
-    id = []
-    doi = []
-    title = []
-    display_name =[]
-    pubication_year = []
-    pubication_date = []
-    type = []
-    authorships = []
-    cited_by_count = []
-    concepts = []
-    referenced_works = []
-    related_works = []
-    abstract_inverted_index = []
-    counts_by_year = []
-
+    with open(os.path.join(output_dir, 'already_processed.txt')) as file:
+        lines = file.readlines()
+        already_processed = [line.rstrip() for line in lines]
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
-            if file != 'manifest':
-                full_path = os.path.join(subdir, file)
-                with open(full_path) as f:
-                    n_lines = 0
-                    for line in f:
-                        try:
-                            paper = json.loads(line)
-                            for keyword in ML_KEYWORDS:
-                                words = keyword.split()
-                                if paper['abstract_inverted_index'] is not None:
-                                    if all(word in paper['abstract_inverted_index'] for word in words):
-                                        id.append(line['id'])
-                                        doi.append(line['doi'])
-                                        title.append(line['title'])
-                                        display_name.append(line['display_name'])
-                                        pubication_year.append(line['publication_year'])
-                                        pubication_date.append(line['publication_date'])
-                                        type.append(line['type'])
-                                        authorships.append(line['authorships'])
-                                        cited_by_count.append(line['cited_by_count'])
-                                        concepts.append(line['concepts'])
-                                        referenced_works.append(line['referenced_works'])
-                                        related_works.append(line['related_works'])
-                                        abstract_inverted_index.append(line['abstract_inverted_index'])
-                                        counts_by_year.append(line['counts_by_year'])
-                                        n_ml_papers += 1
-                                        break
-                        except Exception as e:
-                            print(f'Error: {e}', flush=True)
-                            errors += 1
-                            pass
-                        n_lines += 1
-                        print(
-                            f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
-                            flush=True)
+            if file in already_processed:
+                continue
+            else:
+                update_dir = subdir.split('/')[-1]
+                if file != 'manifest':
+                    full_path = os.path.join(subdir, file)
+                    with open(full_path) as f:
+                        n_lines = 0
+                        for line in f:
+                            try:
+                                paper = json.loads(line)
+                                for keyword in ML_KEYWORDS:
+                                    words = keyword.split()
+                                    if paper['abstract_inverted_index'] is not None:
+                                        if all(word in paper['abstract_inverted_index'] for word in words):
+                                            os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
+                                            filename = os.path.join(output_dir, update_dir, file)
+                                            if not os.path.exists(filename):
+                                                with jsonlines.open(filename, mode='w') as f:
+                                                    f.write(paper)
+                                            else:
+                                                with jsonlines.open(filename, mode='a') as output_f:
+                                                    output_f.write(paper)
+                                            n_ml_papers += 1
+                                            break
+                            except Exception as e:
+                                print(f'Error: {e}', flush=True)
+                                errors += 1
+                                pass
+                            n_lines += 1
+                            print(
+                                f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
+                                flush=True)
 
-            df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
-                               'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
-                               'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
-                               'referenced_works': referenced_works, 'related_works': related_works,
-                               'abstract_inverted_index': abstract_inverted_index,
-                               'counts_by_year': counts_by_year})
-            df.to_csv(os.path.join(output_dir, 'openalex_dataset.csv'))
-            print('Checkpoint saved!', flush=True)
-
-    df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
-                       'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
-                       'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
-                       'referenced_works': referenced_works, 'related_works': related_works,
-                       'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
-    df.to_parquet(os.path.join(output_dir, 'openalex_dataset.parquet'))
+                n_files_processed += 1
+                print('Processed {} files'.format(n_files_processed), flush=True)
+                with open(os.path.join(output_dir, 'already_processed.txt'), 'a') as f:
+                    f.write(os.path.join(subdir, file) + '\n')
 
     print(f'Errors: {errors}', flush=True)
 
