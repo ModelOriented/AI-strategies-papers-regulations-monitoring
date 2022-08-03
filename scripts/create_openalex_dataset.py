@@ -28,6 +28,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                 full_path = os.path.join(subdir, file)
                 with open(full_path) as f:
                     for line in f:
+                        line = json.loads(line)
                         print(f'{i}/{1330668}', flush=True)
                         print(line['id'], flush=True)
                         id.append(line['id'])
