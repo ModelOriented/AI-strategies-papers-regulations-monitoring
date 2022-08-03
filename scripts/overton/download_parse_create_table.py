@@ -226,7 +226,7 @@ def merge_tables(meta, subtable):
 
     for i in range(len(subtable)):
         # idx = int(subtable['Name'][i].strip('.pdf'))
-        idx = huge_table.index[huge_table['Title'] == subtable['Name'][i].strip('.pdf')].tolist()[0]
+        idx = huge_table.index[huge_table['Title'] == subtable['Name'][i].strip('.pdf')].tolist()
         huge_table['Name'][idx] = subtable['Name'][i]
         huge_table['Text'][idx] = subtable['Text'][i]
         huge_table['n_paragraphs'][idx] = subtable['n_paragraphs'][i]
