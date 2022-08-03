@@ -29,7 +29,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                 with open(full_path) as f:
                     for line in f:
                         print(f'{i}/{1330668}', flush=True)
-                        print(line)
+                        print(line['id'], flush=True)
                         id.append(line['id'])
                         doi.append(line['doi'])
                         title.append(line['title'])
