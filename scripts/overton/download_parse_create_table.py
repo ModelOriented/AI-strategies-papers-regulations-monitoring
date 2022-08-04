@@ -223,20 +223,20 @@ def merge_tables(meta, subtable):
     huge_table['Text'] = [None]*len(huge_table)
     huge_table['n_paragraphs'] = [None]*len(huge_table)
     huge_table['n_words'] = [None]*len(huge_table)
-
+    j=1
     for i in range(len(subtable)):
         # idx = int(subtable['Name'][i].strip('.pdf'))
         # idx = huge_table.index[subtable['Name'] == huge_table['Name'][i].strip('.pdf')].tolist()
         try:
-            idx = huge_table.index[huge_table['Name'] == subtable['Name'][i].strip('.pdf')].tolist()
+            idx = huge_table.index[huge_table['Name'] == subtable['Name'][i].strip('.pdf')].tolist()[0]
             huge_table['Name'][idx] = subtable['Name'][i]
             huge_table['Text'][idx] = subtable['Text'][i]
             huge_table['n_paragraphs'][idx] = subtable['n_paragraphs'][i]
             huge_table['n_words'][idx] = subtable['n_words'][i]
         except Exception as e:
             print(e)
-            print(subtable['Name'][i], flush=True)
-            print(subtable['Text'][i], flush=True)
+            print(j)
+            j += 1
 
     return huge_table
 
