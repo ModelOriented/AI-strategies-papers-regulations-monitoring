@@ -236,6 +236,7 @@ def merge_tables(meta, subtable):
         except Exception as e:
             print(e)
             print(subtable['Name'][i])
+            print(huge_table.index[huge_table['Title'] == subtable['Name'][i].strip('.pdf')])
             print(j)
             j += 1
 
