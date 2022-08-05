@@ -14,6 +14,7 @@ from pdfminer.layout import LAParams, LTTextBoxHorizontal
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 
+UNOPENABLE_PDFS_PATH = 'unopenable.csv'
 PROGRESS = 'progress.txt'
 MISSING = 'missing.txt'
 TO_DOWNLOAD = 'to_download.txt'
@@ -58,10 +59,12 @@ def download_parallel(pdfs_path, data, n_jobs):
         if len(to_download_lines) == len(progress_lines):  # in case of finishing
             print('We have downloaded everything')
             return 0
-
+        downloaded_pdfs = os.listdir(pdfs_path)
+        downloaded_pdfs = [l[:-4] for l in downloaded_pdfs]
         with open("to_download.txt", "w") as f:
             for line in to_download_lines:
-                if line not in progress_lines:
+                # if line not in progress_lines:
+                if line not in downloaded_pdfs:
                     f.writelines(line)
     Parallel(n_jobs=n_jobs)(delayed(download_pdf)(pdfs_path, data, i) for i in range(len(data)))
 
@@ -155,6 +158,7 @@ def convert_pdf_folder_to_paragraphs(path, project_path, names):
 
 def remove_corrupted_files(path):
     i = 0
+    corrupted = []
     for file in os.listdir(path):
         try:
             pdfObj = open(os.path.join(path, file), 'rb')
@@ -164,10 +168,12 @@ def remove_corrupted_files(path):
         except Exception as e:
             i += 1
             pdfObj.close()
-            print("Removing unopenable file:", file, flush=True)
+            print("Unopenable file:", file, flush=True)
             print("Exception:", str(e), flush=True)
-            os.remove(os.path.join(path, file))
-    print(str(i) + " Files removed")
+            corrupted.append(file)
+            # os.remove(os.path.join(path, file))
+    print(str(i) + " Files unopenable")
+    pd.Series(corrupted).to_csv(UNOPENABLE_PDFS_PATH)
 
 def custom_regex(text):
     url = re.compile(r'(([a-z]{3,6}://)|(^|\s))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-]*\b([^@]|$)')
