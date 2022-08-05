@@ -53,7 +53,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                                'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
                                'referenced_works': referenced_works, 'related_works': related_works,
                                'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
-            df.to_csv(os.path.join(output_dir, 'openalex_dataset.csv'))
+            df.to_csv(os.path.join(output_dir, 'openalex_subset.csv'))
             print('Checkpoint saved!', flush=True)
             if i >= 1000:
                 break
@@ -65,7 +65,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                        'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
                        'referenced_works': referenced_works, 'related_works': related_works,
                        'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
-    df.to_parquet(os.path.join(output_dir, 'openalex_dataset.parquet'))
+    df.to_parquet(os.path.join(output_dir, 'openalex_subset.parquet'))
 
 
 if __name__ == '__main__':
