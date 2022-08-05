@@ -1,4 +1,4 @@
 outs:
-- md5: 4d7a68da5dfb230367747566887e8fcd
-  size: 2626661
+- md5: b07093b49f3dbbb5478c98af9410044a
+  size: 2606904
   path: raw.parquet

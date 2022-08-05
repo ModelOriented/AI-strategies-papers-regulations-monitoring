@@ -24,7 +24,7 @@ PDF_URL_COLNAME = 'pdf_url'
 TITLE_COLNAME = 'title'
 DOC_ID_COLNAME = 'pdf_document_id'
 PDF_FILENAME_COLNAME = 'pdf_filename'
-
+TEXT_COLNAME = 'text'
 
 def download_parallel(pdfs_path, data, n_jobs):
     try:
@@ -46,8 +46,8 @@ def download_parallel(pdfs_path, data, n_jobs):
 
     if fill == True:  # if it's empty, populate the to_download
         with open(TO_DOWNLOAD, 'a') as f:
-            for i in range(len(data[DOC_ID_COLNAME])):
-                f.writelines(str(data[DOC_ID_COLNAME][i])+'\n')
+            for s in data[DOC_ID_COLNAME]:
+                f.writelines(s+'\n')
 
     if fill == False:  # if there is some content, compare progress and to_download
         with open("to_download.txt", "r") as f:
@@ -123,7 +123,7 @@ def convert_pdf_folder_to_paragraphs(path, project_path, names):
     list_of_lists = []
     names = []
 
-    df = pd.DataFrame(list(zip(names, list_of_lists)), columns=[PDF_FILENAME_COLNAME, 'Text', ])
+    df = pd.DataFrame(list(zip(names, list_of_lists)), columns=[PDF_FILENAME_COLNAME, TEXT_COLNAME, ])
     listdir = os.listdir(path)
     try:
         df = pd.read_parquet(os.path.join(str(project_path), TEXTS_FILE_NAME))
@@ -160,9 +160,12 @@ def remove_corrupted_files(path):
             pdfObj = open(os.path.join(path, file), 'rb')
             doc = PyPDF2.PdfFileReader(pdfObj)
             doc.numPages
-        except:
+            pdfObj.close()
+        except Exception as e:
             i += 1
             pdfObj.close()
+            print("Removing unopenable file:", file, flush=True)
+            print("Exception:", str(e), flush=True)
             os.remove(os.path.join(path, file))
     print(str(i) + " Files removed")
 
@@ -199,7 +202,7 @@ def nwords(string):
     return len(string.split())
 
 def paragraph_management(df, treshold=60):
-    ls = copy.deepcopy(df['Text'])
+    ls = copy.deepcopy(df[TEXT_COLNAME])
     for i in range(len(ls)):  # document
         for j in range(len(ls[i])-1):  # paragraph
             if(nwords(ls[i][j]) < treshold):
@@ -223,7 +226,7 @@ def prepare_stats(lst):
 def merge_tables(meta, subtable):
     huge_table = copy.deepcopy(meta)
     huge_table['Name'] = [None]*len(huge_table)
-    huge_table['Text'] = [None]*len(huge_table)
+    huge_table[TEXT_COLNAME] = [None]*len(huge_table)
     huge_table['n_paragraphs'] = [None]*len(huge_table)
     huge_table['n_words'] = [None]*len(huge_table)
     j=1
@@ -234,7 +237,7 @@ def merge_tables(meta, subtable):
             temp_name = re.sub(r'\.pdf$', '', subtable['Name'][i])
             idx = huge_table.index[huge_table[DOC_ID_COLNAME] == temp_name].tolist()[0]
             huge_table['Name'][idx] = subtable['Name'][i]
-            huge_table['Text'][idx] = subtable['Text'][i]
+            huge_table[TEXT_COLNAME][idx] = subtable[TEXT_COLNAME][i]
             huge_table['n_paragraphs'][idx] = subtable['n_paragraphs'][i]
             huge_table['n_words'][idx] = subtable['n_words'][i]
         except Exception as e:
@@ -285,7 +288,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
 
     print("Creating subtable...", flush=True)
     texts_table = pd.DataFrame(list(zip(paragraph_df[PDF_FILENAME_COLNAME], clean_paragraphs, np, nw)), columns=[
-                            PDF_FILENAME_COLNAME, 'Text', 'n_paragraphs', 'n_words'])
+                            PDF_FILENAME_COLNAME, TEXT_COLNAME, 'n_paragraphs', 'n_words'])
 
     print('Reading dump file...')
     dump_df = pd.read_parquet(overton_table_path)
@@ -295,7 +298,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     texts_table[DOC_ID_COLNAME] = texts_table[PDF_FILENAME_COLNAME].apply(lambda x: x[:-4])
 
     final_table = pd.merge(dump_df, texts_table, on=DOC_ID_COLNAME)
-    print('Saving final table')
+    print('Saving final table...')
     final_table.to_parquet(os.path.join(str(project_path),"processed.parquet"), index=False)
 
 
