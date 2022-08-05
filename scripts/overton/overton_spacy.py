@@ -97,6 +97,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     for i in range(k,n_batches): # we do it in batchsize
         print('Batch ' + str(i+1) +" / "+str(n_batches))
         batch = df[i*batch_size:(i+1)*batch_size]['Text']
+        batch_title = df[i*batch_size:(i+1)*batch_size]['Title']
         batch_nouns = []
         batch_noun_chunks = []
         batch_lemmas = []
@@ -106,7 +107,6 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
         batch_language = []
 
         for document in batch: # for document in batch
-
             doc_nouns = []
             doc_noun_chunks = []
             doc_lemmas = []
@@ -138,7 +138,8 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
             batch_merged_lemmas.append(doc_merged_lemmas)
             batch_language.append(doc_language)
 
-        batch_df = pd.DataFrame({'nouns':batch_nouns, 
+        batch_df = pd.DataFrame({'Title': batch_title,
+                                'nouns':batch_nouns, 
                                 'noun_chunks':batch_noun_chunks, 
                                 'lemmas':batch_lemmas,
                                 'merged_nouns':batch_merged_nouns,
