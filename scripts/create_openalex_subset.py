@@ -60,11 +60,11 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
         if i>= 10:
             break
 
-    df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
-                       'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
-                       'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
-                       'referenced_works': referenced_works, 'related_works': related_works,
-                       'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
+    df = pd.DataFrame({'id': id[0:10], 'doi': doi[0:10], 'title': title[0:10], 'display_name': display_name[0:10],
+                       'pubication_year': pubication_year[0:10], 'pubication_date': pubication_date[0:10], 'type': type[0:10],
+                       'authorships': authorships[0:10], 'cited_by_count': cited_by_count[0:10], 'concepts': concepts[0:10],
+                       'referenced_works': referenced_works[0:10], 'related_works': related_works[0:10],
+                       'abstract_inverted_index': abstract_inverted_index[0:10], 'counts_by_year': counts_by_year[0:10]})
     df.to_parquet(os.path.join(output_dir, 'openalex_subset.parquet'))
 
 
