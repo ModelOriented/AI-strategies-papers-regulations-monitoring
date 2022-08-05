@@ -57,7 +57,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
             print('Checkpoint saved!', flush=True)
             if i >= 10:
                 break
-        if i>= 10
+        if i>= 10:
             break
 
     df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
