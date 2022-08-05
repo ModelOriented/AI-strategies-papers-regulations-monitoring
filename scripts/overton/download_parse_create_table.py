@@ -129,33 +129,32 @@ def convert_pdf_folder_to_paragraphs(path, project_path, names):
     list_of_lists = []
     names = []
 
-    df = pd.DataFrame(list(zip(names, list_of_lists)), columns=[PDF_FILENAME_COLNAME, TEXT_COLNAME, ])
     listdir = os.listdir(path)
     try:
         df = pd.read_parquet(os.path.join(str(project_path), TEXTS_FILE_NAME))
-        k = len(df) - 1
-        print('Loaded previous dataframe')
-        print(df)
+        print('Loaded previous dataframe of length', len(df))
     except:
+        df = pd.DataFrame(list(zip(names, list_of_lists)), columns=[PDF_FILENAME_COLNAME, TEXT_COLNAME, ])
         print('Created new dataframe')
-        k = 0
-    for i in range(k, len(listdir)):
-        try:
-            file = listdir[i]
-            if file.endswith(".pdf"):
-                file_path = f"{path}/{file}"
-                print(file_path)
-                names.append(file)
-                list_of_paragraphs = convert_pdf_to_paragraphs(file_path)
-                list_of_lists.append(list_of_paragraphs)
-
-                df.loc[-1] = [file, list_of_paragraphs]  # adding a row
-                df.index = df.index + 1  # shifting index
-                df = df.sort_index()  # sorting by index
-            else:
-                print(f"File not pdf: {file}", flush=True)
-        except:
-            df.to_parquet(os.path.join(str(project_path), TEXTS_FILE_NAME))
+    for filename in listdir:
+        if filename in df[PDF_FILENAME_COLNAME].values:
+            print("Already processed:", filename)
+        else:
+            try:
+                if filename.endswith(".pdf"):
+                    file_path = f"{path}/{filename}"
+                    print(f"Processing: {file_path}...",flush=True)
+                    names.append(filename)
+                    list_of_paragraphs = convert_pdf_to_paragraphs(file_path)
+                    list_of_lists.append(list_of_paragraphs)
+                    df.loc[-1] = [filename, list_of_paragraphs]  # adding a row
+                    df.index = df.index + 1  # shifting index
+                    df = df.sort_index()  # sorting by index
+                else:
+                    print(f"File not pdf: {filename}", flush=True)
+            except Exception as e:
+                print(f"Error during processing: {filename}",str(e))
+                df.to_parquet(os.path.join(str(project_path), TEXTS_FILE_NAME))
 
     df.to_parquet(os.path.join(str(project_path),TEXTS_FILE_NAME))
 
@@ -175,7 +174,7 @@ def remove_corrupted_files(path):
             print("Exception:", str(e), flush=True)
             corrupted.append(file)
             # os.remove(os.path.join(path, file))
-    print(str(i) + " Files unopenable")
+    print(str(i) + " Files unopenable", flush=True)
     pd.Series(corrupted).to_csv(UNOPENABLE_PDFS_PATH)
 
 def custom_regex(text):
