@@ -78,6 +78,9 @@ def download_pdf(pdfs_dir, data, i):
         pdf_path = pdfs_dir + '/' + str(data[DOC_ID_COLNAME][i]) + '.pdf'
         open(pdf_path, 'wb').write(r.content)
 
+        content_type = str(r.headers.get('Content-Type'))
+        if not str(content_type).startswith('application/pdf'):
+            print("Warning: wrong content type", content_type, "| URL:", url)
         with open(PROGRESS, 'a') as f:  # write title to progress
             f.writelines(str(data[DOC_ID_COLNAME][i])+'\n')
 
