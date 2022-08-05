@@ -1,0 +1,4 @@
+outs:
+- md5: 48fa117e4e41c17ad0ef52ef7efaf03c
+  size: 72476507
+  path: dump.parquet
