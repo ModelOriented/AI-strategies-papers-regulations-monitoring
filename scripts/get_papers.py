@@ -1,4 +1,3 @@
-!pip install spacy
 import os
 import typer
 import json
