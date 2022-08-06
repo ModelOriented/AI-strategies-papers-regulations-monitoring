@@ -2,6 +2,8 @@ import os
 import typer
 import json
 import jsonlines
+import spacy
+spacy.load('en_core_web_sm')
 import spacy.lang.en
 from spacy.matcher import PhraseMatcher
 
