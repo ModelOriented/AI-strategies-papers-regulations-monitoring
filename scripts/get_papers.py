@@ -57,7 +57,7 @@ def main(output_dir: str):
                                 paper = json.loads(line)
                                 if paper['abstract_inverted_index'] is not None:
                                     abstract = get_abstract(paper['abstract_inverted_index'])
-                                    if matcher(abstract):
+                                    if matcher(en(abstract)):
                                         os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
