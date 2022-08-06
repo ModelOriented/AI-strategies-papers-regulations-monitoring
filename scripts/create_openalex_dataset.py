@@ -3,6 +3,14 @@ import pandas as pd
 import typer
 import json
 
+def get_abstract(abstract_inverted_index: dict) -> str:
+    abstract_index = {}
+    for k, vlist in abstract_inverted_index.items():
+        for v in vlist:
+            abstract_index[v] = k
+
+    abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
+    return abstract
 
 def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
     i = 1
@@ -19,7 +27,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
     concepts = []
     referenced_works = []
     related_works = []
-    abstract_inverted_index = []
+    abstract = []
     counts_by_year = []
 
     for subdir, dirs, files in os.walk(path_to_filtered_files):
@@ -43,7 +51,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                         concepts.append(line['concepts'])
                         referenced_works.append(line['referenced_works'])
                         related_works.append(line['related_works'])
-                        abstract_inverted_index.append(line['abstract_inverted_index'])
+                        abstract.append(get_abstract(line['abstract_inverted_index']))
                         counts_by_year.append(line['counts_by_year'])
 
                         i += 1
@@ -51,7 +59,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                                'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
                                'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
                                'referenced_works': referenced_works, 'related_works': related_works,
-                               'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
+                               'abstract': abstract, 'counts_by_year': counts_by_year})
             df.to_csv(os.path.join(output_dir, 'openalex_dataset.csv'))
             print('Checkpoint saved!', flush=True)
 
@@ -59,7 +67,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                        'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
                        'authorships': authorships, 'cited_by_count': cited_by_count, 'concepts': concepts,
                        'referenced_works': referenced_works, 'related_works': related_works,
-                       'abstract_inverted_index': abstract_inverted_index, 'counts_by_year': counts_by_year})
+                       'abstract': abstract, 'counts_by_year': counts_by_year})
     df.to_parquet(os.path.join(output_dir, 'openalex_dataset.parquet'))
 
 
