@@ -2,8 +2,11 @@ import os
 import typer
 import json
 import jsonlines
+import spacy.lang.en
+from spacy.matcher import PhraseMatcher
 
 ROOT_DIR = 'openalex-snapshot/data/works'
+en = spacy.lang.en.English()
 
 ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 'expert system',
                'natural language processing', 'deep learning', 'reinforcement learning', 'learning algorithm',
@@ -13,6 +16,11 @@ ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 
                'representation learning', 'random forest', 'support vector machine', 'multiclass classification',
                'robot learning', 'graph learning', 'naive bayes classification', 'classification algorithm']
 
+def prepare_matcher():
+    matcher = PhraseMatcher(en.vocab, attr="NORM")  # TODO: change to lemma
+    for pattern in ML_KEYWORDS:
+        matcher.add(pattern, None, en(pattern))
+    return matcher
 
 def get_abstract(abstract_inverted_index: dict) -> str:
     abstract_index = {}
@@ -28,6 +36,7 @@ def main(output_dir: str):
     errors = 0
     n_files_processed = 0
     n_ml_papers = 0
+    matcher = prepare_matcher()
     with open(os.path.join(output_dir, 'already_processed.txt')) as file:
         lines = file.readlines()
         already_processed = [line.rstrip() for line in lines]
@@ -44,20 +53,19 @@ def main(output_dir: str):
                         for line in f:
                             try:
                                 paper = json.loads(line)
-                                for keyword in ML_KEYWORDS:
-                                    words = keyword.split()
-                                    if paper['abstract_inverted_index'] is not None:
-                                        if all(word in paper['abstract_inverted_index'] for word in words):
-                                            os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
-                                            filename = os.path.join(output_dir, update_dir, file)
-                                            if not os.path.exists(filename):
-                                                with jsonlines.open(filename, mode='w') as f:
-                                                    f.write(paper)
-                                            else:
-                                                with jsonlines.open(filename, mode='a') as output_f:
-                                                    output_f.write(paper)
-                                            n_ml_papers += 1
-                                            break
+                                if paper['abstract_inverted_index'] is not None:
+                                    abstract = get_abstract(paper['abstract_inverted_index'])
+                                    if matcher(abstract):
+                                        os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
+                                        filename = os.path.join(output_dir, update_dir, file)
+                                        if not os.path.exists(filename):
+                                            with jsonlines.open(filename, mode='w') as f:
+                                                f.write(paper)
+                                        else:
+                                            with jsonlines.open(filename, mode='a') as output_f:
+                                                output_f.write(paper)
+                                        n_ml_papers += 1
+                                        break
                             except Exception as e:
                                 print(f'Error: {e}', flush=True)
                                 errors += 1
