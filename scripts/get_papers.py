@@ -3,12 +3,11 @@ import typer
 import json
 import jsonlines
 import spacy
-spacy.load('en_core_web_sm')
 import spacy.lang.en
 from spacy.matcher import PhraseMatcher
 
 ROOT_DIR = 'openalex-snapshot/data/works'
-en = spacy.lang.en.English()
+nlp = spacy.load('en_core_web_sm')
 
 ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 'expert system',
                'natural language processing', 'deep learning', 'reinforcement learning', 'learning algorithm',
@@ -19,9 +18,9 @@ ML_KEYWORDS = ['artificial intelligence', 'neural network', 'machine learning', 
                'robot learning', 'graph learning', 'naive bayes classification', 'classification algorithm']
 
 def prepare_matcher():
-    matcher = PhraseMatcher(en.vocab, attr="NORM")  # TODO: change to lemma
+    matcher = PhraseMatcher(nlp.vocab, attr="NORM")  # TODO: change to lemma
     for pattern in ML_KEYWORDS:
-        matcher.add(pattern, None, en(pattern))
+        matcher.add('AI', [nlp(pattern)])
     return matcher
 
 def get_abstract(abstract_inverted_index: dict) -> str:
@@ -58,7 +57,8 @@ def main(output_dir: str):
                                 if paper['abstract_inverted_index'] is not None:
                                     abstract = get_abstract(paper['abstract_inverted_index'])
                                     abstract = abstract.lower()
-                                    if matcher(en(abstract)):
+                                    print(matcher(nlp(abstract)))
+                                    if matcher(nlp(abstract)):
                                         os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
