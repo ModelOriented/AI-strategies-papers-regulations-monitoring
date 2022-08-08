@@ -38,6 +38,8 @@ def main(output_dir: str):
     n_files_processed = 0
     n_ml_papers = 0
     matcher = prepare_matcher()
+    number_of_papers_with_abstract = 0
+    number_of_papers = 0
     with open(os.path.join(output_dir, 'already_processed.txt')) as file:
         lines = file.readlines()
         already_processed = [line.rstrip() for line in lines]
@@ -52,13 +54,14 @@ def main(output_dir: str):
                     with open(full_path) as f:
                         n_lines = 0
                         for line in f:
+                            number_of_papers += 1
                             try:
                                 paper = json.loads(line)
                                 if paper['abstract_inverted_index'] is not None:
+                                    number_of_papers_with_abstract += 1
                                     abstract = get_abstract(paper['abstract_inverted_index'])
                                     abstract = abstract.lower()
-                                    print(matcher(nlp(abstract)))
-                                    if matcher(nlp(abstract)):
+                                    if len(matcher(nlp(abstract))) > 0 or len(matcher(nlp(paper['title'].lower()))) > 0:
                                         os.makedirs(os.path.join(output_dir, update_dir), exist_ok=True)
                                         filename = os.path.join(output_dir, update_dir, file)
                                         if not os.path.exists(filename):
@@ -75,8 +78,9 @@ def main(output_dir: str):
                                 pass
                             n_lines += 1
                             print(
-                                f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, {n_ml_papers} ML papers',
-                                flush=True)
+                                f'Processed {n_files_processed} files, {n_lines} lines, {errors} errors, '
+                                f'{n_ml_papers} ML papers, percent of papers with abstract '
+                                f'{number_of_papers_with_abstract / number_of_papers * 100}', flush=True)
 
                 n_files_processed += 1
                 print('Processed {} files'.format(n_files_processed), flush=True)
