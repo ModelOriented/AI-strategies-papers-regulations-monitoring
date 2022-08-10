@@ -1,4 +1,4 @@
-from mars.utils import set_root_path
+#from mars.utils import set_root_path
 import pandas as pd
 
 import os
@@ -24,13 +24,14 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
 
 def get_merged_data():
     if not os.path.exists(MERGED_DATA_PATH):
-        df = pd.read_parquet('data/s2orc/processed_big.parquet')
+        df = pd.read_parquet('data/s2orc/processed_big_test.parquet')
         df2 = pd.read_parquet(
-            'data/s2orc/big_ai_dataset_with_affiliations.parquet')
+            'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')
         memes_df = pd.merge(df2,
                             df[['paper_id', 'noun_chunks_cleaned']],
                             on='paper_id',
                             how='left')
+        #affiliation pipeline
         #df2 = df2[df2['institutions'].str.len()!=0]
         memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
             lambda ids: [int(id) for id in ids])
@@ -121,7 +122,7 @@ def main(df_clusters
     #print("Saving results...")
     df_out = df_memes[[
         'paper_id', 'outbound_citations', 'inbound_citations', 'institutions',
-        'countries', 'types', 'unique_institutions', 'is_big_tech',
+        'countries', 'types', 'unique_institutions', 'condition',
         'noun_chunks_cleaned', 'memes', 'inbound_memes', 'outbound_memes',
         'year'
     ]]

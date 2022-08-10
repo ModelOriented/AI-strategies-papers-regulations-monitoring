@@ -54,7 +54,7 @@ def clean_outbound_citations(df:pd.DataFrame):
     return aff_memes
 
 
-def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
+def meme_score(df: pd.DataFrame, conditioning = None, delta:float=0.0001):
     print('OneHot Encoding ..')
     #OneHotEncoding of memes
     enc = MultiLabelBinarizer(sparse_output=True)
@@ -85,45 +85,28 @@ def meme_score(df: pd.DataFrame, delta=0.0001, conditioning = None):
 
 
     frequency = memes_enc.sum(axis=0)
+
     propagation_factor = np.divide(np.divide(stick1,stick2+delta),np.divide(spark1+delta,spark2+delta))
     if conditioning == None:
         df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_vanilla': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
                                  'sticking_factor_vanilla': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
                                  'sparking_factor_vanilla': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
                                  'frequency': np.squeeze(np.array(frequency))})
-    elif conditioning == 'is_big_tech':
-        df_bt = df[df['is_big_tech'] == 1]
-        enc_bt = MultiLabelBinarizer(sparse_output=True)
-        memes_enc_bt = enc_bt.fit_transform(df_bt['memes'])
-        frequency_bt = pd.DataFrame({'meme_id': enc_bt.classes_, 'frequency_bt': np.squeeze(np.array(memes_enc_bt.sum(axis=0)))})
-        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score_BT': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
-                                 'sticking_factor_BT': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
-                                 'sparking_factor_BT': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
-                                 'stick1_BT': np.squeeze(np.array(stick1)),
-                                 'stick2_BT': np.squeeze(np.array(stick2)),
-                                 'spark1_BT': np.squeeze(np.array(spark1)),
-                                 'spark2_BT': np.squeeze(np.array(spark2))
+    else:
+        df_c = df[df['condition'] == 1]
+        enc = MultiLabelBinarizer(sparse_output=True)
+        memes_enc = enc.fit_transform(df_c['memes'])
+        frequency_c = pd.DataFrame({'meme_id': enc.classes_, 'frequency': np.squeeze(np.array(memes_enc.sum(axis=0)))})
+        df_memes = pd.DataFrame({'meme_id': enc.classes_, 'meme_score': np.squeeze(np.array(np.multiply(propagation_factor,frequency))),
+                                 'sticking_factor': np.squeeze(np.array(np.divide(stick1,stick2+delta))),
+                                 'sparking_factor': np.squeeze(np.array(np.divide(spark1+delta,spark2+delta))),
+                                 'stick1': np.squeeze(np.array(stick1)),
+                                 'stick2': np.squeeze(np.array(stick2)),
+                                 'spark1': np.squeeze(np.array(spark1)),
+                                 'spark2': np.squeeze(np.array(spark2))
                                  })
-        df_memes = df_memes.merge(frequency_bt, how='left', on='meme_id')
-    elif conditioning == 'is_company':
-        df_memes = pd.DataFrame({'meme_id': enc.classes_,
-                                 'meme_score_C': np.squeeze(np.array(np.multiply(propagation_factor, frequency)))})
-    elif conditioning == 'is_academia':
-        df_a = df[df['is_academia'] == 1]
-        enc_a = MultiLabelBinarizer(sparse_output=True)
-        memes_enc_a = enc_a.fit_transform(df_a['memes'])
-        frequency_a = pd.DataFrame(
-            {'meme_id': enc_a.classes_, 'frequency_a': np.squeeze(np.array(memes_enc_a.sum(axis=0)))})
-        df_memes = pd.DataFrame({'meme_id': enc.classes_,
-                                 'meme_score_A': np.squeeze(np.array(np.multiply(propagation_factor, frequency))),
-                                 'sticking_factor_A': np.squeeze(np.array(np.divide(stick1, stick2 + delta))),
-                                 'sparking_factor_A': np.squeeze(np.array(np.divide(spark1 + delta, spark2 + delta))),
-                                 'stick1_A': np.squeeze(np.array(stick1)),
-                                 'stick2_A': np.squeeze(np.array(stick2)),
-                                 'spark1_A': np.squeeze(np.array(spark1)),
-                                 'spark2_A': np.squeeze(np.array(spark2))
-                                 })
-        df_memes = df_memes.merge(frequency_a, how='left', on='meme_id')
+        df_memes = df_memes.merge(frequency_c, how='left', on='meme_id')
+   
     return df_memes
 
 

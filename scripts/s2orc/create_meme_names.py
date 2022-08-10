@@ -58,7 +58,7 @@ def main(chunk_to_meme):
     #in_path = os.path.join(IN_DIR, file_name)
     #out_path = os.path.join(OUT_DIR, file_name)
     #memes_mappings = pd.read_parquet(in_path)
-    processed_with_chunks = pd.read_parquet('data/s2orc/processed_big.parquet')
+    processed_with_chunks = pd.read_parquet('data/s2orc/processed_big_test.parquet')
 
     df_out = prepare_names(chunk_to_meme, processed_with_chunks)
 

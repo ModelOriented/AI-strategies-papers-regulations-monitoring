@@ -6,16 +6,17 @@ import numpy as np
 
 
 
-def main(condition_list,category):
+def main(condition_list,category,big_ai_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet',
+json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet'):
     #wczytywanie danych
-    all_pd = pd.read_parquet(r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet', columns=['paper_id', 'year', 'doi', 'out_citations_count', 'in_citations_count'], engine='pyarrow')
+    all_pd = pd.read_parquet(big_ai_input, columns=['paper_id', 'year', 'doi', 'out_citations_count', 'in_citations_count','outbound_citations', 'inbound_citations'], engine='pyarrow')
     print(f'Number of all records: {len(all_pd)}')
     print(f'Number of unique doi records: {all_pd["doi"].nunique()}')
     print(f'Number of NAN\'s: {len(all_pd) - all_pd["doi"].nunique()}')
 
-    df = all_pd[~((all_pd['in_citations_count'] == 0) & (all_pd['out_citations_count'] == 0))]
-
-    file = open(r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json')
+    df_org = all_pd[~((all_pd['in_citations_count'] == 0) & (all_pd['out_citations_count'] == 0))]
+    df = df_org.copy()
+    file = open(json_input)
     doi_to_authorship_big = json.load(file)
 
     print(f'Number of dois: {len(doi_to_authorship_big.keys())}')
@@ -24,7 +25,7 @@ def main(condition_list,category):
     for key in keys:
         new_key = key.replace('https://doi.org/', '')
         doi_to_authorship_big[new_key] = doi_to_authorship_big.pop(key)
-
+    
     df['open_alex'] = df['doi'].map(doi_to_authorship_big)
     df = df.dropna()
 
@@ -37,7 +38,6 @@ def main(condition_list,category):
         countries_per_paper = []
         types_per_paper = []
         if row['open_alex'] != '':
-            print(row['open_alex'])
             for author in row['open_alex']:
                 try:
                     institution_per_author = []
@@ -166,8 +166,8 @@ def main(condition_list,category):
 
     df['condition'] = is_X
     df.drop(columns='open_alex', inplace=True)
-    df.to_parquet('data/s2orc/big_ai_dataset_with_affiliations.parquet')
+    df.to_parquet(output_path)
 
 #if __name__ == '__main__':
 #    typer.run(main)
-main(['Poland'], 'country')
+main(['PL'], 'country',output_path = 'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')
