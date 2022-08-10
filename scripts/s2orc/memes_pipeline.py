@@ -7,6 +7,7 @@ from meme_score import meme_score
 import prepare_memes
 import memes_flows
 
+import typer
 import numpy as np
 import pandas as pd
 
@@ -34,10 +35,11 @@ n_jobs_cluster: int = -1, cluster_selection_epsilons: str = ".0", gpu_cluster: b
 
 
     pd.DataFrame(df_cluster).to_parquet(out_path_cluster)#saving
+
     print('PREPARING MEMES')
-    df_cluster, chunk_to_meme = prepare_memes.main(df_cluster) #na razie nie ma informacji o cytowaniach
+    df_cluster, chunk_to_meme = prepare_memes.main(df_cluster,in_path,cit_path) #na razie nie ma informacji o cytowaniach
     print('CREATING NAMES')
-    meme_to_name = create_meme_names.main(chunk_to_meme)
+    meme_to_name = create_meme_names.main(chunk_to_meme,in_path)
     print('CALCULATING MEME SCORE')
     df_meme_score = meme_score(df_cluster, conditioning_meme_score)
 
@@ -48,5 +50,6 @@ n_jobs_cluster: int = -1, cluster_selection_epsilons: str = ".0", gpu_cluster: b
 
 
 if __name__ == "__main__":
-    main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet','data/s2orc/clusters.parquet','data/s2orc/final.parquet',in_path = 'data/s2orc/processed_big_test.parquet')
+    typer.run(main)
+    #main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet','data/s2orc/clusters.parquet','data/s2orc/final.parquet',in_path = 'data/s2orc/processed_big_test.parquet')
     #typer.run(main)
