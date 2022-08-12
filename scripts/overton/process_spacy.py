@@ -50,7 +50,7 @@ def get_chunks(docs, stopwords = False):
             noun_chunks.append(chunk.text)
     return noun_chunks
 
-def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='en_core_web_md'):
+def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name: str='en_core_web_md'):
     """
     This script takes output of overton preprocessing and prasing and creates basic spacy objects: nouns, noun chunks and lemmas for documents and paragraphs
     """
@@ -78,7 +78,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     new = 0
     try:
       out_df = pd.read_parquet(out_path)
-      k = round(len(out_df)/batch_size)
+      k = round(len(out_df)/global_batch_size)
       print("Resuming from " + str(k))
     except:
       print("No DF with given out_path. Creating a new one")
@@ -91,12 +91,16 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
       new = 1
 
 
-    n_batches = round(len(df)/batch_size)
+    n_batches = int(len(df)/global_batch_size) + 1
     print("Number of batches " + str(n_batches))
     for i in range(k,n_batches): # we do it in batchsize
         print('Batch ' + str(i+1) +" / "+str(n_batches))
-        batch = df[i*batch_size:(i+1)*batch_size]['Text']
-        batch_title = df[i*batch_size:(i+1)*batch_size]['Title']
+        if (i+1)*global_batch_size > len(df):
+            batch = df[i*global_batch_size:]['Text']
+            batch_title = df[i*global_batch_size:]['Title']
+        else :
+            batch = df[i*global_batch_size:(i+1)*global_batch_size]['Text']
+            batch_title = df[i*global_batch_size:(i+1)*global_batch_size]['Title']
         batch_nouns = []
         batch_noun_chunks = []
         batch_lemmas = []
