@@ -56,15 +56,22 @@ def main(   out_path_embedding:str,
 
         pd.DataFrame(df_cluster).to_parquet(out_path_cluster)#saving
     else:
+        print('READING IN CLUSTERS')
         df_cluster = pd.read_parquet(out_path_cluster)
+        df_cluster.index.name = None
 
-    print('GETTING AFFILIATIONS')
-    df_aff = affiliation_pipeline.affiliations(condition_list,category,cit_path,json_input,aff_output_path)
-    
+    if not os.path.exists(aff_output_path):
+        print('GETTING AFFILIATIONS')
+        df_af = affiliation_pipeline.affiliations(condition_list,category,cit_path,json_input,aff_output_path)
+    else:
+        print('READING IN AFFILIATIONS')
+        df_af = pd.read_parquet(aff_output_path)
+
     print('PREPARING MEMES')
-    df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster,in_path,df_aff)
+    df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af)
+
     print('CREATING NAMES')
-    meme_to_name = create_meme_names.names(chunk_to_meme,in_path)
+    meme_to_name = create_meme_names.names(chunk_to_meme,df_cluster)
 
     print('CALCULATING MEME SCORE')
     df_meme_score = meme_score(df_cluster)
@@ -72,9 +79,10 @@ def main(   out_path_embedding:str,
     df_meme_score['meme_name'] = df_meme_score['meme_id'].map(meme_to_name["best_tfidf"])
 
     pd.DataFrame(df_meme_score).to_parquet(out_path_meme_score)
-    #apka do streamlita wczytuje noun chunki
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    #typer.run(main)
+    main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet',"C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/results/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet",'data/s2orc/final.parquet')
+
     
