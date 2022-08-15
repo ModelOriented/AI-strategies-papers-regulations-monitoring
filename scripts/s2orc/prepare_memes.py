@@ -22,11 +22,10 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
     return chunk_to_meme_id
 
 
-def get_merged_data():
+def get_merged_data(in_path,df2):
     if not os.path.exists(MERGED_DATA_PATH):
-        df = pd.read_parquet('data/s2orc/processed_big_test.parquet')
-        df2 = pd.read_parquet(
-            'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')
+        df = pd.read_parquet(in_path)
+        
         memes_df = pd.merge(df2,
                             df[['paper_id', 'noun_chunks_cleaned']],
                             on='paper_id',
@@ -77,9 +76,9 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def main(df_clusters
+def preparing(df_clusters,in_path,df_aff
          ):  #reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet
-    df_memes = get_merged_data()
+    df_memes = get_merged_data(in_path,df_aff)
     # map chunks to clusters
 
     print("Mapping chunks to memes...")
@@ -132,4 +131,4 @@ def main(df_clusters
     return df_out,chunk_to_meme
 
 if __name__ == '__main__':
-    typer.run(main)
+    typer.run(preparing)

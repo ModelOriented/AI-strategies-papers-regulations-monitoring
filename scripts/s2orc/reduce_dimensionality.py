@@ -6,7 +6,7 @@ import joblib
 EMBEDDINGS_DIR_PATH = "data/s2orc/embeddings/"
 import numpy as np
 
-def main(df,n_components:int, gpu:bool=False):
+def reducing(df,n_components:int, gpu:bool=False):
     print("Reducing dimensionality to {} components".format(n_components))
     print("Loading libraries...")
     if gpu:
@@ -38,4 +38,4 @@ def main(df,n_components:int, gpu:bool=False):
 
     return df
 if __name__=="__main__":
-    typer.run(main)
+    typer.run(reducing)

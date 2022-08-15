@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 
-def main(df:pd.DataFrame,
+def clustering(df:pd.DataFrame,
          n_jobs: int = -1,
          cluster_selection_epsilons: str = ".0",
          gpu: bool = False,
@@ -46,4 +46,4 @@ def main(df:pd.DataFrame,
         return df
 
 if __name__ == '__main__':
-    typer.run(main)
+    typer.run(clustering)
