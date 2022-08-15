@@ -76,5 +76,5 @@ def main(   out_path_embedding:str,
 
 
 if __name__ == "__main__":
-    #typer.run(main)
-    main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet','data/s2orc/clusters.parquet','data/s2orc/final.parquet',in_path = 'data/s2orc/processed_big_test.parquet')
+    typer.run(main)
+    
