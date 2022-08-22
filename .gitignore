@@ -142,3 +142,8 @@ secrets/*
 chromedriver
 jobs/
 **/.DS_Store
+
+# big files
+*.pdf
+*.html
+*.parquet
