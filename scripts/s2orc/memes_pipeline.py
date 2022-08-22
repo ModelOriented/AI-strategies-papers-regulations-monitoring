@@ -83,7 +83,7 @@ def main(   out_path_embedding:str,
 
 
 if __name__ == "__main__":
-    #typer.run(main)
-    main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet',"C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/results/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet",'data/s2orc/final.parquet')
+    typer.run(main)
+    #main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet',"C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/results/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet",'data/s2orc/final.parquet')
 
     
