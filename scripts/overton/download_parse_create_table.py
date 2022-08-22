@@ -263,7 +263,6 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     n_jobs              : int, number of jobs for downloading
     """
     # Process
-    os.makedirs(project_path, exist_ok=True)
     os.chdir(project_path)
     print('Preparing file structre...')
     os.makedirs(pdfs_path, exist_ok=True)
@@ -295,6 +294,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     np, nw = prepare_stats(clean_paragraphs)
 
     print("Creating subtable...", flush=True)
+
     texts_table = pd.DataFrame(list(zip(paragraph_df[PDF_FILENAME_COLNAME], clean_paragraphs, np, nw)), columns=[
                             PDF_FILENAME_COLNAME, TEXT_COLNAME, 'n_paragraphs', 'n_words'])
 
