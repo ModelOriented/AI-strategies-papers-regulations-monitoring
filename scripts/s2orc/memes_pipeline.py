@@ -32,7 +32,8 @@ def main(   out_path_embedding:str,
             min_clust_size: int = 5, 
             metric_cluster: str = 'euclidean',
             condition_list:list = ['PL'],
-            category:str = 'country'
+            category:str = 'country',
+            do_memes:bool = True
             ):
     #embedd noun_chunks
     if not os.path.exists(out_path_cluster):
@@ -59,26 +60,26 @@ def main(   out_path_embedding:str,
         print('READING IN CLUSTERS')
         df_cluster = pd.read_parquet(out_path_cluster)
         df_cluster.index.name = None
+    if do_memes:
+        if not os.path.exists(aff_output_path):
+            print('GETTING AFFILIATIONS')
+            df_af = affiliation_pipeline.affiliations(condition_list,category,cit_path,json_input,aff_output_path)
+        else:
+            print('READING IN AFFILIATIONS')
+            df_af = pd.read_parquet(aff_output_path)
 
-    if not os.path.exists(aff_output_path):
-        print('GETTING AFFILIATIONS')
-        df_af = affiliation_pipeline.affiliations(condition_list,category,cit_path,json_input,aff_output_path)
-    else:
-        print('READING IN AFFILIATIONS')
-        df_af = pd.read_parquet(aff_output_path)
+        print('PREPARING MEMES')
+        df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af)
 
-    print('PREPARING MEMES')
-    df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af)
+        print('CREATING NAMES')
+        meme_to_name = create_meme_names.names(chunk_to_meme,df_cluster)
 
-    print('CREATING NAMES')
-    meme_to_name = create_meme_names.names(chunk_to_meme,df_cluster)
+        print('CALCULATING MEME SCORE')
+        df_meme_score = meme_score(df_cluster)
 
-    print('CALCULATING MEME SCORE')
-    df_meme_score = meme_score(df_cluster)
+        df_meme_score['meme_name'] = df_meme_score['meme_id'].map(meme_to_name["best_tfidf"])
 
-    df_meme_score['meme_name'] = df_meme_score['meme_id'].map(meme_to_name["best_tfidf"])
-
-    pd.DataFrame(df_meme_score).to_parquet(out_path_meme_score)
+        pd.DataFrame(df_meme_score).to_parquet(out_path_meme_score)
 
 
 if __name__ == "__main__":
