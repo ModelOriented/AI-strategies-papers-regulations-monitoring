@@ -1,12 +1,11 @@
 import pandas as pd
-import re
-import collections
+
 import json
 import numpy as np
+import typer
 
 
-
-def main(condition_list,category,big_ai_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet',
+def affiliations(condition_list,category,big_ai_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet',
 json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet'):
     #wczytywanie danych
     all_pd = pd.read_parquet(big_ai_input, columns=['paper_id', 'year', 'doi', 'out_citations_count', 'in_citations_count','outbound_citations', 'inbound_citations'], engine='pyarrow')
@@ -168,6 +167,6 @@ json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitor
     df.drop(columns='open_alex', inplace=True)
     df.to_parquet(output_path)
 
-#if __name__ == '__main__':
-#    typer.run(main)
-main(['PL'], 'country',output_path = 'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')
+if __name__ == '__main__':
+    typer.run(affiliations)
+#main(['PL'], 'country',output_path = 'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')

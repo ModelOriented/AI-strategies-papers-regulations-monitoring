@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 import typer
 import os
 
-def main(
+def embedd_noun_chunks(
     input_path: str, sentences_embedding: str = "all-MiniLM-L6-v2", batch_size:int=32, multiprocess:bool=False):
 
     print("Loading data...")
@@ -33,4 +33,4 @@ def main(
     return pd.DataFrame(chunk_to_embedding, columns=["chunk", "embedding"])
 
 if __name__ == "__main__":
-    typer.run(main)
+    typer.run(embedd)

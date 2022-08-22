@@ -6,7 +6,6 @@ from collections import Counter
 import typer
 from tqdm import tqdm
 
-MERGED_DATA_PATH = "data/s2orc/clean_merged.parquet"
 N_TO_REMOVE = 10
 
 def make_chunk_to_meme_id(df_clusters) -> dict:
@@ -22,27 +21,20 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
     return chunk_to_meme_id
 
 
-def get_merged_data():
-    if not os.path.exists(MERGED_DATA_PATH):
-        df = pd.read_parquet('data/s2orc/processed_big_test.parquet')
-        df2 = pd.read_parquet(
-            'data/s2orc/big_ai_dataset_with_affiliations_poland.parquet')
-        memes_df = pd.merge(df2,
-                            df[['paper_id', 'noun_chunks_cleaned']],
-                            on='paper_id',
-                            how='left')
-        #affiliation pipeline
-        #df2 = df2[df2['institutions'].str.len()!=0]
-        memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
-            lambda ids: [int(id) for id in ids])
-        memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
-            lambda ids: [int(id) for id in ids])
+def get_merged_data(df1,df2):
 
-        memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
-        memes_df.to_parquet(MERGED_DATA_PATH)
-    else:
-        print(f"Loading {MERGED_DATA_PATH}...")
-        memes_df = pd.read_parquet(MERGED_DATA_PATH)
+    memes_df = pd.merge(df2,
+                        df1[['paper_id', 'noun_chunks_cleaned']],
+                        on='paper_id',
+                        how='left')
+    #affiliation pipeline
+    #df2 = df2[df2['institutions'].str.len()!=0]
+    memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
+        lambda ids: [int(id) for id in ids])
+    memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
+        lambda ids: [int(id) for id in ids])
+
+    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
 
     return memes_df
 
@@ -77,9 +69,9 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def main(df_clusters
-         ):  #reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet
-    df_memes = get_merged_data()
+def preparing(df_clusters,df_aff
+         ):  
+    df_memes = get_merged_data(df_clusters,df_aff)
     # map chunks to clusters
 
     print("Mapping chunks to memes...")
@@ -132,4 +124,4 @@ def main(df_clusters
     return df_out,chunk_to_meme
 
 if __name__ == '__main__':
-    typer.run(main)
+    typer.run(preparing)
