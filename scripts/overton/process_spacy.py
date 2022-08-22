@@ -61,7 +61,6 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
     print("Length with NAs:",len(df))
     df = df[df['Text'].notna()].reset_index(drop=True)
     print("Length after removing NAs:",len(df))
-
     en.remove_pipe("ner") # removing entity recognition for speed
 
     nouns = []
@@ -82,72 +81,42 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
       print("No DF with given out_path. Creating a new one")
       out_df = pd.DataFrame([{'nouns':nouns, 
                               'noun_chunks':noun_chunks, 
-                              'lemmas':lemmas,
-                              'merged_nouns':merged_nouns,
-                              'merged_noun_chunks':merged_noun_chunks,
-                              'merged_lemmas':merged_lemmas}])
+                              'lemmas':lemmas}])
       new = 1
 
 
-    n_batches = int(len(df)/global_batch_size) + 1
+    n_batches = round(len(df)/batch_size)
     print("Number of batches " + str(n_batches))
     for i in range(k,n_batches): # we do it in batchsize
         print('Batch ' + str(i+1) +" / "+str(n_batches))
-        if (i+1)*global_batch_size > len(df):
-            batch = df[i*global_batch_size:]['Text']
-            batch_title = df[i*global_batch_size:]['Title']
-        else :
-            batch = df[i*global_batch_size:(i+1)*global_batch_size]['Text']
-            batch_title = df[i*global_batch_size:(i+1)*global_batch_size]['Title']
+        batch = df[i*batch_size:(i+1)*batch_size]['Text']
         batch_nouns = []
         batch_noun_chunks = []
         batch_lemmas = []
-        batch_merged_nouns = []
-        batch_merged_noun_chunks = []
-        batch_merged_lemmas = []
-        batch_language = []
+        for document in batch: # for document in bacth
 
-        for document in batch: # for document in batch
             doc_nouns = []
             doc_noun_chunks = []
             doc_lemmas = []
-            doc_merged_nouns = []
-            doc_merged_noun_chunks = []
-            doc_merged_lemmas = []
-            doc_language = []
+            for paragraph in document: #we get all paragraphs
+                doc = (process(paragraph))
 
-            for paragraph in en.pipe(document, batch_size=50): 
-                doc,lang = process(paragraph,en)
+                doc_nouns.append(get_nouns(doc))
 
-                nouns = get_nouns(doc)
-                doc_nouns.append(nouns)
-                chunks = get_chunks(doc)
-                doc_noun_chunks.append(chunks)
-                lem = [token.lemma_ for token in doc if not token.is_stop if not token.is_punct if token.is_alpha]
-                doc_lemmas.append(lem)
+                doc_noun_chunks.append(get_chunks(doc))
 
-                doc_merged_nouns += nouns
-                doc_merged_noun_chunks += chunks
-                doc_merged_lemmas += lem
-                doc_language.append(lang)
+                doc_lemmas.append([token.lemma_ for token in doc if not token.is_stop if not token.is_punct if token.is_alpha])
+
+
+
 
             batch_nouns.append(doc_nouns)
             batch_noun_chunks.append(doc_noun_chunks)
             batch_lemmas.append(doc_lemmas)
-            batch_merged_nouns.append(doc_merged_nouns)
-            batch_merged_noun_chunks.append(doc_merged_noun_chunks)
-            batch_merged_lemmas.append(doc_merged_lemmas)
-            batch_language.append(doc_language)
 
-        batch_df = pd.DataFrame({'title': batch_title,
-                                'nouns':batch_nouns, 
-                                'noun_chunks':batch_noun_chunks, 
-                                'lemmas':batch_lemmas,
-                                'merged_nouns':batch_merged_nouns,
-                                'merged_noun_chunks':batch_merged_noun_chunks,
-                                'merged_lemmas':batch_merged_lemmas,
-                                'paragraph_language':batch_language})
-
+        batch_df = pd.DataFrame({'nouns':batch_nouns,
+                                  'noun_chunks':batch_noun_chunks,
+                                  'lemmas':batch_lemmas})
         if new == 0:
             out_df = pd.concat([out_df,batch_df],ignore_index = True)
         elif new == 1:
@@ -158,5 +127,3 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
 
 if __name__=="__main__":
     typer.run(main)
-
-

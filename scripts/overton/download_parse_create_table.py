@@ -14,7 +14,6 @@ from pdfminer.layout import LAParams, LTTextBoxHorizontal
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 
-
 UNOPENABLE_PDFS_PATH = 'unopenable.csv'
 PROGRESS = 'progress.txt'
 MISSING = 'missing.txt'
@@ -48,7 +47,6 @@ def download_parallel(pdfs_path, data, n_jobs):
 
     if fill == True:  # if it's empty, populate the to_download
         with open(TO_DOWNLOAD, 'a') as f:
-
             for s in data[DOC_ID_COLNAME]:
                 f.writelines(s+'\n')
 
@@ -61,7 +59,6 @@ def download_parallel(pdfs_path, data, n_jobs):
         if len(to_download_lines) == len(progress_lines):  # in case of finishing
             print('We have downloaded everything')
             return 0
-
         downloaded_pdfs = os.listdir(pdfs_path)
         downloaded_pdfs = [l[:-4] for l in downloaded_pdfs]
         with open("to_download.txt", "w") as f:
@@ -213,7 +210,6 @@ def nwords(string):
     return len(string.split())
 
 def paragraph_management(df, treshold=60):
-
     ls = copy.deepcopy(df[TEXT_COLNAME])
     for i in range(len(ls)):  # document
         for j in range(len(ls[i])-1):  # paragraph
@@ -276,7 +272,6 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
 
     print("Downloading pdfs...", flush=True)
     missing = download_parallel(pdfs_path, dump_df, n_jobs=n_jobs)
-
     print(str(missing) + ' files are missing')
 
     print('Removing corrupted files')
@@ -287,7 +282,6 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     convert_pdf_folder_to_paragraphs(pdfs_path, project_path, names)
 
     print("Loading paragraphs files...", flush=True)
-
     paragraph_df = pd.read_parquet(os.path.join(str(project_path),TEXTS_FILE_NAME))
 
     print("Merging paragraphs...")
@@ -300,7 +294,7 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
     np, nw = prepare_stats(clean_paragraphs)
 
     print("Creating subtable...", flush=True)
-    
+
     texts_table = pd.DataFrame(list(zip(paragraph_df[PDF_FILENAME_COLNAME], clean_paragraphs, np, nw)), columns=[
                             PDF_FILENAME_COLNAME, TEXT_COLNAME, 'n_paragraphs', 'n_words'])
 
@@ -313,7 +307,6 @@ def main(pdfs_path: str, project_path: str, overton_table_path: str, n_jobs: int
 
     final_table = pd.merge(dump_df, texts_table, on=DOC_ID_COLNAME)
     print('Saving final table...')
-
     final_table.to_parquet(os.path.join(str(project_path),"processed.parquet"), index=False)
 
 
