@@ -60,7 +60,7 @@ def download_pdf(file_names: Tuple[str, str], output_path: str, failed_to_downlo
                       "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
         except:
             with open(failed_to_download_path, 'a') as f:
-                f.write(file_names + '\n')
+                f.write(filename + '\n')
             print('Unable to download:', filename, flush=True)
     else:
         print('Already downloaded:', filename, flush=True)
