@@ -54,15 +54,15 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
 
     return df_out
 
-def main(file_name:str):
-    in_path = os.path.join(IN_DIR, file_name)
-    out_path = os.path.join(OUT_DIR, file_name)
-    memes_mappings = pd.read_parquet(in_path)
-    processed_with_chunks = pd.read_parquet('data/s2orc/processed_big.parquet')
+def names(chunk_to_meme,df_processed):
+    #in_path = os.path.join(IN_DIR, file_name)
+    #out_path = os.path.join(OUT_DIR, file_name)
+    #memes_mappings = pd.read_parquet(in_path)
 
-    df_out = prepare_names(memes_mappings, processed_with_chunks)
 
-    df_out.to_parquet(out_path)
+    df_out = prepare_names(chunk_to_meme, df_processed)
+
+    return df_out
 
 if __name__ == "__main__":
-    typer.run(main)
+    typer.run(names)

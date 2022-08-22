@@ -1,0 +1,4 @@
+outs:
+- md5: 64dfc842fd30814f1fe492b75e918e58
+  size: 120744108
+  path: text_col.parquet

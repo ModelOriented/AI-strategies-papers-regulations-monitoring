@@ -1,4 +1,4 @@
-from mars.utils import set_root_path
+#from mars.utils import set_root_path
 import pandas as pd
 
 import os
@@ -6,7 +6,6 @@ from collections import Counter
 import typer
 from tqdm import tqdm
 
-MERGED_DATA_PATH = "data/s2orc/clean_merged.parquet"
 N_TO_REMOVE = 10
 
 def make_chunk_to_meme_id(df_clusters) -> dict:
@@ -22,26 +21,20 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
     return chunk_to_meme_id
 
 
-def get_merged_data():
-    if not os.path.exists(MERGED_DATA_PATH):
-        df = pd.read_parquet('data/s2orc/processed_big.parquet')
-        df2 = pd.read_parquet(
-            'data/s2orc/big_ai_dataset_with_affiliations.parquet')
-        memes_df = pd.merge(df2,
-                            df[['paper_id', 'noun_chunks_cleaned']],
-                            on='paper_id',
-                            how='left')
-        #df2 = df2[df2['institutions'].str.len()!=0]
-        memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
-            lambda ids: [int(id) for id in ids])
-        memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
-            lambda ids: [int(id) for id in ids])
+def get_merged_data(df1,df2):
 
-        memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
-        memes_df.to_parquet(MERGED_DATA_PATH)
-    else:
-        print(f"Loading {MERGED_DATA_PATH}...")
-        memes_df = pd.read_parquet(MERGED_DATA_PATH)
+    memes_df = pd.merge(df2,
+                        df1[['paper_id', 'noun_chunks_cleaned']],
+                        on='paper_id',
+                        how='left')
+    #affiliation pipeline
+    #df2 = df2[df2['institutions'].str.len()!=0]
+    memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
+        lambda ids: [int(id) for id in ids])
+    memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
+        lambda ids: [int(id) for id in ids])
+
+    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
 
     return memes_df
 
@@ -76,14 +69,11 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def main(clusters_file_name: str
-         ):  #reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet
-    df_memes = get_merged_data()
+def preparing(df_clusters,df_aff
+         ):  
+    df_memes = get_merged_data(df_clusters,df_aff)
     # map chunks to clusters
-    print("Loading clusters...")
-    df_clusters = pd.read_parquet(
-        f'data/s2orc/clusterings/{clusters_file_name}',
-        columns=['chunk', 'cluster'])
+
     print("Mapping chunks to memes...")
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
@@ -107,7 +97,6 @@ def main(clusters_file_name: str
     df_memes['outbound_memes'] = df_memes['outbound_citations'].apply(get_memes_from_ids)
 
 
-
     df_meme_stats = get_meme_statiscics(df_memes, chunk_to_meme)
     df_meme_stats.sort_values(by='count', ascending=False, inplace=True)
     df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
@@ -118,22 +107,21 @@ def main(clusters_file_name: str
     df_memes['outbound_memes'] = df_memes['outbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
 
 
-
     # Saving
-    print("Saving meme stats to",
-          f'data/s2orc/meme_stats/{clusters_file_name}...')
-    df_meme_stats.to_parquet(f"data/s2orc/meme_stats/{clusters_file_name}")
-    print("Saving results...")
+    #print("Saving meme stats to",
+    #      f'data/s2orc/meme_stats/{clusters_file_name}...')
+    #df_meme_stats.to_parquet(f"data/s2orc/meme_stats/{clusters_file_name}")
+    #print("Saving results...")
     df_out = df_memes[[
         'paper_id', 'outbound_citations', 'inbound_citations', 'institutions',
-        'countries', 'types', 'unique_institutions', 'is_big_tech',
+        'countries', 'types', 'unique_institutions', 'condition',
         'noun_chunks_cleaned', 'memes', 'inbound_memes', 'outbound_memes',
         'year'
     ]]
-    df_out.to_parquet(f'data/s2orc/results/{clusters_file_name}')
-    print("Saving chunk to meme mapping...")
-    chunk_to_meme.to_parquet(f'data/s2orc/chunk_meme_mappings/{clusters_file_name}')
-
+    #df_out.to_parquet(f'data/s2orc/results/{clusters_file_name}')
+    #print("Saving chunk to meme mapping...")
+    #chunk_to_meme.to_parquet(f'data/s2orc/chunk_meme_mappings/{clusters_file_name}')
+    return df_out,chunk_to_meme
 
 if __name__ == '__main__':
-    typer.run(main)
+    typer.run(preparing)

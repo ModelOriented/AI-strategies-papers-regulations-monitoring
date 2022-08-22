@@ -1,0 +1,4 @@
+outs:
+- md5: 4b373d399455f577938449ceb2c99c5d
+  size: 727094
+  path: openalex_subset.parquet

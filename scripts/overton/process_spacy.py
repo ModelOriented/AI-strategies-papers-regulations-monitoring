@@ -62,9 +62,6 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
     df = df[df['Text'].notna()].reset_index(drop=True)
     print("Length after removing NAs:",len(df))
 
-    print("Loading spacy model...")
-    en = spacy.load(spacy_model_name)
-    en.add_pipe("language_detector")
     en.remove_pipe("ner") # removing entity recognition for speed
 
     nouns = []
@@ -73,6 +70,7 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
     merged_nouns = []
     merged_noun_chunks = []
     merged_lemmas = []
+
 
     k = 0
     new = 0
@@ -160,4 +158,5 @@ def main(in_path: str, out_path:str, global_batch_size:int =10, spacy_model_name
 
 if __name__=="__main__":
     typer.run(main)
+
 
