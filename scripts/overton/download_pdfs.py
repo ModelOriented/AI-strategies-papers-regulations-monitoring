@@ -24,7 +24,7 @@ def get_unable_to_download(failed_to_download_path: str):
     unable_to_download = []
     if os.path.exists(failed_to_download_path):
         with open(failed_to_download_path, 'r') as f:
-            unable_to_download = f.readlines()
+            unable_to_download = [line.rstrip for line in f]
     else:
         with open(failed_to_download_path, 'w') as f:
             pass
