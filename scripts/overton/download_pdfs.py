@@ -14,7 +14,7 @@ def get_already_downloaded(pdfs_path: str):
     if os.path.exists(pdfs_path):
         for subdir, dirs, files in os.walk(pdfs_path):
             for file in files:
-                already_downloaded.append(file)
+                already_downloaded.append(file.split(".")[0])
     else:
         raise Exception('Path does not exist:', pdfs_path)
     return already_downloaded
