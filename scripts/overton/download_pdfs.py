@@ -81,7 +81,7 @@ def run(pdfs_path: str, failed_to_download_path: str, dump_path: str):
     print('Reading the list of files to download...', flush=True)
     # all_files = (pdf_name, pdf_url)
     all_files = get_all_files(dump_path)
-    remaining_to_download = [x for x in all_files if x[0] not in already_downloaded and x[0] not in unable_to_download]
+    remaining_to_download = [x for x in all_files if (x[0] not in already_downloaded and x[0] not in unable_to_download)]
     print('Remaining to download:', len(remaining_to_download), flush=True)
 
     # Downloading the files
