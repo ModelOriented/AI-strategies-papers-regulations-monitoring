@@ -35,6 +35,7 @@ def get_all_files(dump_path: str):
     all_files = []
     if os.path.exists(dump_path):
         df = pd.read_parquet(dump_path)
+        df.dropna(subset=[PDF_URL], inplace=True)
         all_files_name = df[PDF_FILENAME_COLNAME].tolist()
         print('All files:', len(all_files_name), flush=True)
         all_files_ulr = df[PDF_URL].tolist()
