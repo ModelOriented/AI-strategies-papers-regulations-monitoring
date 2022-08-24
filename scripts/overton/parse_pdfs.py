@@ -36,12 +36,12 @@ def extract_text_from_pdf(pdfs_path: str, already_processed: List[str]):
     pdfs = [f for f in os.listdir(pdfs_path) if f.endswith('.pdf')]
     successful_files = 0
     for pdf in pdfs:
+        if not pdf.endswith('.pdf'):
+            print('Skipping file: ' + pdf)
         try:
             if pdf not in already_processed:
                 print(f'Processing {pdf}', flush=True)
-                with open(os.path.join(pdfs_path, pdf), 'rb') as f:
-                    pdf_content = f.read()
-                pdf_text = convert_pdf_to_paragraphs(pdf_content)
+                pdf_text = convert_pdf_to_paragraphs(os.path.join(pdfs_path, pdf))
                 file_name = os.path.basename(pdf).split('.')[0]
                 processed_files['file_id'].append(file_name)
                 processed_files['paragraphs'].append(pdf_text)
