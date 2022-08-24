@@ -41,7 +41,7 @@ def extract_text_from_pdf(pdfs_path: str, already_processed: List[str]):
                 with open(os.path.join(pdfs_path, pdf), 'rb') as f:
                     pdf_content = f.read()
                 pdf_text = convert_pdf_to_paragraphs(pdf_content)
-                file_name = os.path.basename(pdf)
+                file_name = os.path.basename(pdf).split('.')[0]
                 processed_files['file_id'].append(file_name)
                 processed_files['paragraphs'].append(pdf_text)
         except Exception as e:
@@ -145,6 +145,7 @@ def process(parquet_path: str, pdfs_path: str):
     df.to_parquet(parquet_path, index=False)
 
     print('Done!', flush=True)
+    print('Final dataframe shape:', df.shape, flush=True)
 
 
 if __name__ == '__main__':
