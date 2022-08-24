@@ -48,7 +48,7 @@ def extract_text_from_pdf(pdfs_path: str, already_processed: List[str]):
                 successful_files += 1
         except Exception as e:
             print(f'Error processing {pdf}', flush=True)
-            # print(e, flush=True)
+            print(e, flush=True)
 
     processed_files = pd.DataFrame(processed_files)
     return processed_files, successful_files
