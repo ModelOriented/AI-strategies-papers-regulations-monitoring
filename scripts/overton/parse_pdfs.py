@@ -34,22 +34,24 @@ def convert_pdf_to_paragraphs(path):
 def extract_text_from_pdf(pdfs_path: str, already_processed: List[str]):
     processed_files = {'file_id': [], 'paragraphs': []}
     pdfs = [f for f in os.listdir(pdfs_path) if f.endswith('.pdf')]
+    successful_files = 0
     for pdf in pdfs:
         try:
             if pdf not in already_processed:
                 print(f'Processing {pdf}', flush=True)
-                with open(os.path.join(pdfs_path, pdf), 'rb') as f:
+                with open(pdf, 'rb') as f:
                     pdf_content = f.read()
                 pdf_text = convert_pdf_to_paragraphs(pdf_content)
                 file_name = os.path.basename(pdf).split('.')[0]
                 processed_files['file_id'].append(file_name)
                 processed_files['paragraphs'].append(pdf_text)
+                successful_files += 1
         except Exception as e:
             print(f'Error processing {pdf}', flush=True)
             # print(e, flush=True)
 
     processed_files = pd.DataFrame(processed_files)
-    return processed_files
+    return processed_files, successful_files
 
 
 def nwords(string):
