@@ -126,7 +126,7 @@ def process(parquet_path: str, pdfs_path: str):
 
     print('Pdfs to process:', len(already_processed), flush=True)
     print('Extracting text from pdfs...', flush=True)
-    df_new = extract_text_from_pdf(pdfs_path, already_processed)
+    df_new, files_done = extract_text_from_pdf(pdfs_path, already_processed)
 
     print('Merging paragraphs ...', flush=True)
     df_new['paragraphs'] = df_new['paragraphs'].apply(paragraph_management)
@@ -148,6 +148,7 @@ def process(parquet_path: str, pdfs_path: str):
 
     print('Done!', flush=True)
     print('Final dataframe shape:', df.shape, flush=True)
+    print('Files processed:', files_done, flush=True)
 
 
 if __name__ == '__main__':
