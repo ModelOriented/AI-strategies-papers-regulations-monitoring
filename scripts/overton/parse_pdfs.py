@@ -39,7 +39,7 @@ def extract_text_from_pdf(pdfs_path: str, already_processed: List[str]):
         try:
             if pdf not in already_processed:
                 print(f'Processing {pdf}', flush=True)
-                with open(pdf, 'rb') as f:
+                with open(os.path.join(pdfs_path, pdf), 'rb') as f:
                     pdf_content = f.read()
                 pdf_text = convert_pdf_to_paragraphs(pdf_content)
                 file_name = os.path.basename(pdf).split('.')[0]
