@@ -9,6 +9,7 @@ from typing import Tuple
 PDF_URL = 'pdf_url'
 PDF_FILENAME_COLNAME = 'pdf_document_id'
 
+
 def get_already_downloaded(pdfs_path: str):
     already_downloaded = []
     if os.path.exists(pdfs_path):
@@ -51,7 +52,7 @@ def download_pdf(file_names: Tuple[str, str], output_path: str, failed_to_downlo
     file_path = os.path.join(output_path, filename)
     if not os.path.exists(file_path + '.pdf'):
         try:
-            r = requests.get(url, allow_redirects=True)
+            r = requests.get(url, allow_redirects=True, timeout=20)
             with open(file_path + '.pdf', 'wb') as f:
                 f.write(r.content)
 
@@ -59,6 +60,10 @@ def download_pdf(file_names: Tuple[str, str], output_path: str, failed_to_downlo
             if not str(content_type).startswith('application/pdf'):
                 print("Warning: wrong content type", content_type, "| file:", file_names[0],
                       "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
+        except requests.exceptions.Timeout as e:
+            print("Timeout:", file_names[0], "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
+            with open(failed_to_download_path, 'a') as f:
+                f.write(file_names[0] + '\n')
         except:
             with open(failed_to_download_path, 'a') as f:
                 f.write(filename + '\n')
@@ -82,7 +87,8 @@ def run(pdfs_path: str, failed_to_download_path: str, dump_path: str):
     print('Reading the list of files to download...', flush=True)
     # all_files = (pdf_name, pdf_url)
     all_files = get_all_files(dump_path)
-    remaining_to_download = [x for x in all_files if (x[0] not in already_downloaded and x[0] not in unable_to_download)]
+    remaining_to_download = [x for x in all_files if
+                             (x[0] not in already_downloaded and x[0] not in unable_to_download)]
     print('Remaining to download:', len(remaining_to_download), flush=True)
 
     # Downloading the files
