@@ -52,7 +52,7 @@ def download_pdf(file_names: Tuple[str, str], output_path: str, failed_to_downlo
     file_path = os.path.join(output_path, filename)
     if not os.path.exists(file_path + '.pdf'):
         try:
-            r = requests.get(url, allow_redirects=True, timeout=20)
+            r = requests.get(url, allow_redirects=True, timeout=120)
             with open(file_path + '.pdf', 'wb') as f:
                 f.write(r.content)
 
@@ -60,6 +60,8 @@ def download_pdf(file_names: Tuple[str, str], output_path: str, failed_to_downlo
             if not str(content_type).startswith('application/pdf'):
                 print("Warning: wrong content type", content_type, "| file:", file_names[0],
                       "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
+            else:
+                print("Downloaded:", file_names[0], "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
         except requests.exceptions.Timeout as e:
             print("Timeout:", file_names[0], "on ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), flush=True)
             with open(failed_to_download_path, 'a') as f:
