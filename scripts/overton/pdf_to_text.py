@@ -83,7 +83,7 @@ def process(pdfs_path: str, txt_path: str, failed_to_convert_path: str, jb_n_job
     print(f'Found {len(files_to_process)} files to process', flush=True)
 
     print('Extracting text from pdfs with multiprocessing', flush=True)
-    Parallel(n_jobs=jb_n_jobs)(delayed(extract_text_from_pdf)(f, pdfs_path, txt_path, failed_to_convert_path, i, len(files_to_process)) for f, i in enumerate(files_to_process))
+    Parallel(n_jobs=jb_n_jobs)(delayed(extract_text_from_pdf)(f, pdfs_path, txt_path, failed_to_convert_path, i, len(files_to_process)) for i, f in enumerate(files_to_process))
     print('Done', flush=True)
 
 
