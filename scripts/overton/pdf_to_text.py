@@ -21,8 +21,14 @@ def read_jsons_from_directory(txt_path: str):
 
 
 def read_failed_to_convert_files(file_path: str):
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+    else:
+        lines = []
+        print(f'File {file_path} does not exist, creating one ...', flush=True)
+        with open(file_path, 'w') as f:
+            f.write('')
     return lines
 
 
