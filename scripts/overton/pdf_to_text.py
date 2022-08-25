@@ -34,7 +34,7 @@ def read_failed_to_convert_files(file_path: str):
 
 def extract_text_from_pdf(filename: str, pdf_path: str, jsons_path: str, failed_to_convert_path: str, i: int, n_files: int):
     try:
-        document = open(os.path.join(pdf_path, filename, '.pdf'), 'rb')
+        document = open(os.path.join(pdf_path, filename) + '.pdf', 'rb')
         # Create resource manager
         rsrcmgr = PDFResourceManager()
         # Set parameters for analysis.
