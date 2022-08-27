@@ -1,0 +1,4 @@
+outs:
+- md5: 2ffafcc9f9ae46fc8c95f32372976137
+  size: 2176768927
+  path: glove.840B.300d.zip

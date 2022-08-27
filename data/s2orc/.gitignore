@@ -14,3 +14,4 @@
 /clean_merged.parquet
 /memes_edges.parquet
 /chunks_from_ai_act1.csv
+/glove.840B.300d.zip
