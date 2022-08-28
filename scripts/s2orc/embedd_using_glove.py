@@ -26,6 +26,7 @@ def read_embeddings(filename: str) -> dict:
     embeddings = {}
     with open(filename, 'r', encoding='utf-8') as f:
         for line in f:
+            print(line)
             line = line.split()
             embeddings[line[0]] = np.array(line[1:], dtype=np.float32)
     return embeddings
