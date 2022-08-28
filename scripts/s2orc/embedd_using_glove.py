@@ -15,9 +15,9 @@ def chunk_to_embedding(noun_chunks: List[str], word_embeddings: dict) -> List[np
         if ' ' in chunk:
             words = chunk.split(' ')
             print(words)
-            chunk_to_embedding_mapping['chunk'] = (np.mean([word_embeddings[word] for word in words], axis=0))
+            chunk_to_embedding_mapping[chunk] = (np.mean([word_embeddings[word] for word in words], axis=0))
         else:
-            chunk_to_embedding_mapping['chunk'] = word_embeddings[chunk]
+            chunk_to_embedding_mapping[chunk] = word_embeddings[chunk]
     return chunk_to_embedding_mapping
 
 
@@ -27,7 +27,6 @@ def read_embeddings(filename: str) -> dict:
     """
     df = pd.read_csv(filename, sep=" ", quoting=3, header=None, index_col=0)
     glove = {key: val.values for key, val in df.T.items() if key != ''}
-    print(f'Number of embeddings: {len(glove)}')
     return glove
 
 
