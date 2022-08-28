@@ -34,21 +34,21 @@ def read_embeddings(filename: str) -> dict:
 
 
 def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
-    print(f'Loading parquet with noun chunks from {path_to_parquet}')
+    print(f'Loading parquet with noun chunks from {path_to_parquet}', flush=True)
     try:
         df = pd.read_parquet(path_to_parquet)
-        print(f'Loaded parquet with noun chunks from {path_to_parquet}')
-        print('Length of parquet:', len(df))
+        print(f'Loaded parquet with noun chunks from {path_to_parquet}', flush=True)
+        print('Length of parquet:', len(df), flush=True)
     except Exception as e:
-        print(e)
-        print('Could not load parquet with noun chunks from', path_to_parquet)
+        print(e, flush=True)
+        print('Could not load parquet with noun chunks from', path_to_parquet, flush=True)
         return
 
-    print(f'Loading embeddings from {path_to_embeddings}')
+    print(f'Loading embeddings from {path_to_embeddings}', flush=True)
     embeddings = read_embeddings(path_to_embeddings)
-    print(f'Number of embeddings: {len(embeddings)}')
+    print(f'Number of embeddings: {len(embeddings)}', flush=True)
 
-    print(f'Getting unique noun chunks from parquet')
+    print(f'Getting unique noun chunks from parquet', flush=True)
     # Parquet column noun_chunks_cleaned contains lists of noun chunks.
     # We want to get unique noun chunks from the whole column
     all_noun_chunks = df['noun_chunks_cleaned'].tolist()
@@ -58,20 +58,20 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
         for chunk in noun_chunks:
             all_noun_chunks_num += 1
             unique_noun_chunks.add(chunk)
-    print(f'Number of unique noun chunks: {len(unique_noun_chunks)} from {all_noun_chunks_num}')
+    print(f'Number of unique noun chunks: {len(unique_noun_chunks)} from {all_noun_chunks_num}', flush=True)
 
-    print(f'Embedding noun chunks')
+    print(f'Embedding noun chunks', flush=True)
     chunk_to_embedding_mapping_dict = chunk_to_embedding(list(unique_noun_chunks), embeddings)
-    print(f'Embedding noun chunks done')
+    print(f'Embedding noun chunks done', flush=True)
 
-    print(f'Saving parquet with embeddings to {path_to_output}')
+    print(f'Saving parquet with embeddings to {path_to_output}', flush=True)
     # Making dataframe with two columns: chunk and embedding
     df_embeddings = pd.DataFrame.from_dict(chunk_to_embedding_mapping_dict, orient='index')
     df_embeddings.columns = ['embedding']
     df_embeddings.reset_index(inplace=True)
     df_embeddings.rename(columns={'index': 'chunk'}, inplace=True)
     df_embeddings.to_parquet(path_to_output)
-    print(f'Saving parquet with embeddings to {path_to_output} done')
+    print(f'Saving parquet with embeddings to {path_to_output} done', flush=True)
 
 
 if __name__ == '__main__':
