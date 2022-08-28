@@ -11,8 +11,10 @@ def chunk_to_embedding(noun_chunks: List[str], word_embeddings: dict) -> List[np
     """
     chunk_to_embedding_mapping = {}
     for chunk in noun_chunks:
+        print(chunk)
         if ' ' in chunk:
             words = chunk.split(' ')
+            print(words)
             chunk_to_embedding_mapping['chunk'] = (np.mean([word_embeddings[word] for word in words], axis=0))
         else:
             chunk_to_embedding_mapping['chunk'] = word_embeddings[chunk]
@@ -23,18 +25,9 @@ def read_embeddings(filename: str) -> dict:
     """
     Function to read embeddings from file.
     """
-    # embeddings = {}
-    # with open(filename, 'r', encoding='utf-8') as f:
-    #     for line in f:
-    #         if line.startswith(' '):
-    #             continue
-    #         line = line.split()
-    #         embeddings[line[0]] = np.array(line[1:], dtype=np.float32)
-    # return embeddings
     df = pd.read_csv(filename, sep=" ", quoting=3, header=None, index_col=0)
     glove = {key: val.values for key, val in df.T.items() if key != ''}
     print(f'Number of embeddings: {len(glove)}')
-    print(glove['the'])
     return glove
 
 
