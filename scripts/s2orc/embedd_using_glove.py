@@ -37,7 +37,6 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
     print(f'Loading parquet with noun chunks from {path_to_parquet}')
     try:
         df = pd.read_parquet(path_to_parquet)
-        df = df.head()
         print(f'Loaded parquet with noun chunks from {path_to_parquet}')
         print('Length of parquet:', len(df))
     except Exception as e:
@@ -71,7 +70,6 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
     df_embeddings.columns = ['embedding']
     df_embeddings.reset_index(inplace=True)
     df_embeddings.rename(columns={'index': 'chunk'}, inplace=True)
-    print(df_embeddings.head())
     df_embeddings.to_parquet(path_to_output)
     print(f'Saving parquet with embeddings to {path_to_output} done')
 
