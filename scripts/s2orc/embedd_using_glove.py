@@ -11,7 +11,8 @@ def chunk_to_embedding(noun_chunks: List[str], word_embeddings: dict) -> List[np
     """
     chunk_to_embedding_mapping = {}
     for chunk in noun_chunks:
-        print(chunk)
+        if chunk == '':
+            continue
         if ' ' in chunk:
             words = chunk.split(' ')
             print(words)
@@ -28,7 +29,6 @@ def read_embeddings(filename: str) -> dict:
     df = pd.read_csv(filename, sep=" ", quoting=3, header=None, index_col=0)
     glove = {key: val.values for key, val in df.T.items() if key != ''}
     return glove
-
 
 
 def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
