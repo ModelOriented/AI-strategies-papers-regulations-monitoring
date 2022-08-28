@@ -20,7 +20,7 @@ def chunk_to_embedding(noun_chunks: List[str], word_embeddings: dict) -> List[np
             if chunk in word_embeddings.keys():
                 chunk_to_embedding_mapping[chunk] = [word_embeddings[chunk]]
             else:
-                chunk_to_embedding_mapping[chunk] = np.zeros(300)
+                chunk_to_embedding_mapping[chunk] = [np.zeros(300)]
     return chunk_to_embedding_mapping
 
 
