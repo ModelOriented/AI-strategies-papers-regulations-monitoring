@@ -15,11 +15,10 @@ def chunk_to_embedding(noun_chunks: List[str], word_embeddings: dict) -> List[np
             continue
         if ' ' in chunk:
             words = chunk.split(' ')
-            print(words)
-            chunk_to_embedding_mapping[chunk] = (np.mean([word_embeddings[word] for word in words if word in word_embeddings.keys()], axis=0))
+            chunk_to_embedding_mapping[chunk] = [(np.mean([word_embeddings[word] for word in words if word in word_embeddings.keys()], axis=0))]
         else:
             if chunk in word_embeddings.keys():
-                chunk_to_embedding_mapping[chunk] = word_embeddings[chunk]
+                chunk_to_embedding_mapping[chunk] = [word_embeddings[chunk]]
             else:
                 chunk_to_embedding_mapping[chunk] = np.zeros(300)
     return chunk_to_embedding_mapping
@@ -38,6 +37,7 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
     print(f'Loading parquet with noun chunks from {path_to_parquet}')
     try:
         df = pd.read_parquet(path_to_parquet)
+        df = df.head()
         print(f'Loaded parquet with noun chunks from {path_to_parquet}')
         print('Length of parquet:', len(df))
     except Exception as e:
@@ -68,6 +68,9 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
     print(f'Saving parquet with embeddings to {path_to_output}')
     # Making dataframe with two columns: chunk and embedding
     df_embeddings = pd.DataFrame.from_dict(chunk_to_embedding_mapping_dict, orient='index')
+    df_embeddings.columns = ['embedding']
+    df_embeddings.reset_index(inplace=True)
+    df_embeddings.rename(columns={'index': 'chunk'}, inplace=True)
     df_embeddings.to_parquet(path_to_output)
     print(f'Saving parquet with embeddings to {path_to_output} done')
 
