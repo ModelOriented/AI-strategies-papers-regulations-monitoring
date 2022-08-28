@@ -68,6 +68,7 @@ def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
     print(f'Saving parquet with embeddings to {path_to_output}')
     # Making dataframe with two columns: chunk and embedding
     df_embeddings = pd.DataFrame.from_dict(chunk_to_embedding_mapping_dict, orient='index')
+    print(df_embeddings.head())
     df_embeddings.columns = ['embedding']
     df_embeddings.reset_index(inplace=True)
     df_embeddings.rename(columns={'index': 'chunk'}, inplace=True)
