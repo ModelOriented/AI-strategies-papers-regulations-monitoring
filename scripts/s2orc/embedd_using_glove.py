@@ -23,14 +23,19 @@ def read_embeddings(filename: str) -> dict:
     """
     Function to read embeddings from file.
     """
-    embeddings = {}
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            if line.startswith(' '):
-                continue
-            line = line.split()
-            embeddings[line[0]] = np.array(line[1:], dtype=np.float32)
-    return embeddings
+    # embeddings = {}
+    # with open(filename, 'r', encoding='utf-8') as f:
+    #     for line in f:
+    #         if line.startswith(' '):
+    #             continue
+    #         line = line.split()
+    #         embeddings[line[0]] = np.array(line[1:], dtype=np.float32)
+    # return embeddings
+    df = pd.read_csv(filename, sep=" ", quoting=3, header=None, index_col=0)
+    glove = {key: val.values for key, val in df.T.items()}
+    print(f'Number of embeddings: {len(glove)}')
+    return glove
+
 
 
 def process(path_to_parquet: str, path_to_embeddings: str, path_to_output: str):
