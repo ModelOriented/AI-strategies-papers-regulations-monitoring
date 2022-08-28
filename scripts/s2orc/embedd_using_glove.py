@@ -32,8 +32,9 @@ def read_embeddings(filename: str) -> dict:
     #         embeddings[line[0]] = np.array(line[1:], dtype=np.float32)
     # return embeddings
     df = pd.read_csv(filename, sep=" ", quoting=3, header=None, index_col=0)
-    glove = {key: val.values for key, val in df.T.items()}
+    glove = {key: val.values for key, val in df.T.items() if key != ''}
     print(f'Number of embeddings: {len(glove)}')
+    print(glove['the'])
     return glove
 
 
