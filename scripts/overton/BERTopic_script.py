@@ -4,6 +4,7 @@ from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer
 from sentence_transformers import SentenceTransformer
 import typer
+import os
 #FINAL_TABLE_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/EDA/final_table.parquet'
 #FOLDER_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/BERTopic'
 
@@ -14,27 +15,27 @@ def topic_modelling(data, sentence_transformer, en, folder_path, nr_topics = 'au
     vectorizer_model = CountVectorizer(ngram_range = (min_ngram, max_ngram), stop_words = en.Defaults.stop_words)
     topic_model.update_topics(data, topics, vectorizer_model = vectorizer_model)
 
-    model_path = folder_path + str('/models/') + model_name
+    model_path = os.path.join(folder_path, 'models', model_name)
     topic_model.save(model_path)
 
     info = topic_model.get_topic_info()
-    info_path = folder_path + str('/excel/') + model_name + str('_info.xlsx')
+    info_path = os.path.join(folder_path, 'excel', str(model_name +'_info.xlsx'))
     info.to_excel(info_path)
 
     topics = topic_model.visualize_topics()
-    topics_path = folder_path + str('/plots/') + model_name + str('_topics.html')
+    topics_path = os.path.join(folder_path, 'plots', str(model_name + '_topics.html'))
     topics.write_html(topics_path)
 
     bars = topic_model.visualize_barchart(top_n_topics = top_n_topics, n_words = top_n_words)
-    bars_path = folder_path + str('/plots/') + model_name + str('_bars.html')
+    bars_path = os.path.join(folder_path, 'plots', str(model_name + '_bars.html'))
     bars.write_html(bars_path)
 
     heatmap = topic_model.visualize_heatmap(top_n_topics = top_n_topics)
-    heatmap_path = folder_path + str('/plots/') + model_name + str('_heatmap.html')
+    heatmap_path = os.path.join(folder_path, 'plots', str(model_name +  '_heatmap.html'))
     heatmap.write_html(heatmap_path)
 
     hierarchy = topic_model.visualize_hierarchy(top_n_topics = top_n_topics)
-    hierarchy_path = folder_path + str('/plots/') + model_name + str('_hierarchy.html')
+    hierarchy_path = os.path.join(folder_path, 'plots', str(model_name +  '_hierarchy.html'))
     hierarchy.write_html(hierarchy_path)
 
     topic_nr = []
@@ -48,7 +49,7 @@ def topic_modelling(data, sentence_transformer, en, folder_path, nr_topics = 'au
 
     keywords = pd.DataFrame({'topic_nr' : topic_nr,
                             'key_words' : key_words})
-    keywords_path = folder_path + str('/excel/') + model_name + str('_keywords.xlsx')
+    keywords_path = os.path.join(folder_path, 'excel',str(model_name + '_keywords.xlsx'))
     keywords.to_excel(keywords_path)
 
 def prepare_data(final_table_path : str):
@@ -65,6 +66,7 @@ def prepare_data(final_table_path : str):
 
 def main(final_table_path : str,
         folder_path : str,
+        sentence_transformer : str = 'sentence-transformers/all-MiniLM-L6-v2',
         nr_topics : int = -1,
         min_ngram : int = 1,
         max_ngram : int = 3,
@@ -74,15 +76,23 @@ def main(final_table_path : str,
 
     if nr_topics == -1:
        nr_topics = 'auto' 
+    
+    print('Preparing file structre...')
+    try:
+        os.mkdir(os.path.join(folder_path, 'excel'))
+        os.mkdir(os.path.join(folder_path, 'models'))
+        os.mkdir(os.path.join(folder_path, 'plots'))
+    except:
+        print('Structure already exists!')
 
     df = prepare_data(final_table_path)
 
-    MiniLM = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    transformer = SentenceTransformer(sentence_transformer)
 
     en = spacy.load("en_core_web_md")
     #en.add_pipe('spacytextblob')
 
-    topic_modelling(df, MiniLM, en, folder_path, nr_topics = nr_topics, min_ngram = min_ngram, max_ngram = max_ngram,  top_n_words = top_n_words, top_n_topics = top_n_topics, model_name = model_name)
+    topic_modelling(df, transformer, en, folder_path, nr_topics = nr_topics, min_ngram = min_ngram, max_ngram = max_ngram,  top_n_words = top_n_words, top_n_topics = top_n_topics, model_name = model_name)
 
 if __name__=="__main__":
     typer.run(main)
