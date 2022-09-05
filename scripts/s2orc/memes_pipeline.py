@@ -13,28 +13,28 @@ import numpy as np
 import pandas as pd
 
 
-def main(   out_path_embedding:str,
-            out_path_cluster:str, 
-            out_path_meme_score:str, 
-            in_path:str='data/s2orc/processed_big.parquet',
-            cit_path = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet', 
-            sentences_embedding: str = "all-MiniLM-L6-v2", 
-            json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',
-            aff_output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet',
-            batch_size_embedd:int=32, 
-            multiprocess_embedd:bool=False, 
-            do_reduce:bool = True, 
-            n_components_reduce:int=300, 
-            gpu_reduce:bool=False,
-            n_jobs_cluster: int = -1, 
-            cluster_selection_epsilons: str = ".0", 
-            gpu_cluster: bool = False, 
-            min_clust_size: int = 5, 
-            metric_cluster: str = 'euclidean',
-            condition_list:list = ['PL'],
-            category:str = 'country',
-            do_memes:bool = True
-            ):
+def main(out_path_embedding: str,
+out_path_cluster: str, 
+out_path_meme_score: str, 
+in_path: str = 'data/s2orc/processed_big.parquet',
+cit_path: str = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet', 
+sentences_embedding: str = "all-MiniLM-L6-v2", 
+json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',
+aff_output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet',
+batch_size_embedd: int = 32, 
+multiprocess_embedd: bool = False, 
+do_reduce: bool = True, 
+n_components_reduce: int = 300, 
+gpu_reduce: bool = False,
+n_jobs_cluster: int = -1, 
+cluster_selection_epsilons: str = ".0", 
+gpu_cluster: bool = False, 
+min_clust_size: int = 5, 
+metric_cluster: str = 'euclidean',
+condition_list: list = ['PL'],
+category: str = 'country',
+do_memes: bool = True
+):
     #embedd noun_chunks
     if not os.path.exists(out_path_cluster):
         print('EMBEDDING NOUN CHUNKS')
