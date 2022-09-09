@@ -11,15 +11,15 @@ import affiliation_pipeline
 import typer
 import numpy as np
 import pandas as pd
-
+from typing import List
 
 def main(out_path_embedding: str,
 out_path_cluster: str, 
 out_path_meme_score: str, 
 in_path: str = 'data/s2orc/processed_big.parquet',
-cit_path: str = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet', 
+cit_path: str = 'data/s2orc/big_ai_dataset.parquet', 
 sentences_embedding: str = "all-MiniLM-L6-v2", 
-json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',
+json_input = 'data/s2orc/doi_to_authorship_big.json',
 aff_output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet',
 batch_size_embedd: int = 32, 
 multiprocess_embedd: bool = False, 
@@ -31,7 +31,7 @@ cluster_selection_epsilons: str = ".0",
 gpu_cluster: bool = False, 
 min_clust_size: int = 5, 
 metric_cluster: str = 'euclidean',
-condition_list: list = ['PL'],
+condition_list: List[str] = ['PL'],
 category: str = 'country',
 do_memes: bool = True
 ):
