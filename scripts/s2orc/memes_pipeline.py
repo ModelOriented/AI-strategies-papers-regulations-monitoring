@@ -25,7 +25,7 @@ batch_size_embedd: int = 32,
 multiprocess_embedd: bool = False, 
 do_reduce: bool = True, 
 n_components_reduce: int = 300, 
-gpu_reduce: bool = False,
+gpu_reduce: bool = typer.Argument(False),
 n_jobs_cluster: int = -1, 
 cluster_selection_epsilons: str = ".0", 
 gpu_cluster: bool = False, 
@@ -33,7 +33,7 @@ min_clust_size: int = 5,
 metric_cluster: str = 'euclidean',
 condition_list: List[str] = ['PL'],
 category: str = 'country',
-do_memes: bool = True
+do_memes: bool = typer.Argument(True)
 ):
     #embedd noun_chunks
     if not os.path.exists(out_path_cluster):
