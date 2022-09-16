@@ -39,7 +39,7 @@ import nltk
 nltk.download('punkt')
 
 en = spacy.load("en_core_web_md")
-en.add_pipe('spacytextblob')
+#en.add_pipe('spacytextblob')
 
 def convert_pdf_to_txt(path):
   """
