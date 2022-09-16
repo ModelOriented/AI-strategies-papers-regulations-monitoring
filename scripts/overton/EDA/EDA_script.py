@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import spacy
 import seaborn as sns
 import typer
+import os
 
 #EDA_FOR_NLP_PATH = 'C:/Users/Hubert/Dropbox/DarlingProject/eda_for_nlp_package'
 #FINAL_TABLE_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/EDA/final_table.parquet'
@@ -17,6 +18,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     sys.path.insert(0, eda_for_nlp_path)
     for p in sys.path:
         print( p )
+    print(os.getcwd())
     import eda_for_nlp_package as eda
     en = spacy.load("en_core_web_md")
 
