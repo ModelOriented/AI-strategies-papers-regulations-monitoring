@@ -37,9 +37,11 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
             text_all.append(df['Text'][i].sum())
             for j in range(len(df['Text'][i])):
                 text_paragraph.append(df['Text'][i][j])
-    else:
-        text_all.append("")
+        else:
+            text_all.append("")
+    
     df['Text_all'] = text_all
+
     with open("EDA_report.txt", "a") as file_object:
         file_object.write("Number of paragraphs:" + str(len(text_paragraph)) + "\n")
     len(text_paragraph)
