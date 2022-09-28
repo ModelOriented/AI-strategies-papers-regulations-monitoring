@@ -37,10 +37,10 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     text_all = []
     text_paragraph = []
     for i in range(len(df)):
-        if df['Text'][i] is not None:
-            text_all.append(df['Text'][i].sum())
-            for j in range(len(df['Text'][i])):
-                text_paragraph.append(df['Text'][i][j])
+        if df['text'][i] is not None:
+            text_all.append(df['text'][i].sum())
+            for j in range(len(df['text'][i])):
+                text_paragraph.append(df['text'][i][j])
         else:
             text_all.append("")
     
@@ -58,7 +58,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     ai_fq   = []
     ml_fq   = []
     for i in range(len(df)):
-        titles.append(df['Title'][i])
+        titles.append(df['title'][i])
         n_ai.append(df['Text_all'][i].count('artificial intelligence'))
         n_ml.append(df['Text_all'][i].count('machine learning'))
         n_words.append(len(df['Text_all'][i]))
