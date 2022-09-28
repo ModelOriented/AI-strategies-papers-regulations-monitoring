@@ -24,9 +24,10 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
 
     print('Loading data...')
     df       = pd.read_parquet(final_table_path)
-    print(df.columns)
-    df       = df[['Title','Text','n_paragraphs','n_words']]
+    print(f'df cols {df.columns}')
+    df       = df[['title','text','n_paragraphs','n_words']]
     spacy_df = pd.read_parquet(spacy_table_path)
+    print(f'spacy_df cols {spacy_df.columns}')
 
 
     print('Creating the text report...')
