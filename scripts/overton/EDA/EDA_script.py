@@ -14,6 +14,7 @@ import os
 #SPACY_TABLE_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/EDA/spacy_table_new.parquet'
 
 def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str):
+
     print('Loading the model...')
     sys.path.insert(0, eda_for_nlp_path)
     for p in sys.path:
@@ -57,9 +58,16 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     ml_fq   = []
     for i in range(len(df)):
         titles.append(df['Title'][i])
-        n_ai.append(df['Text_all'][i].count('artificial intelligence'))
-        n_ml.append(df['Text_all'][i].count('machine learning'))
-        n_words.append(len(df['Text_all'][i]))
+
+        if (df['Text_all'][i] != '') :
+            n_ai.append(df['Text_all'][i].count('artificial intelligence'))
+            n_ml.append(df['Text_all'][i].count('machine learning'))
+            n_words.append(len(df['Text_all'][i]))
+        else : # for empty text files
+            n_ai.append(0)
+            n_ml.append(0)
+            n_words.append(0)
+
         ai_fq.append(n_ai[i] / (n_words[i] + 1) * 100)
         ml_fq.append(n_ml[i] / (n_words[i] + 1) * 100)
     stats = pd.DataFrame({"title": titles, "n_ai": n_ai, "n_ml": n_ml, "n_words": n_words, "ai_fq(%)": ai_fq, "ml_fq(%)": ml_fq})
