@@ -25,8 +25,10 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
 
     print('Loading data...')
     df       = pd.read_parquet(final_table_path)
-    df       = df[['Title','Text','n_paragraphs','n_words']]
+    print(f'df cols {df.columns}')
+    df       = df[['title','text','n_paragraphs','n_words']]
     spacy_df = pd.read_parquet(spacy_table_path)
+    print(f'spacy_df cols {spacy_df.columns}')
 
 
     print('Creating the text report...')
@@ -36,10 +38,10 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     text_all = []
     text_paragraph = []
     for i in range(len(df)):
-        if df['Text'][i] is not None:
-            text_all.append(df['Text'][i].sum())
-            for j in range(len(df['Text'][i])):
-                text_paragraph.append(df['Text'][i][j])
+        if df['text'][i] is not None:
+            text_all.append(df['text'][i].sum())
+            for j in range(len(df['text'][i])):
+                text_paragraph.append(df['text'][i][j])
         else:
             text_all.append("")
     
@@ -57,6 +59,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     ai_fq   = []
     ml_fq   = []
     for i in range(len(df)):
+
         titles.append(df['Title'][i])
 
         if (df['Text_all'][i] != '') :
