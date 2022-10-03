@@ -72,7 +72,8 @@ do_cluster: bool = typer.Option(True)
             df_af = pd.read_parquet(aff_output_path)
 
         print('PREPARING MEMES')
-        df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af)
+        df_res = pd.read_parquet('data/s2orc/clusterings/reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet')
+        df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af,df_res)
 
         print('CREATING NAMES')
         meme_to_name = create_meme_names.names(chunk_to_meme,df_cluster)
