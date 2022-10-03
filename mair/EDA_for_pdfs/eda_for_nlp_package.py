@@ -20,38 +20,26 @@ Needed instalations
 import spacy
 import pandas as pd
 from tqdm.auto import tqdm 
-import swifter
 import numpy as np
 import plotly.express as px
 from wordcloud import WordCloud
 from matplotlib import pyplot as plt
 import os
 import re
-import gensim
 import string
 import textacy
 from collections import Counter
-from nltk.util import ngrams
 from matplotlib import pyplot
 import seaborn as sns
 pd.options.plotting.backend = "plotly"
-import csv
-import math
 from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
-from sklearn.base import TransformerMixin
-from sklearn.pipeline import Pipeline
 from matplotlib.pyplot import figure
 import pdfminer
-from spacytextblob.spacytextblob import SpacyTextBlob
 import nltk
 nltk.download('punkt')
-from google.colab import drive
-import copy
 
 en = spacy.load("en_core_web_md")
-en.add_pipe('spacytextblob')
-
-"""# Data preparation"""
+#en.add_pipe('spacytextblob')
 
 def convert_pdf_to_txt(path):
   """
