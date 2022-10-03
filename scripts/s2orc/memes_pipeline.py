@@ -34,9 +34,10 @@ metric_cluster: str = 'euclidean',
 condition_list: List[str] = ['PL'],
 category: str = 'country',
 do_memes: bool = typer.Option(True)
+do_cluster: bool = typer.Option(True)
 ):
     #embedd noun_chunks
-    if not os.path.exists(out_path_cluster):
+    if do_cluster:#not os.path.exists(out_path_cluster):
         print('EMBEDDING NOUN CHUNKS')
         chunk_to_embedding = embedd_noun_chunks.embedd_noun_chunks(in_path, sentences_embedding,batch_size_embedd,multiprocess_embedd)#return chunk to embeddinng
         
@@ -46,7 +47,7 @@ do_memes: bool = typer.Option(True)
             reduced = reduce_dimensionality.reducing(chunk_to_embedding, n_components_reduce, gpu_reduce)
 
         pd.DataFrame(chunk_to_embedding).to_parquet(out_path_embedding)#saving
-
+    
         print('CLUSTERING')
         df_cluster = cluster.clustering(reduced,
             n_jobs_cluster,
