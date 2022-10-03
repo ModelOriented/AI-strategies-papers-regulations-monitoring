@@ -45,6 +45,8 @@ do_cluster: bool = typer.Option(True)
         if do_reduce:
             print('REDUCING')
             reduced = reduce_dimensionality.reducing(chunk_to_embedding, n_components_reduce, gpu_reduce)
+        else:
+            reduced = chunk_to_embedding
 
         pd.DataFrame(chunk_to_embedding).to_parquet(out_path_embedding)#saving
     

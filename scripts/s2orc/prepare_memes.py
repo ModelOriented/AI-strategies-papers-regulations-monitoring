@@ -27,7 +27,6 @@ def get_merged_data(df1,df2):
                         df1[['paper_id', 'noun_chunks_cleaned']],
                         on='paper_id',
                         how='left')
-    #affiliation pipeline
     #df2 = df2[df2['institutions'].str.len()!=0]
     memes_df['inbound_citations'] = memes_df['inbound_citations'].apply(
         lambda ids: [int(id) for id in ids])
@@ -69,17 +68,16 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def preparing(df_clusters,df_aff
+def preparing(df_clusters,df_aff,df_res
          ): 
-    print('columns names',df_clusters.columns)
-    print('affiliation columns names',df_aff.columns) 
-    df_memes = get_merged_data(df_clusters,df_aff)
-    # map chunks to clusters
 
     print("Mapping chunks to memes...")
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
                                  columns=['chunk', 'meme_id'])
+
+    df_memes = get_merged_data(df_res,df_aff)
+    # map chunks to clusters
 
     print("Preparing memes...")
     df_memes['memes'] = df_memes['noun_chunks_cleaned'].apply(
