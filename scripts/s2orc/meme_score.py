@@ -39,13 +39,13 @@ def meme_score(df: pd.DataFrame, delta:float=0.0001):
     memes_enc = enc.fit_transform(df['memes'])
 
     #OneHotEncoding of memes in cited papers
-    c_enc = MultiLabelBinarizer(classes = [enc.classes_], sparse_output=True)
+    c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
     cited_memes_enc = c_enc.fit_transform(df['outbound_memes'])
     print('Meme score ...')
     #factors for meme score
 
     df['outbound_memes_condition'] = get_memes_with_aff(df)
-    c_a_enc = MultiLabelBinarizer(classes = [enc.classes_], sparse_output=True)
+    c_a_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
     cited_memes_aff_enc = c_a_enc.fit_transform(df['outbound_memes_condition'])
 
     stick2 = cited_memes_aff_enc.sum(axis=0) #sum of papers that are affiliated with BT AND cite papers with this meme 
@@ -66,6 +66,7 @@ def meme_score(df: pd.DataFrame, delta:float=0.0001):
     enc = MultiLabelBinarizer(sparse_output=True)
     memes_enc = enc.fit_transform(df_c['memes'])
     frequency_c = pd.DataFrame({'meme_id': enc.classes_, 'frequency': np.squeeze(np.array(memes_enc.sum(axis=0)))})
+    print(np.shape(cited_memes_aff_enc))
     print({'meme_id': len(enc.classes_), 'meme_score': len(np.squeeze(np.array(np.multiply(propagation_factor,frequency)))),
                                 'sticking_factor': len(np.squeeze(np.array(np.divide(stick1,stick2+delta)))),
                                 'sparking_factor': len(np.squeeze(np.array(np.divide(spark1+delta,spark2+delta)))),
