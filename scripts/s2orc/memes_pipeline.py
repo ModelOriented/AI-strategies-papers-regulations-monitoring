@@ -62,7 +62,7 @@ do_cluster: bool = typer.Option(True)
     else:
         print('READING IN CLUSTERS')
         df_cluster = pd.read_parquet(out_path_cluster)
-        df_cluster.index.name = None
+        
     if do_memes:
         if not os.path.exists(aff_output_path):
             print('GETTING AFFILIATIONS')
@@ -73,6 +73,7 @@ do_cluster: bool = typer.Option(True)
 
         print('PREPARING MEMES')
         df_res = pd.read_parquet('data/s2orc/results/reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet')
+        df_res.index.name = None
         df_cluster, chunk_to_meme = prepare_memes.preparing(df_cluster, df_af, df_res)
 
         print('CREATING NAMES')
