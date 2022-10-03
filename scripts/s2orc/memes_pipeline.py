@@ -33,7 +33,7 @@ min_clust_size: int = 5,
 metric_cluster: str = 'euclidean',
 condition_list: List[str] = ['PL'],
 category: str = 'country',
-do_memes: bool = typer.Option(True)
+do_memes: bool = typer.Option(True),
 do_cluster: bool = typer.Option(True)
 ):
     #embedd noun_chunks
