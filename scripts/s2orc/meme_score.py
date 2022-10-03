@@ -81,11 +81,11 @@ def meme_score(df: pd.DataFrame, delta:float=0.0001):
                                 'spark2': np.squeeze(np.array(spark2))
                                 })
 
-    df_c = df[df['condition'] == 1]
-    f_enc = MultiLabelBinarizer(sparse_output=True)
-    memes_enc = f_enc.fit_transform(df_c['memes'])
-    frequency_c = pd.DataFrame({'meme_id': enc.classes_, 'frequency': np.squeeze(np.array(memes_enc.sum(axis=0)))})
-    df_memes = df_memes.merge(frequency_c, how='left', on='meme_id')
+    #df_c = df[df['condition'] == 1]
+    #f_enc = MultiLabelBinarizer(sparse_output=True)
+    #memes_enc = f_enc.fit_transform(df_c['memes'])
+    #frequency_c = pd.DataFrame({'meme_id': enc.classes_, 'frequency': np.squeeze(np.array(memes_enc.sum(axis=0)))})
+    #df_memes = df_memes.merge(frequency_c, how='left', on='meme_id')
    
     return df_memes
 
