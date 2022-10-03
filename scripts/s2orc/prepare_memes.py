@@ -73,7 +73,8 @@ def preparing(df_clusters,df_aff
          ):  
     df_memes = get_merged_data(df_clusters,df_aff)
     # map chunks to clusters
-
+    print('columns names',df_clusters.columns)
+    print('affiliation columns names',df_aff.columns)
     print("Mapping chunks to memes...")
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
