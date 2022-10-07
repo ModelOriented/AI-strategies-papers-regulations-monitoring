@@ -65,7 +65,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         if (df['text_all'][i] != '') :
             n_ai.append(df['text_all'][i].count('artificial intelligence'))
             n_ml.append(df['text_all'][i].count('machine learning'))
-            n_words.append(len(df['Text_all'][i]))
+            n_words.append(len(df['text_all'][i]))
         else : # for empty text files
             n_ai.append(0)
             n_ml.append(0)
@@ -164,21 +164,21 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
 
     print('Visualizing bigrams')
     stopwords = en.Defaults.stop_words
-    top_n_bigrams=eda.get_top_ngram(df['Text_all'], stopwords = stopwords, n = 2, m = 2)[:30]
+    top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords, n = 2, m = 2)[:30]
     x, y=map(list,zip(*top_n_bigrams))
     fig = plt.subplots(figsize=(15, 15))
     sns.barplot(x = y, y = x)
     plt.savefig('plots/bigram.png')
 
     print('Visualizing trigrams')
-    top_n_bigrams=eda.get_top_ngram(df['Text_all'], stopwords = stopwords , n = 3, m = 3)[:30]
+    top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords , n = 3, m = 3)[:30]
     x, y=map(list,zip(*top_n_bigrams))
     fig = plt.subplots(figsize=(15, 15))
     sns.barplot(x = y, y = x)
     plt.savefig('plots/trigram.png')
 
     print('Visualizing fourgrams')
-    top_n_bigrams=eda.get_top_ngram(df['Text_all'], stopwords = stopwords, n = 4, m = 4)[:30]
+    top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords, n = 4, m = 4)[:30]
     x, y=map(list,zip(*top_n_bigrams))
     fig = plt.subplots(figsize=(15, 15))
     sns.barplot(x = y, y = x)
