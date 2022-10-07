@@ -61,7 +61,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     spacy.prefer_gpu()
     print("Loading data...")
     df = pd.read_parquet(in_path)
-    df = df[df['Text'].notna()].reset_index(drop=True)
+    df = df[df['text'].notna()].reset_index(drop=True)
 
     print("Loading spacy model...")
     en = spacy.load(spacy_model_name)
@@ -96,8 +96,8 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     print("Number of batches " + str(n_batches))
     for i in range(k,n_batches): # we do it in batchsize
         print('Batch ' + str(i+1) +" / "+str(n_batches))
-        batch = df[i*batch_size:(i+1)*batch_size]['Text']
-        batch_title = df[i*batch_size:(i+1)*batch_size]['Title']
+        batch = df[i*batch_size:(i+1)*batch_size]['text']
+        batch_title = df[i*batch_size:(i+1)*batch_size]['title']
         batch_nouns = []
         batch_noun_chunks = []
         batch_lemmas = []
@@ -138,7 +138,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
             batch_merged_lemmas.append(doc_merged_lemmas)
             batch_language.append(doc_language)
 
-        batch_df = pd.DataFrame({'Title': batch_title,
+        batch_df = pd.DataFrame({'title': batch_title,
                                 'nouns':batch_nouns, 
                                 'noun_chunks':batch_noun_chunks, 
                                 'lemmas':batch_lemmas,
