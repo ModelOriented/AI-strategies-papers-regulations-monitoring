@@ -9,6 +9,7 @@ import seaborn as sns
 import typer
 import os
 import numbers
+from pathlib import Path
 
 #EDA_FOR_NLP_PATH = 'C:/Users/Hubert/Dropbox/DarlingProject/eda_for_nlp_package'
 #FINAL_TABLE_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/EDA/final_table.parquet'
@@ -75,6 +76,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         ai_fq.append(n_ai[i] / (n_words[i] + 1) * 100)
         ml_fq.append(n_ml[i] / (n_words[i] + 1) * 100)
     stats = pd.DataFrame({"title": titles, "n_ai": n_ai, "n_ml": n_ml, "n_words": n_words, "ai_fq(%)": ai_fq, "ml_fq(%)": ml_fq})
+    Path('excel').mkdir(parents = True, exist_ok = True)
     stats.to_excel('excel/stats.xlsx')
     stats
 
@@ -112,6 +114,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         file_object.write('0.0001:'+ str(ml00001) + ', percentage: ' + str(round(ml00001 / len(df),2)) + '\n')
     
     print('Creating histogram...')
+    Path('plots').mkdir(parents = True, exist_ok = True)
     df['n_paragraphs'].hist().write_image(file = 'plots/hist_n_paragraphs.png', format = 'png')
     df['n_paragraphs'].hist()
 
