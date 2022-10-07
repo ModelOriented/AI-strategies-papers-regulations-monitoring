@@ -8,6 +8,7 @@ import spacy
 import seaborn as sns
 import typer
 import os
+import numbers
 
 #EDA_FOR_NLP_PATH = 'C:/Users/Hubert/Dropbox/DarlingProject/eda_for_nlp_package'
 #FINAL_TABLE_PATH = 'C:/Users/Hubert/Documents/DarlingProject/Overton/EDA/final_table.parquet'
@@ -62,7 +63,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
 
         titles.append(df['title'][i])
 
-        if (df['text_all'][i] != '' and not df['text_all'][i].isnumeric()) :
+        if (df['text_all'][i] != '' and not isinstance(df['text_all'][i], numbers.Number)) :
             n_ai.append(df['text_all'][i].count('artificial intelligence'))
             n_ml.append(df['text_all'][i].count('machine learning'))
             n_words.append(len(df['text_all'][i]))
