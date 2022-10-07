@@ -45,7 +45,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         else:
             text_all.append("")
     
-    df['Text_all'] = text_all
+    df['text_all'] = text_all
 
     with open("EDA_report.txt", "a") as file_object:
         file_object.write("Number of paragraphs:" + str(len(text_paragraph)) + "\n")
@@ -60,11 +60,11 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     ml_fq   = []
     for i in range(len(df)):
 
-        titles.append(df['Title'][i])
+        titles.append(df['title'][i])
 
-        if (df['Text_all'][i] != '') :
-            n_ai.append(df['Text_all'][i].count('artificial intelligence'))
-            n_ml.append(df['Text_all'][i].count('machine learning'))
+        if (df['text_all'][i] != '') :
+            n_ai.append(df['text_all'][i].count('artificial intelligence'))
+            n_ml.append(df['text_all'][i].count('machine learning'))
             n_words.append(len(df['Text_all'][i]))
         else : # for empty text files
             n_ai.append(0)
