@@ -62,7 +62,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
 
         titles.append(df['title'][i])
 
-        if (df['text_all'][i] != '' and !df['text_all'][i].isnumeric()) :
+        if (df['text_all'][i] != '' and not df['text_all'][i].isnumeric()) :
             n_ai.append(df['text_all'][i].count('artificial intelligence'))
             n_ml.append(df['text_all'][i].count('machine learning'))
             n_words.append(len(df['text_all'][i]))
