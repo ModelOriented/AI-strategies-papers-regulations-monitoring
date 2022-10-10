@@ -156,5 +156,6 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
         out_df.to_parquet(out_path, index=False)
 
 if __name__=="__main__":
+    print('Does it work?')
     typer.run(main)
 
