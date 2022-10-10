@@ -1,10 +1,11 @@
+print('works vol 1?', flush = True)
 import pandas as pd
 import spacy
 from tqdm import tqdm 
 import typer
 from spacy.language import Language
 from spacy_langdetect import LanguageDetector
-print('works?')
+print('works?', flush = True)
 tqdm.pandas()
 
 @Language.factory("language_detector")
@@ -59,11 +60,11 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     """
 
     #spacy.prefer_gpu()
-    print("Loading data...")
+    print("Loading data...", flush = True)
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop=True)
 
-    print("Loading spacy model...")
+    print("Loading spacy model...", flush = True)
     en = spacy.load(spacy_model_name)
     en.add_pipe("language_detector")
     en.remove_pipe("ner") # removing entity recognition for speed
@@ -80,9 +81,9 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     try:
       out_df = pd.read_parquet(out_path)
       k = round(len(out_df)/batch_size)
-      print("Resuming from " + str(k))
+      print("Resuming from " + str(k), flush = True)
     except:
-      print("No DF with given out_path. Creating a new one")
+      print("No DF with given out_path. Creating a new one", flush = True)
       out_df = pd.DataFrame([{'nouns':nouns, 
                               'noun_chunks':noun_chunks, 
                               'lemmas':lemmas,
@@ -93,9 +94,9 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
 
 
     n_batches = round(len(df)/batch_size)
-    print("Number of batches " + str(n_batches))
+    print("Number of batches " + str(n_batches), flush = True)
     for i in range(k,n_batches): # we do it in batchsize
-        print('Batch ' + str(i+1) +" / "+str(n_batches))
+        print('Batch ' + str(i+1) +" / "+str(n_batches), flush = True)
         batch = df[i*batch_size:(i+1)*batch_size]['text']
         batch_title = df[i*batch_size:(i+1)*batch_size]['title']
         batch_nouns = []
@@ -156,6 +157,6 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
         out_df.to_parquet(out_path, index=False)
 
 if __name__=="__main__":
-    print('Does it work?')
+    print('Does it work?', flush = True)
     typer.run(main)
 
