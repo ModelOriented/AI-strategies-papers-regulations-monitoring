@@ -4,7 +4,7 @@ from tqdm import tqdm
 import typer
 from spacy.language import Language
 from spacy_langdetect import LanguageDetector
-
+print('works?')
 tqdm.pandas()
 
 @Language.factory("language_detector")
@@ -58,7 +58,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     This script takes output of overton preprocessing and prasing and creates basic spacy objects: nouns, noun chunks and lemmas for documents and paragraphs
     """
 
-    spacy.prefer_gpu()
+    #spacy.prefer_gpu()
     print("Loading data...")
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop=True)
