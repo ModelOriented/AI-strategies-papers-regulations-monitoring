@@ -60,6 +60,7 @@ def main(in_path: str, out_path:str, batch_size:int =10, spacy_model_name: str='
     """
 
     #spacy.prefer_gpu()
+    print(out_path, flush = True)
     print("Loading data...", flush = True)
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop=True)
