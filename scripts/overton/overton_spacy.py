@@ -117,7 +117,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_merged_noun_chunks = []
             doc_merged_lemmas = []
             doc_language = []
-
+            print(en.pipe(document, batch_size = 50), flush = True)
             for paragraph in en.pipe(document, batch_size = 50): 
                 #print('Paragraph loop', flush = True)
                 doc,lang = process(paragraph,en)
