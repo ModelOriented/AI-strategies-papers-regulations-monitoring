@@ -122,15 +122,17 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             for paragraph in en.pipe(document, batch_size = 50): 
                 idx += 1
                 print(paragraph, flush = True)
-                doc,lang = process(paragraph,en)
-
+                doc, lang = process(paragraph, en)
+                
+                print('noun', flush = True)
                 nouns = get_nouns(doc)
                 doc_nouns.append(nouns)
+                print('chunk', flush = True)
                 chunks = get_chunks(doc)
                 doc_noun_chunks.append(chunks)
+                print('lemma', flush = True)
                 lem = [token.lemma_ for token in doc if not token.is_stop if not token.is_punct if token.is_alpha]
                 doc_lemmas.append(lem)
-                print('mid', flush = True)
                 doc_merged_nouns = doc_merged_nouns + nouns
                 doc_merged_noun_chunks = doc_merged_noun_chunks + chunks
                 doc_merged_lemmas = doc_merged_lemmas + lem
