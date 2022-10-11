@@ -15,9 +15,12 @@ def _create_language_detector(nlp: Language, name: str) -> LanguageDetector:
 
 def process(text, en):
     try:
+        print('en', flush = True)
         doc = en(text)
+        print('return', flush = True)
         return doc, doc._.language["language"]
     except Exception:
+        print('error', flush = True)
         print("Error: {}".format(text))
         return "", ""
         
