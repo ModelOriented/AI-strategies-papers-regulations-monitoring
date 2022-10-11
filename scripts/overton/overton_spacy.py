@@ -119,7 +119,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_language = []
 
             for paragraph in en.pipe(document, batch_size = 50): 
-                print('Paragraph loop', flush = True)
+                #print('Paragraph loop', flush = True)
                 doc,lang = process(paragraph,en)
 
                 nouns = get_nouns(doc)
