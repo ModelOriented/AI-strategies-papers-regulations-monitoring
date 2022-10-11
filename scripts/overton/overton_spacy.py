@@ -121,6 +121,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             idx = 0
             for paragraph in en.pipe(document, batch_size = 50): 
                 idx += 1
+                print(idx, flush = True)
                 print(paragraph, flush = True)
                 doc,lang = process(paragraph,en)
 
