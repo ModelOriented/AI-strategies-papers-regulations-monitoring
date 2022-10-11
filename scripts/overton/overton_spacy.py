@@ -16,6 +16,7 @@ def _create_language_detector(nlp: Language, name: str) -> LanguageDetector:
 def process(text, en):
     try:
         print('en', flush = True)
+        print(text , flush = True)             
         doc = en(text)
         print('return', flush = True)
         return doc, doc._.language["language"]
