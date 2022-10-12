@@ -1,22 +1,20 @@
-print('works vol 1?', flush = True)
 import pandas as pd
 import spacy
 from tqdm import tqdm 
 import typer
 from spacy.language import Language
 from spacy_langdetect import LanguageDetector
-print('works?', flush = True)
+import unicodedata
 tqdm.pandas()
 
-@Language.factory("language_detector")
+@Language.factory('language_detector')
 def _create_language_detector(nlp: Language, name: str) -> LanguageDetector:
     """Function registered to spacy as a pipeline step"""
     return LanguageDetector(language_detection_function = None)
 
 def process(doc):
     try:
-        print('return', flush = True)
-        return doc, doc._.language["language"]
+        return doc, doc._.language['language']
     except Exception as e:
         print(e, flush = True)
         print("Error: {}".format(doc), flush = True)
@@ -32,7 +30,7 @@ def get_nouns(docs):
             for token in docs
             if (not token.is_stop and
                 not token.is_punct and
-                token.pos_ == "NOUN")]
+                token.pos_ == 'NOUN')]
     return nouns
 
 def get_chunks(docs, stopwords = False):
@@ -62,13 +60,17 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
 
     #spacy.prefer_gpu()
     print(out_path, flush = True)
-    print("Loading data...", flush = True)
+    print('Loading data...', flush = True)
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop = True)
+    
+    for row in df:
+        row['text'] = unicodedata.normalize('NFKC', row['text'])
 
+    print(df.head())
     print("Loading spacy model...", flush = True)
     en = spacy.load(spacy_model_name)
-    en.add_pipe("language_detector")
+    en.add_pipe('language_detector')
     en.remove_pipe("ner") # removing entity recognition for speed
 
     nouns = []
@@ -83,9 +85,9 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
     try:
       out_df = pd.read_parquet(out_path)
       k = round(len(out_df) / batch_size)
-      print("Resuming from " + str(k), flush = True)
+      print('Resuming from ' + str(k), flush = True)
     except:
-      print("No DF with given out_path. Creating a new one", flush = True)
+      print('No DF with given out_path. Creating a new one', flush = True)
       out_df = pd.DataFrame([{'nouns': nouns, 
                               'noun_chunks': noun_chunks, 
                               'lemmas': lemmas,
@@ -96,7 +98,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
 
 
     n_batches = round(len(df) / batch_size)
-    print("Number of batches " + str(n_batches), flush = True)
+    print('Number of batches ' + str(n_batches), flush = True)
     for i in range(k, n_batches): # we do it in batchsize
         print('Batch ' + str(i + 1) + " / " + str(n_batches), flush = True)
         batch = df[i*batch_size: (i + 1) * batch_size]['text']
@@ -124,13 +126,10 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
                 print(paragraph, flush = True)
                 doc, lang = process(paragraph)
                 
-                print('noun', flush = True)
                 nouns = get_nouns(doc)
                 doc_nouns.append(nouns)
-                print('chunk', flush = True)
                 chunks = get_chunks(doc)
                 doc_noun_chunks.append(chunks)
-                print('lemma', flush = True)
                 lem = [token.lemma_ for token in doc if not token.is_stop if not token.is_punct if token.is_alpha]
                 doc_lemmas.append(lem)
                 doc_merged_nouns = doc_merged_nouns + nouns
@@ -167,7 +166,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
         print('Saving..', flush = True)
         out_df.to_parquet(out_path, index=False)
 
-if __name__=="__main__":
+if __name__=='__main__':
     print('Does it work?', flush = True)
     typer.run(main)
 
