@@ -63,11 +63,6 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
     print('Loading data...', flush = True)
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop = True)
-    
-    for i in range(len(df)):
-        print(df['text'][i])
-        print(str(df['text'][i]))
-        df['text'][i] = unicodedata.normalize('NFKC', df['text'][i])
 
     print(df.head())
     print("Loading spacy model...", flush = True)
@@ -123,6 +118,8 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_merged_lemmas = []
             doc_language = []
             idx = 0
+            document = unicodedata.normalize('NFKC', document)
+            
             for paragraph in en.pipe(document, batch_size = 50): 
                 idx += 1
                 print(paragraph, flush = True)
