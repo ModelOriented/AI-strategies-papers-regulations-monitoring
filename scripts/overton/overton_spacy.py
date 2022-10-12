@@ -13,16 +13,13 @@ def _create_language_detector(nlp: Language, name: str) -> LanguageDetector:
     """Function registered to spacy as a pipeline step"""
     return LanguageDetector(language_detection_function = None)
 
-def process(text, en):
+def process(doc):
     try:
-        print('en', flush = True)
-        print(text , flush = True)             
-        doc = en(text)
         print('return', flush = True)
         return doc, doc._.language["language"]
-    except Exception:
-        print('error', flush = True)
-        print("Error: {}".format(text))
+    except Exception as e:
+        print(e, flush = True)
+        print("Error: {}".format(doc), flush = True)
         return "", ""
         
 def get_nouns(docs):
@@ -121,12 +118,11 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_merged_noun_chunks = []
             doc_merged_lemmas = []
             doc_language = []
-            print(en.pipe(document, batch_size = 50), flush = True)
             idx = 0
             for paragraph in en.pipe(document, batch_size = 50): 
                 idx += 1
                 print(paragraph, flush = True)
-                doc, lang = process(paragraph, en)
+                doc, lang = process(paragraph)
                 
                 print('noun', flush = True)
                 nouns = get_nouns(doc)
