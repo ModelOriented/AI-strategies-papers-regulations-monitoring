@@ -69,6 +69,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
             n_ml.append(df['text_all'][i].count('machine learning'))
             n_words.append(len(df['text_all'][i]))
         else : # for empty text files
+            df['text_all'][i] = 'NOT_A_TEXT'
             n_ai.append(0)
             n_ml.append(0)
             n_words.append(0)
