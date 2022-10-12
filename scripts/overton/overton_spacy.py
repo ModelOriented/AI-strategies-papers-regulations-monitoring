@@ -119,7 +119,7 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_language = []
             idx = 0
 
-            for i in range(len(document))
+            for i in range(len(document)):
                 document[i] = unicodedata.normalize('NFKC', document[i])
             
             for paragraph in en.pipe(document, batch_size = 50): 
