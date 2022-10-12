@@ -58,13 +58,12 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
     This script takes output of overton preprocessing and prasing and creates basic spacy objects: nouns, noun chunks and lemmas for documents and paragraphs
     """
 
-    #spacy.prefer_gpu()
+    spacy.prefer_gpu()
     print(out_path, flush = True)
     print('Loading data...', flush = True)
     df = pd.read_parquet(in_path)
     df = df[df['text'].notna()].reset_index(drop = True)
 
-    print(df.head())
     print("Loading spacy model...", flush = True)
     en = spacy.load(spacy_model_name)
     en.add_pipe('language_detector')
@@ -117,14 +116,11 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
             doc_merged_noun_chunks = []
             doc_merged_lemmas = []
             doc_language = []
-            idx = 0
 
             for i in range(len(document)):
                 document[i] = unicodedata.normalize('NFKC', document[i])
             
             for paragraph in en.pipe(document, batch_size = 50): 
-                idx += 1
-                print(paragraph, flush = True)
                 doc, lang = process(paragraph)
                 
                 nouns = get_nouns(doc)
@@ -137,7 +133,6 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
                 doc_merged_noun_chunks = doc_merged_noun_chunks + chunks
                 doc_merged_lemmas = doc_merged_lemmas + lem
                 doc_language.append(lang)
-                print(idx, flush = True)
             
             print('After paragraph loop', flush = True)
             batch_nouns.append(doc_nouns)
@@ -168,6 +163,5 @@ def main(in_path: str, out_path: str, batch_size: int = 10, spacy_model_name: st
         out_df.to_parquet(out_path, index=False)
 
 if __name__=='__main__':
-    print('Does it work?', flush = True)
     typer.run(main)
 
