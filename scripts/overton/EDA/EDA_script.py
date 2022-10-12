@@ -17,7 +17,7 @@ from pathlib import Path
 
 def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str):
 
-    print('Loading the model...')
+    print('Loading the model...', flush = True)
     sys.path.insert(0, eda_for_nlp_path)
     for p in sys.path:
         print( p )
@@ -25,12 +25,12 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     import eda_for_nlp_package as eda
     en = spacy.load("en_core_web_md")
 
-    print('Loading data...')
+    print('Loading data...', flush = True)
     df       = pd.read_parquet(final_table_path)
-    print(f'df cols {df.columns}')
+    print(f'df cols {df.columns}', flush = True)
     df       = df[['title','text','n_paragraphs','n_words']]
     spacy_df = pd.read_parquet(spacy_table_path)
-    print(f'spacy_df cols {spacy_df.columns}')
+    print(f'spacy_df cols {spacy_df.columns}', flush = True)
 
 
     print('Creating the text report...')
@@ -53,7 +53,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         file_object.write("Number of paragraphs:" + str(len(text_paragraph)) + "\n")
     len(text_paragraph)
 
-    print('Preparing statistics table...')
+    print('Preparing statistics table...', flush = True)
     titles  = []
     n_ai    = []
     n_ml    = []
@@ -80,7 +80,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     stats.to_excel('excel/stats.xlsx')
     stats
 
-    print('Calculating AI and ML frequencies...')
+    print('Calculating AI and ML frequencies...', flush = True)
     ai01    = len(stats.loc[stats['ai_fq(%)'] >= 0.1])
     ai001   = len(stats.loc[stats['ai_fq(%)'] >= 0.01])
     ai0001  = len(stats.loc[stats['ai_fq(%)'] >= 0.001])
@@ -90,16 +90,16 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     ml0001  = len(stats.loc[stats['ml_fq(%)'] >= 0.001])
     ml00001 = len(stats.loc[stats['ml_fq(%)'] >= 0.0001])
 
-    print('AI over: ')
-    print('0.1:', ai01, ', percentage: ', round(ai01 / len(df),2))
-    print('0.01:', ai001, ', percentage: ', round(ai001 / len(df),2))
-    print('0.001:', ai0001, ', percentage: ', round(ai0001 / len(df),2))
-    print('0.0001:', ai00001, ', percentage: ', round(ai00001 / len(df),2))
-    print('ML over: ')
-    print('0.1:', ml01, ', percentage: ', round(ml01 / len(df),2))
-    print('0.01:', ml001, ', percentage: ', round(ml001 / len(df),2))
-    print('0.001:', ml0001, ', percentage: ', round(ml0001 / len(df),2))
-    print('0.0001:', ml00001, ', percentage: ', round(ml00001 / len(df),2))
+    print('AI over: ', flush = True)
+    print('0.1:', ai01, ', percentage: ', round(ai01 / len(df),2), flush = True)
+    print('0.01:', ai001, ', percentage: ', round(ai001 / len(df),2), flush = True)
+    print('0.001:', ai0001, ', percentage: ', round(ai0001 / len(df),2), flush = True)
+    print('0.0001:', ai00001, ', percentage: ', round(ai00001 / len(df),2), flush = True)
+    print('ML over: ', flush = True)
+    print('0.1:', ml01, ', percentage: ', round(ml01 / len(df),2), flush = True)
+    print('0.01:', ml001, ', percentage: ', round(ml001 / len(df),2), flush = True)
+    print('0.001:', ml0001, ', percentage: ', round(ml0001 / len(df),2), flush = True)
+    print('0.0001:', ml00001, ', percentage: ', round(ml00001 / len(df),2), flush = True)
 
     with open("EDA_report.txt", "a") as file_object:
         file_object.write('AI over: \n')
@@ -113,7 +113,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         file_object.write('0.001:'+ str(ml0001) + ', percentage: ' + str(round(ml0001 / len(df),2)) + '\n')
         file_object.write('0.0001:'+ str(ml00001) + ', percentage: ' + str(round(ml00001 / len(df),2)) + '\n')
     
-    print('Creating histogram...')
+    print('Creating histogram...', flush = True)
     Path('plots').mkdir(parents = True, exist_ok = True)
     df['n_paragraphs'].hist().write_image(file = 'plots/hist_n_paragraphs.png', format = 'png')
     df['n_paragraphs'].hist()
@@ -121,7 +121,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     df['n_words'].hist().write_image(file = 'plots/hist_n_words.png', format = 'png')
     df['n_words'].hist()
     
-    print('Counting Languages...')
+    print('Counting Languages...', flush = True)
     count_language = Counter(spacy_df['paragraph_language'][0])
     for i in range(1, len(spacy_df)):
         count_language += Counter(spacy_df['paragraph_language'][i])
@@ -129,7 +129,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     count_language.to_excel('excel/count_language.xlsx')
     count_language
 
-    print('Counting nouns, lemmas and noun chunks...')
+    print('Counting nouns, lemmas and noun chunks...', flush = True)
     nouns = []
     for i in range(len(spacy_df['merged_nouns'])):
         nouns = np.concatenate((nouns,spacy_df['merged_nouns'][i]))
@@ -145,11 +145,11 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
         file_object.write('Number of lemmas:'+ str(len(lemmas)) + '\n')
         file_object.write('Number of noun_chunks:'+ str(len(noun_chunks)) + '\n')
 
-    print('Number of nouns:', len(nouns))
-    print('Number of lemmas:', len(lemmas))
-    print('Number of noun_chunks:', len(noun_chunks))
+    print('Number of nouns:', len(nouns), flush = True)
+    print('Number of lemmas:', len(lemmas), flush = True)
+    print('Number of noun_chunks:', len(noun_chunks), flush = True)
 
-    print('Creating a word cloud...')
+    print('Creating a word cloud...', flush = True)
     count_nouns = eda.count_texts(nouns)
     eda.plot_counts(count_nouns, ['obj', 'count']).write_image(file = 'plots/bar_counted_nouns.png', format = 'png')
     eda.plot_counts(count_nouns, ['obj', 'count'])
@@ -161,12 +161,12 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     plt.imshow(wc)
     plt.savefig('plots/word_cloud.png')
 
-    print('Visualizing lemmas counts')
+    print('Visualizing lemmas counts', flush = True)
     count_lemmas= eda.count_texts(lemmas)
     eda.plot_counts(count_lemmas, ['obj', 'count']).write_image(file = 'plots/bar_counted_lemmas.png', format = 'png')
     eda.plot_counts(count_lemmas, ['obj', 'count'])
 
-    print('Visualizing bigrams')
+    print('Visualizing bigrams', flush = True)
     stopwords = en.Defaults.stop_words
     top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords, n = 2, m = 2)[:30]
     x, y=map(list,zip(*top_n_bigrams))
@@ -174,21 +174,21 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     sns.barplot(x = y, y = x)
     plt.savefig('plots/bigram.png')
 
-    print('Visualizing trigrams')
+    print('Visualizing trigrams', flush = True)
     top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords , n = 3, m = 3)[:30]
     x, y=map(list,zip(*top_n_bigrams))
     fig = plt.subplots(figsize=(15, 15))
     sns.barplot(x = y, y = x)
     plt.savefig('plots/trigram.png')
 
-    print('Visualizing fourgrams')
+    print('Visualizing fourgrams', flush = True)
     top_n_bigrams=eda.get_top_ngram(df['text_all'], stopwords = stopwords, n = 4, m = 4)[:30]
     x, y=map(list,zip(*top_n_bigrams))
     fig = plt.subplots(figsize=(15, 15))
     sns.barplot(x = y, y = x)
     plt.savefig('plots/fourgram.png')
 
-    print('Visualizing most common 120 chunks...')
+    print('Visualizing most common 120 chunks...', flush = True)
     noun_chunks = list(filter(lambda x: len(x.split()) > 1, noun_chunks))
     count_chunks = eda.count_texts(noun_chunks,['chunk', 'count'], 40)
     eda.plot_counts(count_chunks, ['chunk', 'count']).write_image(file = 'plots/bar_counted_chunks_from_1_to_40.png', format = 'png')
@@ -202,7 +202,7 @@ def main(eda_for_nlp_path : str, final_table_path : str, spacy_table_path : str)
     eda.plot_counts(count_chunks, ['chunk', 'count']).write_image(file = 'plots/bar_counted_chunks_from_81_to_120.png', format = 'png')
     eda.plot_counts(count_chunks,['chunk', 'count'])
 
-    print('EDA ready')
+    print('EDA ready', flush = True)
 
 if __name__=="__main__":
     typer.run(main)
