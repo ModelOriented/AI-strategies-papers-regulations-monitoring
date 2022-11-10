@@ -20,5 +20,5 @@ def doi_to_authorship(directory_path:str):
 
 if __name__ == "__main__":
     doi_dict = doi_to_authorship('/raid/shared/openalex/openalex-snapshot/data/works')
-    with open('doi_to_authorship_extended.json', 'w') as fp:
+    with open('data/s2orc/doi_to_authorship_extended.json', 'w') as fp:
         json.dump(doi_dict, fp)
