@@ -2,7 +2,7 @@ import json
 
 import os
 
-def doi_to_authorship(directory_path:str):
+def doi_to_authorship(directory_path):
 
     directory = os.fsencode(directory_path)
     
