@@ -1,21 +1,18 @@
 import json
 
 import os
+import glob
+from tqdm import tqdm
 
-def doi_to_authorship(directory_path):
-
-    directory = os.fsencode(directory_path)
-    
+def doi_to_authorship(directory_path: str):    
     doi_to_authorship = {}
 
-    for update_dir in os.listdir(directory):
-        for file in os.listdir(update_dir):
+    for file_path in tqdm(glob(os.path.join(directory_path,"/*/*"))):
+        with open(file_path, "r") as fp:
+            oa = json.loads(fp.readline())
+            if oa['doi'] is not None:
+                doi_to_authorship[oa['doi']] = oa['authorship']
 
-            oa_file = open(file)
-            oa = json.load(oa_file)
-
-            for key in oa:
-                doi_to_authorship[key['doi']] = key['author']
     return doi_to_authorship
 
 if __name__ == "__main__":
