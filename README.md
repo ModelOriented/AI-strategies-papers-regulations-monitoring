@@ -1,4 +1,4 @@
-# AI-stretegies-papers-regulations-monitoring
+# AI-strategies-papers-regulations-monitoring
 Monitoring of AI strategies, papers, and regulations
 
 Code is available at: https://github.com/ModelOriented/AI-strategies-papers-regulations-monitoring (to access please contact [Stanisław Giziński](https://github.com/Gizzio) or [Hanna Zdulska](https://github.com/HaZdula))
