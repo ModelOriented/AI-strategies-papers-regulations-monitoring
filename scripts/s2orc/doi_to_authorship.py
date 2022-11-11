@@ -11,7 +11,7 @@ def doi_to_authorship(directory_path: str):
         with open(file_path, "r") as fp:
             oa = json.loads(fp.readline())
             if oa['doi'] is not None:
-                doi_to_authorship[oa['doi']] = oa['authorship']
+                doi_to_authorship[oa['doi']] = oa['authorships']
 
     return doi_to_authorship
 
