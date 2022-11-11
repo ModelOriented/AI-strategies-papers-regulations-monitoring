@@ -9,9 +9,10 @@ def doi_to_authorship(directory_path: str):
 
     for file_path in tqdm(glob(os.path.join(directory_path+"/*/*"))):
         with open(file_path, "r") as fp:
-            oa = json.loads(fp.readline())
-            if oa['doi'] is not None:
-                doi_to_authorship[oa['doi']] = oa['authorships']
+            for line in fp.readlines():
+                oa = json.loads(line)
+                if oa['doi'] is not None:
+                    doi_to_authorship[oa['doi']] = oa['authorships']
 
     return doi_to_authorship
 
