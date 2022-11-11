@@ -1,7 +1,7 @@
 import json
 
 import os
-import glob
+from glob import glob
 from tqdm import tqdm
 
 def doi_to_authorship(directory_path: str):    
