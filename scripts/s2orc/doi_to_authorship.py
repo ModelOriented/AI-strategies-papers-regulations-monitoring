@@ -7,7 +7,7 @@ from tqdm import tqdm
 def doi_to_authorship(directory_path: str):    
     doi_to_authorship = {}
 
-    for file_path in tqdm(glob(os.path.join(directory_path+"/*/*"))):
+    for file_path in tqdm(glob(os.path.join(directory_path+"/*/*"))[:2]):
         with open(file_path, "r") as fp:
             for line in fp.readlines():
                 oa = json.loads(line)
