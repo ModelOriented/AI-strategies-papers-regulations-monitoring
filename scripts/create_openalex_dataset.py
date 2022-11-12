@@ -32,7 +32,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
 
     for subdir, dirs, files in os.walk(path_to_filtered_files):
         for file in files:
-            if file != 'already_processed.txt':
+            if file != 'already_processed.txt' and file != 'manifest':
                 full_path = os.path.join(subdir, file)
                 with open(full_path) as f:
                     for line in f:
