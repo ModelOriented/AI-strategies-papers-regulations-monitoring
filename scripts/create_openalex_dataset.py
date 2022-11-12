@@ -12,7 +12,7 @@ def get_abstract(abstract_inverted_index: dict) -> str:
 
         abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
         return abstract
-   else:
+    else:
         return 'No data about abstract!'
 
 def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
