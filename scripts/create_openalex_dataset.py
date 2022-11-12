@@ -2,6 +2,11 @@ import os
 import pandas as pd
 import typer
 import json
+import spacy
+
+
+sp = spacy.load('en_core_web_sm')
+
 
 def get_abstract(abstract_inverted_index: dict) -> str:
     abstract_index = {}
@@ -11,9 +16,11 @@ def get_abstract(abstract_inverted_index: dict) -> str:
                 abstract_index[v] = k
 
         abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
+        sentence = sp(abstract)
+        abstract = ' '.join(word.lemma_ for word in sentence)
         return abstract
     else:
-        return 'No data about abstract!'
+        return None
 
 def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
     i = 1
