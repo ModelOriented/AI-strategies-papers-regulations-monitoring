@@ -5,12 +5,15 @@ import json
 
 def get_abstract(abstract_inverted_index: dict) -> str:
     abstract_index = {}
-    for k, vlist in abstract_inverted_index.items():
-        for v in vlist:
-            abstract_index[v] = k
+    if abstract_inverted_index is not None:
+        for k, vlist in abstract_inverted_index.items():
+            for v in vlist:
+                abstract_index[v] = k
 
-    abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
-    return abstract
+        abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
+        return abstract
+   else:
+        return 'No data about abstract!'
 
 def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
     i = 1
