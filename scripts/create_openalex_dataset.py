@@ -53,7 +53,8 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                         related_works.append(line['related_works'])
                         abstract.append(get_abstract(line['abstract_inverted_index']))
                         counts_by_year.append(line['counts_by_year'])
-
+                        print(get_abstract(line['abstract_inverted_index']), flush=True)
+                        
                         i += 1
             df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
                                'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
