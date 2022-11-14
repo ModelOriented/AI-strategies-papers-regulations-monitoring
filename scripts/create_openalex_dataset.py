@@ -2,15 +2,25 @@ import os
 import pandas as pd
 import typer
 import json
+import spacy
+
+
+sp = spacy.load('en_core_web_sm')
+
 
 def get_abstract(abstract_inverted_index: dict) -> str:
     abstract_index = {}
-    for k, vlist in abstract_inverted_index.items():
-        for v in vlist:
-            abstract_index[v] = k
+    if abstract_inverted_index is not None:
+        for k, vlist in abstract_inverted_index.items():
+            for v in vlist:
+                abstract_index[v] = k
 
-    abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
-    return abstract
+        abstract = ' '.join(abstract_index[k] for k in sorted(abstract_index.keys()))
+        sentence = sp(abstract)
+        abstract = ' '.join(word.lemma_ for word in sentence)
+        return abstract
+    else:
+        return None
 
 def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
     i = 1
@@ -32,7 +42,7 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
 
     for subdir, dirs, files in os.walk(path_to_filtered_files):
         for file in files:
-            if file != 'already_processed.txt':
+            if file != 'already_processed.txt' and file != 'manifest':
                 full_path = os.path.join(subdir, file)
                 with open(full_path) as f:
                     for line in f:
@@ -53,7 +63,8 @@ def create_openalex_dataset(path_to_filtered_files:str, output_dir:str):
                         related_works.append(line['related_works'])
                         abstract.append(get_abstract(line['abstract_inverted_index']))
                         counts_by_year.append(line['counts_by_year'])
-
+                        print(get_abstract(line['abstract_inverted_index']), flush=True)
+                        
                         i += 1
             df = pd.DataFrame({'id': id, 'doi': doi, 'title': title, 'display_name': display_name,
                                'pubication_year': pubication_year, 'pubication_date': pubication_date, 'type': type,
