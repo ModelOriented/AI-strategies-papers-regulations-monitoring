@@ -26,9 +26,9 @@ json_input = 'data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/b
         doi_to_authorship_big[new_key] = doi_to_authorship_big.pop(key)
     
     df['open_alex'] = df['doi'].map(doi_to_authorship_big)
-    df = df.dropna()
-
-   
+    print(f'Number of mapped papers: {df["doi"].nunique()}')
+    df.to_parquet(output_path)
+    
     institutions = []
     countries = []
     types = []
