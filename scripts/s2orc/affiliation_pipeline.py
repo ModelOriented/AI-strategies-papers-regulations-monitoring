@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import numpy as np
 import typer
-import tqdm
+from tqdm import tqdm
 
 
 def affiliations(condition_list = ['Adobe Systems', 'Alibaba Group', 'Amazon', 'Facebook','Google', 'Huawei Technologies','IBM', 'Intel','Microsoft', 'Nvidia','Samsung', 'Siemens','Tencent', 'Yahoo'],category = 'institution',big_ai_input = '/data/s2orc/big_ai_dataset.parquet',
