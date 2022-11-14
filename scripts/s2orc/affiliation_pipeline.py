@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import numpy as np
 import typer
+import tqdm
 
 
 def affiliations(condition_list = ['Adobe Systems', 'Alibaba Group', 'Amazon', 'Facebook','Google', 'Huawei Technologies','IBM', 'Intel','Microsoft', 'Nvidia','Samsung', 'Siemens','Tencent', 'Yahoo'],category = 'institution',big_ai_input = '/data/s2orc/big_ai_dataset.parquet',
@@ -21,14 +22,14 @@ json_input = 'data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/b
     print(f'Number of dois: {len(doi_to_authorship_big.keys())}')
 
     keys = list(doi_to_authorship_big.keys())
-    for key in keys:
+    for key in tqdm(keys):
         new_key = key.replace('https://doi.org/', '')
         doi_to_authorship_big[new_key] = doi_to_authorship_big.pop(key)
     
     df['open_alex'] = df['doi'].map(doi_to_authorship_big)
     print(f'Number of mapped papers: {df["doi"].nunique()}')
     df.to_parquet(output_path)
-    
+
     institutions = []
     countries = []
     types = []
