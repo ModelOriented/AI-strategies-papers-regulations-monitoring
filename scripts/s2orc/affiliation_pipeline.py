@@ -5,8 +5,8 @@ import numpy as np
 import typer
 
 
-def affiliations(condition_list,category,big_ai_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset.parquet',
-json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet'):
+def affiliations(condition_list = ['Adobe Systems', 'Alibaba Group', 'Amazon', 'Facebook','Google', 'Huawei Technologies','IBM', 'Intel','Microsoft', 'Nvidia','Samsung', 'Siemens','Tencent', 'Yahoo'],category = 'institution',big_ai_input = '/data/s2orc/big_ai_dataset.parquet',
+json_input = 'data/s2orc/doi_to_authorship_big.json',output_path = 'data/s2orc/big_ai_dataset_with_affiliations.parquet'):
     #wczytywanie danych
     all_pd = pd.read_parquet(big_ai_input, columns=['paper_id', 'year', 'doi', 'out_citations_count', 'in_citations_count','outbound_citations', 'inbound_citations'], engine='pyarrow')
     print(f'Number of all records: {len(all_pd)}')
@@ -119,35 +119,6 @@ json_input = r'C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitor
         else:
             for country in paper:
                 unique_countries_joint.append(country)
-
-    company = []
-    education = []
-    government = []
-    facility = []
-    healthcare = []
-    nonprofit = []
-    other = []
-    for paper_institution, paper_type in zip(institutions, types):
-        if paper_institution != [] and paper_type != []:
-            institutions_so_far = set()
-            for author_institution, author_type in zip(paper_institution, paper_type):
-                for institution_institution, institution_type in zip(author_institution, author_type):
-                    if institution_institution not in institutions_so_far:
-                        institutions_so_far.add(institution_institution)
-                        if institution_type == 'company':
-                            company.append(institution_institution)
-                        elif institution_type == 'education':
-                            education.append(institution_institution)
-                        elif institution_type == 'government':
-                            government.append(institution_institution)
-                        elif institution_type == 'healthcare':
-                            healthcare.append(institution_institution)
-                        elif institution_type == 'nonprofit':
-                            nonprofit.append(institution_institution)
-                        elif institution_type == 'facility':
-                            facility.append(institution_institution)
-                        elif institution_type == 'other':
-                            other.append(institution_institution)
 
     is_X = []
     if category =='country':
