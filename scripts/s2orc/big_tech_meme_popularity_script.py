@@ -11,14 +11,18 @@ def main(cluster_name : str, chunk_meme : str, processed_big : str, bt_perc: str
     processed_big : processed_big
     bt_perc : big_ai_dataset_with_affiliations_nb
     '''
-    #cluster_name = pd.read_parquet('C:/Users/Hubert/Documents/DarlingProject/s2orc_scripts/November_paper/reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet')
-
-    #chunk_meme = pd.read_parquet('C:/Users/Hubert/Documents/DarlingProject/s2orc_scripts/November_paper/meme_mappings_reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet')
-
-    #processed_big = pd.read_parquet('C:/Users/Hubert/Documents/DarlingProject/s2orc_scripts/November_paper/processed_big.parquet')
-
-    #bt_perc = pd.read_parquet('C:/Users/Hubert/Documents/DarlingProject/s2orc_scripts/November_paper/big_ai_dataset_with_affiliations_nb.parquet')
-
+    print('Reading the files..', flush = True)
+    cluster_name = pd.read_parquet(cluster_name)
+    chunk_meme = pd.read_parquet(chunk_meme)
+    processed_big = pd.read_parquet(processed_big)
+    bt_perc = pd.read_parquet(bt_perc)
+    
+    print('Sample dataset observations..', flush = True)
+    print(cluster_name.head(), flush = True)
+    print(chunk_meme.head(), flush = True)
+    print(cluster_name.head(), flush = True)
+    print(cluster_name.head(), flush = True)
+    
     print('Reducing information about papers (bt_perc)..', flush = True)
     bt_perc_reduced = bt_perc[['paper_id', '%BT']].reset_index()
 
