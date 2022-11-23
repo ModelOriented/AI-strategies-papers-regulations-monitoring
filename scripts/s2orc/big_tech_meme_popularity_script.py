@@ -20,8 +20,8 @@ def main(cluster_name : str, chunk_meme : str, processed_big : str, bt_perc: str
     print('Sample dataset observations..', flush = True)
     print(cluster_name.head(), flush = True)
     print(chunk_meme.head(), flush = True)
-    print(cluster_name.head(), flush = True)
-    print(cluster_name.head(), flush = True)
+    print(processed_big.head(), flush = True)
+    print(bt_perc.head(), flush = True)
     
     print('Reducing information about papers (bt_perc)..', flush = True)
     bt_perc_reduced = bt_perc[['paper_id', '%BT']].reset_index()
