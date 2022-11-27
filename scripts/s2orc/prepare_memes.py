@@ -68,16 +68,14 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def preparing(df_clusters,df_aff,df_res
-         ): 
+def preparing(df_clusters, df_aff,df_nc): 
 
-    print("Mapping chunks to memes...")
+    print("Mapping chunks to memes...")# map chunks to clusters - meme id
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
                                  columns=['chunk', 'meme_id'])
 
-    df_memes = get_merged_data(df_res,df_aff)
-    # map chunks to clusters
+    df_memes = get_merged_data(df_nc,df_aff)
 
     print("Preparing memes...")
     df_memes['memes'] = df_memes['noun_chunks_cleaned'].apply(
