@@ -34,4 +34,4 @@ def main(df):
 
 
 if __name__ == '__main__':
-    main(pd.read_parquet('C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/big_ai_dataset_with_affiliations_extended_oa.parquet'))
+    main(pd.read_parquet('data/s2orc/big_ai_dataset_with_affiliations_extended_oa.parquet'))
