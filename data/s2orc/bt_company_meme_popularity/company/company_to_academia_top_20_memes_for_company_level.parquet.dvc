@@ -1,0 +1,4 @@
+outs:
+- md5: 0274caa2faf00f0b8bb29d7351435de3
+  size: 10386
+  path: company_to_academia_top_20_memes_for_company_level.parquet

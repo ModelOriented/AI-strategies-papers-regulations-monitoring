@@ -1,0 +1,4 @@
+outs:
+- md5: b35793a569bab6279aa2ce7a1ea9c7f2
+  size: 128796347
+  path: chunk_meme_dict.pkl

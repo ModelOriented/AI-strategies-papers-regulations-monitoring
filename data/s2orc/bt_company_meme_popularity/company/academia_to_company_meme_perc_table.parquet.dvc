@@ -1,0 +1,4 @@
+outs:
+- md5: 4ae302956bf87e6199a717a6fbf0c394
+  size: 35159
+  path: academia_to_company_meme_perc_table.parquet

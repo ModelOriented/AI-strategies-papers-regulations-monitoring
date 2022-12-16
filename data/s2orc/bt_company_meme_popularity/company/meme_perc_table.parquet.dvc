@@ -1,0 +1,4 @@
+outs:
+- md5: 5a93ded039fbb9b6d6d9e1f0472aaf76
+  size: 34365
+  path: meme_perc_table.parquet
