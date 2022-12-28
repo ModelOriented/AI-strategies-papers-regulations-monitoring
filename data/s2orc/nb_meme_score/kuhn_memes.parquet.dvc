@@ -1,0 +1,4 @@
+outs:
+- md5: 3822596b140aae3f2d2add10a7654523
+  size: 24655325
+  path: kuhn_memes.parquet

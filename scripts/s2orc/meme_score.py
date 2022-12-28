@@ -53,7 +53,7 @@ def meme_score(df: pd.DataFrame, delta:float=0.0001):
     stick1 = p.sum(axis=0)#sum of papers that are affiliated with BT AND cite papers with this meme AND have this meme
 
 
-    spark2 = cited_memes_enc.shape[1] - cited_memes_enc.sum(axis=0)#sum of papers that DO NOT cite papers with this meme
+    spark2 = cited_memes_enc.shape[0] - cited_memes_enc.sum(axis=0)#sum of papers that DO NOT cite papers with this meme
     #(1-cited_memes_enc).multiply(memes_enc).sum(axis=1) 
     spark1 = memes_enc.sum(axis=0)-memes_enc.multiply(cited_memes_enc).sum(axis=0) #sum of papers that DO NOT cite papers with this meme AND have this meme
 
