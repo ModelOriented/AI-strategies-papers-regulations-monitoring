@@ -1,0 +1,4 @@
+outs:
+- md5: 9b8f15ea2ec8a11e0fa6930e07a587c6
+  size: 85451931
+  path: chunk_meme_name.parquet

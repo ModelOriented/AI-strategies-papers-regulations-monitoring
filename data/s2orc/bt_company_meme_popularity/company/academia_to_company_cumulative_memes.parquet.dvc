@@ -1,0 +1,4 @@
+outs:
+- md5: dac257b1e1ca0ef964309e2a91b7b3e9
+  size: 92554215
+  path: academia_to_company_cumulative_memes.parquet

@@ -1,0 +1,4 @@
+outs:
+- md5: 4a60339033b1c291eae216d3cb9a698b
+  size: 2205309
+  path: company_perc_reduced.parquet

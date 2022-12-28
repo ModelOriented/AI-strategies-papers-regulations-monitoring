@@ -1,0 +1,4 @@
+outs:
+- md5: 61a1e64ed7f95db2af97307f91d608f9
+  size: 91202650
+  path: academia_to_bt_cumulative_memes.parquet

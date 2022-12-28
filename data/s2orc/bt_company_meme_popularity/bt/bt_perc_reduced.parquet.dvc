@@ -1,0 +1,4 @@
+outs:
+- md5: 5ffbd909bc656f5cf6599b2f548f8478
+  size: 2192537
+  path: bt_perc_reduced.parquet

@@ -1,0 +1,4 @@
+outs:
+- md5: 4745c88e83bd7c78182369abecc24716
+  size: 9100
+  path: top_20_memes_for_company_level.parquet
