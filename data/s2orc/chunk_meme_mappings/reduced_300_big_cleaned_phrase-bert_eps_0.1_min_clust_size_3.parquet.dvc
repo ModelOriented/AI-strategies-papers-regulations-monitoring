@@ -1,0 +1,4 @@
+outs:
+- md5: a2002acc55187f2960e54f8722350508
+  size: 72487038
+  path: reduced_300_big_cleaned_phrase-bert_eps_0.1_min_clust_size_3.parquet
