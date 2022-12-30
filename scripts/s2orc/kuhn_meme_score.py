@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MultiLabelBinarizer
 
 def meme_score(df: pd.DataFrame, delta:float=3):
     #df['outbound_memes'] = clean_outbound_citations(df)
