@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
+import memes_pipeline
 
 def meme_score(df: pd.DataFrame, delta:float=3):
     #df['outbound_memes'] = clean_outbound_citations(df)
@@ -49,3 +50,33 @@ def meme_score(df: pd.DataFrame, delta:float=3):
                                 'spark2': np.squeeze(np.array(spark2))
                                 })
     return df_memes
+
+def outbound_memes(df):
+    out_col = []
+    for _,row in df.iterrows():
+        out_meme = []
+        for cit in row['outbound_citations']:
+            ind = int(cit)
+            if ind in df.index:
+
+                out_meme.extend(df.loc[ind,'memes_ids'])
+        out_col.append(out_meme)
+
+    df['outbound_memes'] = out_col
+    return df
+
+
+if __name__ == '__main__':
+    
+    clustering_path = ['/reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet',
+                        '/reduced_300_big_cleaned_phrase-bert_eps_0.3_min_clust_size_3.parquet',
+                        '/reduced_300_big_cleaned_phrase-bert_eps_0.4_min_clust_size_3.parquet']
+    for path in clustering_path:
+
+        memes_pipeline.pipeline(None,
+                'data/s2orc/chunk_meme_mappings'+path, 
+                'data/s2orc/meme_score'+path, 
+                aff_output_path = 'data/s2orc/big_ai_dataset_with_affiliations_extended_oa.parquet',
+                condition_list = ['company'],
+                category = 'types',
+                do_cluster = False)

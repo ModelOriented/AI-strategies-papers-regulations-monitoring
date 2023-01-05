@@ -4,7 +4,7 @@ import cluster
 import os
 import reduce_dimensionality
 import create_meme_names
-from meme_score import meme_score
+
 import prepare_memes
 import affiliation_pipeline
 
@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-def main(out_path_embedding: str,
+def pipeline(out_path_embedding: str,
 out_path_cluster: str, 
 out_path_meme_score: str, 
 in_path: str = 'data/s2orc/processed_big.parquet',
@@ -80,7 +80,12 @@ do_cluster: bool = typer.Option(True)
         meme_to_name = create_meme_names.names(chunk_to_meme,df_cluster)
 
         print('CALCULATING MEME SCORE')
-        df_meme_score = meme_score(df_cluster)
+        if condition_list:
+            from meme_score import meme_score
+            df_meme_score = meme_score(df_cluster)
+        else:
+            from kuhn_meme_score import meme_score
+            df_meme_score = kuhn_meme_score(df_cluster)
 
         df_meme_score['meme_name'] = df_meme_score['meme_id'].map(meme_to_name["best_tfidf"])
 
@@ -88,7 +93,7 @@ do_cluster: bool = typer.Option(True)
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    typer.run(pipeline)
     #main('data/s2orc/'+"all-MiniLM-L6-v2"+'.parquet',"C:/Users/ppaul/Documents/AI-strategies-papers-regulations-monitoring/data/s2orc/results/reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0.parquet",'data/s2orc/final.parquet')
 
     
