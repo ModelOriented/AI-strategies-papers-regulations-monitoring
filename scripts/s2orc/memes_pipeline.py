@@ -17,7 +17,7 @@ def pipeline(
     out_path_embedding: str,
     out_path_cluster: str,
     out_path_meme_score: str,
-    in_path: str = 'data/s2orc/processed_big.parquet',
+    in_path: str = 'data/s2orc/big_ai_dataset_with_affiliations_extended_oa.parquet',
     cit_path: str = 'data/s2orc/big_ai_dataset.parquet',
     sentences_embedding: str = "all-MiniLM-L6-v2",
     json_input='data/s2orc/doi_to_authorship_big.json',
@@ -77,12 +77,12 @@ def pipeline(
             df_af = pd.read_parquet(aff_output_path)
 
         print('PREPARING MEMES')
-        df_res = pd.read_parquet(
+        df_noun_chunks = pd.read_parquet(
             in_path
         )
-        df_res.index.name = None
+        df_noun_chunks.index.name = None
         df_cluster, chunk_to_meme = prepare_memes.preparing(
-            df_cluster, df_af, df_res)
+            df_cluster, df_af, df_noun_chunks)
 
         print('CREATING NAMES')
         meme_to_name = create_meme_names.names(chunk_to_meme, df_cluster)
