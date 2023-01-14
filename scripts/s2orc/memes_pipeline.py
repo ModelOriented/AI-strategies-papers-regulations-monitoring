@@ -67,7 +67,7 @@ def pipeline(
         pd.DataFrame(df_cluster).to_parquet(out_path_cluster)  #saving
     else:
         print('READING IN CLUSTERS')
-        df_cluster = pd.read_parquet(out_path_cluster)
+        df_cluster = pd.read_parquet(out_path_cluster, columns = ['chunk','cluster'])
 
     if do_memes:
         if not os.path.exists(aff_output_path):
