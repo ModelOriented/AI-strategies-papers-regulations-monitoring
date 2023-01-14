@@ -17,7 +17,7 @@ def pipeline(
     out_path_embedding: str,
     out_path_cluster: str,
     out_path_meme_score: str,
-    in_path: str = 'data/s2orc/big_ai_dataset_with_affiliations_extended_oa.parquet',
+    in_path: str = 'data/s2orc/processed_big.parquet',
     cit_path: str = 'data/s2orc/big_ai_dataset.parquet',
     sentences_embedding: str = "all-MiniLM-L6-v2",
     json_input='data/s2orc/doi_to_authorship_big.json',
