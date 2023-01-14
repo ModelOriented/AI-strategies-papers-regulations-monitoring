@@ -37,6 +37,9 @@ def pipeline(
     do_memes: bool = typer.Option(True),
     do_cluster: bool = typer.Option(True)):
     #embedd noun_chunks
+    
+    conditioned = len(condition_list)>0
+
     if do_cluster:  #not os.path.exists(out_path_cluster):
         print('EMBEDDING NOUN CHUNKS')
         chunk_to_embedding = embedd_noun_chunks.embedd_noun_chunks(
@@ -86,15 +89,15 @@ def pipeline(
         print("Noun chunks table size: ", len(df_noun_chunks))
         print("Affiliations table size: ", len(df_af))
 
-        
+
         df_cluster, chunk_to_meme = prepare_memes.preparing(
-            df_cluster, df_af, df_noun_chunks)
+            df_cluster, df_af, df_noun_chunks,conditioned=conditioned)
 
         print('CREATING NAMES')
         meme_to_name = create_meme_names.names(chunk_to_meme, df_cluster)
 
         print('CALCULATING MEME SCORE')
-        if condition_list:
+        if conditioned:
             from meme_score import meme_score
             df_meme_score = meme_score(df_cluster)
         else:

@@ -68,7 +68,7 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def preparing(df_clusters, df_aff, df_nc): 
+def preparing(df_clusters, df_aff, df_nc, conditioned=False): 
 
     print("Mapping chunks to memes...")# map chunks to clusters - meme id
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
@@ -98,8 +98,8 @@ def preparing(df_clusters, df_aff, df_nc):
 
     df_meme_stats = get_meme_statiscics(df_memes, chunk_to_meme)
     df_meme_stats.sort_values(by='count', ascending=False, inplace=True)
-    df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
-    ids_to_remove = df_memes_to_remove[:N_TO_REMOVE]['meme_id']
+    # df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
+    # ids_to_remove = df_memes_to_remove[:N_TO_REMOVE]['meme_id']
     print("Removing memes:", list(ids_to_remove))
     df_memes['memes'] = df_memes['memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
     df_memes['inbound_memes'] = df_memes['inbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
@@ -111,12 +111,15 @@ def preparing(df_clusters, df_aff, df_nc):
     #      f'data/s2orc/meme_stats/{clusters_file_name}...')
     #df_meme_stats.to_parquet(f"data/s2orc/meme_stats/{clusters_file_name}")
     #print("Saving results...")
-    df_out = df_memes[[
+    columns = [
         'paper_id', 'outbound_citations', 'inbound_citations', 'institutions',
-        'countries', 'types', 'unique_institutions', 'condition',
+        'countries', 'types', 'unique_institutions',
         'noun_chunks_cleaned', 'memes', 'inbound_memes', 'outbound_memes',
         'year'
-    ]]
+    ]
+    if conditioned:
+        columns.append('condition')
+    df_out = df_memes[columns]
     #df_out.to_parquet(f'data/s2orc/results/{clusters_file_name}')
     #print("Saving chunk to meme mapping...")
     #chunk_to_meme.to_parquet(f'data/s2orc/chunk_meme_mappings/{clusters_file_name}')
