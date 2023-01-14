@@ -34,6 +34,7 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
     meme_chunk_to_count['ctfidf'] = ctfidf
 
     meme_to_name = dict()
+    print("Calculating tfidf...")
     for meme_id, g in tqdm(meme_chunk_to_count.groupby('meme_id')):
         words = g.nlargest(2, 'ctfidf')['chunk_words']
         name = "_".join(words)
@@ -43,6 +44,7 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
     meme_to_idx = memes_with_chunks.groupby('meme_id')['count'].idxmax()
 
     meme_to_most_common = dict()
+    print("Counting most common chunks in meme...")
     for meme in tqdm(meme_to_name):
         idx = meme_to_idx[meme]
         chunk = memes_with_chunks['chunk'][idx]

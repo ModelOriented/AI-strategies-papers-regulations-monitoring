@@ -102,10 +102,10 @@ def pipeline(
             df_meme_score = meme_score(df_cluster)
         else:
             from kuhn_meme_score import meme_score
-            df_meme_score = kuhn_meme_score(df_cluster)
+            df_meme_score = meme_score(df_cluster)
 
         df_meme_score['meme_name'] = df_meme_score['meme_id'].map(
-            meme_to_name["best_tfidf"])
+            meme_to_name["most_common"])
 
         pd.DataFrame(df_meme_score).to_parquet(out_path_meme_score)
 
