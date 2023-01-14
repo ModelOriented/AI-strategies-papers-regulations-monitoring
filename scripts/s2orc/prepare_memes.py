@@ -21,10 +21,10 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
     return chunk_to_meme_id
 
 
-def get_merged_data(df1,df2):
+def merge_noun_chunks_with_affiliations(df_noun_chunks,df_affiliations):
 
-    memes_df = pd.merge(df2,
-                        df1[['paper_id', 'noun_chunks_cleaned']],
+    memes_df = pd.merge(df_affiliations,
+                        df_noun_chunks[['paper_id', 'noun_chunks_cleaned']],
                         on='paper_id',
                         how='left')
     #df2 = df2[df2['institutions'].str.len()!=0]
@@ -75,11 +75,12 @@ def preparing(df_clusters, df_aff,df_nc):
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
                                  columns=['chunk', 'meme_id'])
 
-    df_memes = get_merged_data(df_nc,df_aff)
+    df_memes = merge_noun_chunks_with_affiliations(df_nc,df_aff)
 
     print("Preparing memes...")
+    # get meme id for each chunk
     df_memes['memes'] = df_memes['noun_chunks_cleaned'].apply(
-        lambda chunks: list(set(list(map(chunk_to_meme_dct.get, chunks)))))
+        lambda chunks: list(set(list(map(chunk_to_meme_dct.get, chunks))))) 
     df_memes.index = df_memes['paper_id']
     def get_memes_from_ids(ids):
         memes = []
