@@ -68,7 +68,7 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def preparing(df_clusters, df_aff,df_nc): 
+def preparing(df_clusters, df_aff, df_nc): 
 
     print("Mapping chunks to memes...")# map chunks to clusters - meme id
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)

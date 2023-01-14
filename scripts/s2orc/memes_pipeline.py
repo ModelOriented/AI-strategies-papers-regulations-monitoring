@@ -77,10 +77,16 @@ def pipeline(
             df_af = pd.read_parquet(aff_output_path)
 
         print('PREPARING MEMES')
+        print("Reading noun chunks...")
         df_noun_chunks = pd.read_parquet(
             in_path
         )
         df_noun_chunks.index.name = None
+        print("Clusters table size: ", len(df_cluster))
+        print("Noun chunks table size: ", len(df_noun_chunks))
+        print("Affiliations table size: ", len(df_af))
+
+        
         df_cluster, chunk_to_meme = prepare_memes.preparing(
             df_cluster, df_af, df_noun_chunks)
 
