@@ -78,7 +78,7 @@ def pipeline(
 
         print('PREPARING MEMES')
         df_res = pd.read_parquet(
-            'data/s2orc/results/reduced_300_big_cleaned_phrase-bert_eps_0.2_min_clust_size_3.parquet'
+            in_path
         )
         df_res.index.name = None
         df_cluster, chunk_to_meme = prepare_memes.preparing(
