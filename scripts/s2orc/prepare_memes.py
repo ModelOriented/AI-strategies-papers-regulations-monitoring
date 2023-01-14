@@ -100,10 +100,10 @@ def preparing(df_clusters, df_aff, df_nc, conditioned=False):
     df_meme_stats.sort_values(by='count', ascending=False, inplace=True)
     # df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
     # ids_to_remove = df_memes_to_remove[:N_TO_REMOVE]['meme_id']
-    print("Removing memes:", list(ids_to_remove))
-    df_memes['memes'] = df_memes['memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
-    df_memes['inbound_memes'] = df_memes['inbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
-    df_memes['outbound_memes'] = df_memes['outbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # print("Removing memes:", list(ids_to_remove))
+    # df_memes['memes'] = df_memes['memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # df_memes['inbound_memes'] = df_memes['inbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # df_memes['outbound_memes'] = df_memes['outbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
 
 
     # Saving
