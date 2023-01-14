@@ -23,7 +23,7 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
 
 def merge_noun_chunks_with_affiliations(df_noun_chunks,df_affiliations):
 
-    memes_df = pd.merge(df_affiliations,
+    memes_df = pd.merge(df_affiliations.drop("noun_chunks_cleaned", axis=1),
                         df_noun_chunks[['paper_id', 'noun_chunks_cleaned']],
                         on='paper_id',
                         how='left')
@@ -33,7 +33,7 @@ def merge_noun_chunks_with_affiliations(df_noun_chunks,df_affiliations):
     memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
         lambda ids: [int(id) for id in ids])
 
-    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
+    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()] 
 
     return memes_df
 
