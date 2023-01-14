@@ -9,7 +9,7 @@ def meme_score(df: pd.DataFrame, delta:float=3):
     print('OneHot Encoding ..')
     #OneHotEncoding of memes
     enc = MultiLabelBinarizer(sparse_output=True)
-    memes_enc = enc.fit_transform(df['memes_ids'])#shape:papers x memes
+    memes_enc = enc.fit_transform(df['memes'])#shape:papers x memes
 
     #OneHotEncoding of memes in cited papers
     c_enc = MultiLabelBinarizer(classes = enc.classes_, sparse_output=True)
@@ -59,7 +59,7 @@ def outbound_memes(df):
             ind = int(cit)
             if ind in df.index:
 
-                out_meme.extend(df.loc[ind,'memes_ids'])
+                out_meme.extend(df.loc[ind,'memes'])
         out_col.append(out_meme)
 
     df['outbound_memes'] = out_col
