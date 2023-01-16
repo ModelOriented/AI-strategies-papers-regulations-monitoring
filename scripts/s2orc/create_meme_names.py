@@ -27,7 +27,7 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
     meme_chunk_to_count = meme_chunk_to_count.reset_index()
 
     word_to_count = meme_chunk_to_count.groupby('chunk_words').sum()['count']
-    A = meme_chunk_to_count['count'].sum()/len(meme_chunk_to_count['meme_id'].unique())
+    A = meme_chunk_to_count['count'].sum() / len(meme_chunk_to_count['meme_id'].unique())
 
     ctfidf = meme_chunk_to_count.progress_apply(lambda x: x['count'] * np.log(1 + A  / word_to_count[x['chunk_words']]), axis=1) # calculating ctfidf
 
@@ -40,15 +40,18 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
         name = "_".join(words)
         meme_to_name[meme_id] = name
 
-    memes_with_chunks = pd.merge(chunk_meme_mappings, chunk_count, left_on='chunk', right_index=True)
-    meme_to_idx = memes_with_chunks.groupby('meme_id')['count'].idxmax()
+    memes_with_chunks_counts = pd.merge(chunk_meme_mappings, chunk_count, left_on='chunk', right_index=True)
+    memes_with_chunks_counts.index=memes_with_chunks_counts['chunk']
+    chunks_groupby_meme_id = memes_with_chunks_counts.groupby('meme_id')['count'].idxmax()
+
+    meme_to_idx = memes_with_chunks_counts.groupby('meme_id')['count'].idxmax()
 
     meme_to_most_common = dict()
     print("Counting most common chunks in meme...")
     for meme in tqdm(meme_to_name):
         idx = meme_to_idx[meme]
-        chunk = memes_with_chunks['chunk'][idx]
-        meme_to_most_common[meme]= chunk
+        chunk = memes_with_chunks_counts['chunk'][idx]
+        meme_to_most_common[meme] = chunk
 
     df_out = pd.DataFrame({"most_common": meme_to_most_common, "best_tfidf":meme_to_name})
     df_out.index.name = "meme_id"
@@ -56,11 +59,13 @@ def prepare_names(chunk_meme_mappings:pd.DataFrame, processed_table:pd.DataFrame
 
     return df_out
 
-def names(chunk_to_meme,df_processed):
-    #in_path = os.path.join(IN_DIR, file_name)
-    #out_path = os.path.join(OUT_DIR, file_name)
-    #memes_mappings = pd.read_parquet(in_path)
-
+def names(chunk_to_meme:pd.DataFrame, df_processed:pd.DataFrame):
+    print("chunk_to_meme columns:", chunk_to_meme.columns)
+    print("df_processed columns:", df_processed.columns)
+    if chunk_to_meme.isna().sum() != 0:
+        print("Warning: NaNs in chunk_to_meme teble")
+    if df_processed.isna().sum() != 0:
+        print("Warning: NaNs in df_processed table")
 
     df_out = prepare_names(chunk_to_meme, df_processed)
 
