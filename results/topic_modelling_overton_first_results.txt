@@ -1,0 +1,39 @@
+10 documents, 4 topics, chunksize in LDA = 2
+[(0,
+  '0.014*"national_security" + 0.009*"commission" + 0.008*"technology" + '
+  '0.008*"ai" + 0.005*"recommendation" + 0.005*"united_state" + 0.005*"need" + '
+  '0.005*"development" + 0.005*"house" + 0.005*"ensure"'),
+ (1,
+  '0.008*"right" + 0.008*"ai" + 0.006*"business" + 0.006*"invest" + '
+  '0.005*"smart" + 0.005*"job" + 0.005*"datum" + 0.005*"work" + '
+  '0.004*"intelligence" + 0.004*"candidate"'),
+ (2,
+  '0.007*"development" + 0.007*"need" + 0.006*"technology" + 0.006*"patient" + '
+  '0.005*"use" + 0.005*"research" + 0.005*"medical_application" + '
+  '0.005*"support" + 0.005*"new" + 0.005*"ai"'),
+ (3,
+  '0.000*"career" + 0.000*"human" + 0.000*"big_data" + 0.000*"reduce" + '
+  '0.000*"help" + 0.000*"business" + 0.000*"use" + 0.000*"organization" + '
+  '0.000*"find" + 0.000*"enhance"')]
+  
+100 documents, 4 topics, chunksize in LDA = 2
+[(0,
+  '0.024*"machine_learne" + 0.011*"use" + 0.009*"example" + '
+  '0.009*"machine_learning" + 0.008*"datum" + 0.007*"learn" + 0.006*"result" + '
+  '0.006*"model" + 0.005*"user" + 0.005*"ipsos_mori"'),
+ (1,
+  '0.012*"technology" + 0.011*"ai" + 0.008*"use" + 0.007*"system" + '
+  '0.006*"datum" + 0.005*"development" + 0.005*"application" + 0.004*"include" '
+  '+ 0.004*"support" + 0.003*"need"'),
+ (2,
+  '0.035*"motion" + 0.026*"resolution_amendment" + 0.016*"en_amendment" + '
+  '0.012*"resolution_paragraph" + 0.011*"robotics_relate" + '
+  '0.009*"resolution_annex" + 0.008*"use" + 0.008*"robotics_related" + '
+  '0.007*"development_deployment" + 0.007*"union"'),
+ (3,
+  '0.009*"cid" + 0.007*"central_bank" + 0.004*"workshop_big" + '
+  '0.004*"rolling_window" + 0.004*"main_result" + 0.003*"squared_error" + '
+  '0.003*"inﬂation" + 0.003*"rf_model" + 0.003*"quantum_computing" + '
+  '0.002*"data_nontraditional"')]
+Perplexity:  -9.294043018121044
+Coherence Score:  0.5076866083507489

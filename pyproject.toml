@@ -39,6 +39,7 @@ plotly = "^5.8.2"
 joblib = "^1.1.0"
 PyPDF2 = "^2.5.0"
 openpyxl = "^3.0.10"
+wordcloud = "^1.8.2.2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.13.0"
