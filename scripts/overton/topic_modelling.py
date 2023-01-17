@@ -138,11 +138,9 @@ def main(per_paragraph=False, first=100, num_topics=6, lda_chunksize=6, save_mod
     coherence_lda = coherence_model_lda.get_coherence()
     print('\nCoherence Score: ', coherence_lda)
 
-    try:
-        vis = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
-        pyLDAvis.save_html(data=vis, fileobj=f"../../results/vis-{first}_num-topics-{num_topics}.html")
-    except:
-        ...
+    vis = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
+    pyLDAvis.save_html(data=vis, fileobj=f"../../results/vis-{first}_num-topics-{num_topics}.html")
+
 
     def format_topics_sentences(ldamodel, corpus, doc_ids):
         # Init output

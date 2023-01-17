@@ -1,21 +1,3 @@
-10 documents, 4 topics, chunksize in LDA = 2
-[(0,
-  '0.014*"national_security" + 0.009*"commission" + 0.008*"technology" + '
-  '0.008*"ai" + 0.005*"recommendation" + 0.005*"united_state" + 0.005*"need" + '
-  '0.005*"development" + 0.005*"house" + 0.005*"ensure"'),
- (1,
-  '0.008*"right" + 0.008*"ai" + 0.006*"business" + 0.006*"invest" + '
-  '0.005*"smart" + 0.005*"job" + 0.005*"datum" + 0.005*"work" + '
-  '0.004*"intelligence" + 0.004*"candidate"'),
- (2,
-  '0.007*"development" + 0.007*"need" + 0.006*"technology" + 0.006*"patient" + '
-  '0.005*"use" + 0.005*"research" + 0.005*"medical_application" + '
-  '0.005*"support" + 0.005*"new" + 0.005*"ai"'),
- (3,
-  '0.000*"career" + 0.000*"human" + 0.000*"big_data" + 0.000*"reduce" + '
-  '0.000*"help" + 0.000*"business" + 0.000*"use" + 0.000*"organization" + '
-  '0.000*"find" + 0.000*"enhance"')]
-  
 100 documents, 4 topics, chunksize in LDA = 2
 [(0,
   '0.024*"machine_learne" + 0.011*"use" + 0.009*"example" + '
@@ -37,3 +19,34 @@
   '0.002*"data_nontraditional"')]
 Perplexity:  -9.294043018121044
 Coherence Score:  0.5076866083507489
+
+100 documents, 6 topics, chunksize in LDA = 6
+[(0,
+  '0.014*"machine_learne" + 0.011*"use" + 0.008*"datum" + 0.007*"example" + '
+  '0.006*"system" + 0.005*"learn" + 0.005*"machine_learning" + 0.004*"result" '
+  '+ 0.004*"model" + 0.004*"risk"'),
+ (1,
+  '0.002*"sponsor_gold" + 0.001*"sponsor_silver" + 0.001*"m²_m²" + '
+  '0.001*"montesquieu_room" + 0.000*"sponsor_diamond" + 0.000*"boileau_room" + '
+  '0.000*"colbert_room" + 0.000*"richelieu_room" + 0.000*"zz_zz" + '
+  '0.000*"publications_oﬃ"'),
+ (2,
+  '0.001*"ian_goodfellow" + 0.001*"technological_element" + '
+  '0.001*"street_sign" + 0.001*"neural_decode" + 0.001*"www_cse" + '
+  '0.001*"ibm_overpromise" + 0.001*"dark_secret" + 0.001*"nature_volume" + '
+  '0.001*"der_kunstlichen" + 0.001*"der_schweiz"'),
+ (3,
+  '0.006*"rolling_window" + 0.005*"squared_error" + 0.004*"inﬂation" + '
+  '0.004*"rf_model" + 0.003*"table_report" + 0.003*"twelve_month" + 0.003*"rw" '
+  '+ 0.003*"variable_selection" + 0.002*"mad" + 0.002*"nonlinearity"'),
+ (4,
+  '0.016*"ai" + 0.007*"technology" + 0.006*"development" + 0.005*"ai_system" + '
+  '0.005*"support" + 0.005*"datum" + 0.004*"government" + 0.004*"include" + '
+  '0.004*"system" + 0.004*"develop"'),
+ (5,
+  '0.027*"motion" + 0.019*"resolution_amendment" + 0.016*"technology" + '
+  '0.012*"use" + 0.012*"en_amendment" + 0.009*"resolution_paragraph" + '
+  '0.008*"robotics_relate" + 0.006*"resolution_annex" + '
+  '0.006*"robotics_related" + 0.006*"union"')]
+Perplexity:  -9.09348916947722
+Coherence Score:  0.5757616502726529
