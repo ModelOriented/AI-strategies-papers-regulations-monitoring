@@ -7,6 +7,8 @@ nltk.download('stopwords')
 import re
 import itertools
 import numpy as np
+import time
+from typing import List
 import pandas as pd
 from pprint import pprint
 
@@ -18,6 +20,7 @@ from gensim.models import CoherenceModel
 
 # spacy for lemmatization
 import spacy
+import textacy.extract
 from spacy_langdetect import LanguageDetector
 
 
@@ -40,33 +43,20 @@ from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
 
 
-def text_to_words(texts):
-    for text in texts:
-        words = gensim.utils.simple_preprocess(str(text), deacc=True)  # deacc=True removes punctuations
-        if words:
-            yield words
-
-
-def remove_stopwords(texts):
-    return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in
-            tqdm(texts, desc="Remove stopwords")]
-
-
-def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-    """https://spacy.io/api/annotation"""
+def preprocess_texts(texts: List[str], allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']) -> List[List[str]]:
+    texts = [re.sub('\s+', ' ', paragraph) for paragraph in tqdm(texts, desc="Remove white spaces")]
     texts_out = []
-    for doc in tqdm(texts, desc='Lemmatize'):
-        doc = nlp(" ".join(doc))
-
-        # Leave only nouns, adjectives, verbs and adverbs
-        # Leave only sentences in English
-        texts_out.append([token.lemma_ for sent in doc.sents
-                          for token in sent
-                          if sent._.language['language'] == 'en' and token.pos_ in allowed_postags])
+    for doc in tqdm(nlp.pipe(texts), desc='Lemmatize', total=len(texts)):
+        ngrams = [x.text for x in textacy.extract.basics.ngrams(doc, 2, min_freq=2)]
+        result = [token.lemma_.lower() for sent in doc.sents
+                  for token in sent
+                  if sent._.language['language'] == 'en' and token.pos_ in allowed_postags
+                  if not token.is_stop] + ngrams
+        texts_out.append(result)
     return texts_out
 
 
-def main(per_paragraph=False, first=100, num_topics=6, lda_chunksize=6, save_model=False):
+def main(per_paragraph=True, first=10, num_topics=6, lda_chunksize=6, save_model=False):
     tc = pd.read_parquet("../../data/overton/AI_subsample/text_col.parquet")  # All the filenames finish with ".pdf"
     proc = pd.read_parquet("../../data/overton/AI_subsample/processed.parquet")[
         ["policy_document_id", "overton_policy_document_series"]]
@@ -85,29 +75,8 @@ def main(per_paragraph=False, first=100, num_topics=6, lda_chunksize=6, save_mod
     data_with_ids = [(paragraph, doc_id) for doc, doc_id in data_with_ids for paragraph in doc] if per_paragraph \
         else [(' '.join(doc), doc_id) for doc, doc_id in data_with_ids]
     data, doc_ids = list(zip(*data_with_ids))
-    data = [re.sub('\s+', ' ', paragraph) for paragraph in tqdm(data, desc="Remove white spaces")]
 
-    data_words = list(text_to_words(data))
-
-    bigram = gensim.models.Phrases(data_words, min_count=1, threshold=1)
-    bigram_mod = gensim.models.phrases.Phraser(bigram)
-
-    def make_bigrams(texts):
-        return [bigram_mod[doc] for doc in tqdm(texts, desc='Make bigrams')]
-
-    # trigram = gensim.models.Phrases(bigram[data_words], threshold=1)
-    # trigram_mod = gensim.models.phrases.Phraser(trigram)
-
-    # def make_trigrams(texts):
-    #   return [trigram_mod[bigram_mod[doc]] for doc in texts]
-
-    # print(trigram_mod[bigram_mod[data_words[0]]])
-
-    data_words_nostops = remove_stopwords(data_words)
-
-    data_words_bigrams = make_bigrams(data_words_nostops)
-
-    data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+    data_lemmatized = preprocess_texts(data, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
     id2word = corpora.Dictionary([x for x in tqdm(data_lemmatized, desc='Create Dictionary')])
 
@@ -115,18 +84,21 @@ def main(per_paragraph=False, first=100, num_topics=6, lda_chunksize=6, save_mod
     texts = data_lemmatized
 
     # Term Document Frequency
-    corpus = [id2word.doc2bow(text) for text in tqdm(texts, desc='Create corpus')]
+    corpus = [id2word.doc2bow(text) for text in tqdm(texts, desc='Create Bag of Words')]
     print(sorted([(freq, id2word[id]) for id, freq in corpus[0]], reverse=True)[:20])
 
-    lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
-                                                id2word=id2word,
-                                                num_topics=num_topics,
-                                                random_state=100,
-                                                update_every=1,
-                                                chunksize=lda_chunksize,
-                                                passes=20,
-                                                alpha='auto',
-                                                per_word_topics=True)
+    start_time = time.perf_counter()
+    lda_model = gensim.models.LdaMulticore(corpus=corpus,
+                                           id2word=id2word,
+                                           num_topics=num_topics,
+                                           random_state=100,
+                                           alpha='auto',
+                                           # update_every=1,  # Not present in multicore
+                                           # chunksize=2000,
+                                           # passes=1,  # By default, passes=1 is used, more was on the website
+                                           # per_word_topics=False
+                                           )
+    print(f"LdaMulticore for {first} docs: {time.perf_counter() - start_time} seconds")
     if save_model:
         lda_model.save(f"../../models/lda_model-{first}_num-topics-{num_topics}.pkl")
     pprint(lda_model.print_topics())
@@ -140,7 +112,6 @@ def main(per_paragraph=False, first=100, num_topics=6, lda_chunksize=6, save_mod
 
     vis = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(data=vis, fileobj=f"../../results/vis-{first}_num-topics-{num_topics}.html")
-
 
     def format_topics_sentences(ldamodel, corpus, doc_ids):
         # Init output
