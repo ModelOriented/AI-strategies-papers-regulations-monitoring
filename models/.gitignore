@@ -3,3 +3,7 @@
 labse2
 /universal-sentence-encoder-cmlm_multilingual-preprocess_2
 /tokenizers
+*.npy
+*.id2word
+*.state
+lda_model-100_num-topics-50

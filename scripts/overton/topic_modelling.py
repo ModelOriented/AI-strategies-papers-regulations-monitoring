@@ -5,7 +5,6 @@ from spacy import Language
 
 nltk.download('stopwords')
 import re
-import itertools
 import numpy as np
 import time
 from typing import List
@@ -15,7 +14,6 @@ from pprint import pprint
 # Gensim
 import gensim
 import gensim.corpora as corpora
-from gensim.utils import simple_preprocess
 from gensim.models import CoherenceModel
 
 # spacy for lemmatization
@@ -47,7 +45,7 @@ def preprocess_texts(texts: List[str], allowed_postags=['NOUN', 'ADJ', 'VERB', '
     texts = [re.sub('\s+', ' ', paragraph) for paragraph in tqdm(texts, desc="Remove white spaces")]
     texts_out = []
     for doc in tqdm(nlp.pipe(texts), desc='Lemmatize', total=len(texts)):
-        ngrams = [x.text for x in textacy.extract.basics.ngrams(doc, 2, min_freq=2)]
+        ngrams = [x.text.lower() for x in textacy.extract.basics.ngrams(doc, 2, min_freq=2)]
         result = [token.lemma_.lower() for sent in doc.sents
                   for token in sent
                   if sent._.language['language'] == 'en' and token.pos_ in allowed_postags
@@ -56,7 +54,7 @@ def preprocess_texts(texts: List[str], allowed_postags=['NOUN', 'ADJ', 'VERB', '
     return texts_out
 
 
-def main(per_paragraph=True, first=10, num_topics=6, lda_chunksize=6, save_model=False):
+def main(per_paragraph=True, first=100, num_topics=50, lda_chunksize=2000, save_model=True):
     tc = pd.read_parquet("../../data/overton/AI_subsample/text_col.parquet")  # All the filenames finish with ".pdf"
     proc = pd.read_parquet("../../data/overton/AI_subsample/processed.parquet")[
         ["policy_document_id", "overton_policy_document_series"]]
@@ -86,21 +84,20 @@ def main(per_paragraph=True, first=10, num_topics=6, lda_chunksize=6, save_model
     # Term Document Frequency
     corpus = [id2word.doc2bow(text) for text in tqdm(texts, desc='Create Bag of Words')]
     print(sorted([(freq, id2word[id]) for id, freq in corpus[0]], reverse=True)[:20])
-
+    print(corpus[:10])
     start_time = time.perf_counter()
     lda_model = gensim.models.LdaMulticore(corpus=corpus,
                                            id2word=id2word,
                                            num_topics=num_topics,
                                            random_state=100,
-                                           alpha='auto',
                                            # update_every=1,  # Not present in multicore
                                            # chunksize=2000,
                                            # passes=1,  # By default, passes=1 is used, more was on the website
                                            # per_word_topics=False
                                            )
-    print(f"LdaMulticore for {first} docs: {time.perf_counter() - start_time} seconds")
+    print(f"LdaMulticore for {first} docs: {time.perf_counter() - start_time:.2f} seconds")
     if save_model:
-        lda_model.save(f"../../models/lda_model-{first}_num-topics-{num_topics}.pkl")
+        lda_model.save(f"../../models/lda_model-{first}_num-topics-{num_topics}")
     pprint(lda_model.print_topics())
     print('\nPerplexity: ', lda_model.log_perplexity(
         corpus))  # a measure of how good the model is. lower the better. SF: Really? Not higher the better?
@@ -119,8 +116,8 @@ def main(per_paragraph=True, first=10, num_topics=6, lda_chunksize=6, save_model
 
         # Get main topic in each document
         for i, row in enumerate(ldamodel[corpus]):
-            # try:
-            row = row[0]
+            # Uncomment the next line if you use a simple lda_model instead of LdaMulticore
+            # row = row[0]
             row = sorted(row, key=lambda x: (x[1]), reverse=True)
             # except (TypeError, IndexError) as e:
             #     print(e, row)
@@ -147,7 +144,7 @@ def main(per_paragraph=True, first=10, num_topics=6, lda_chunksize=6, save_model
     df_topic_sents_keywords.columns = ['dominant_topic', 'topic_perc_contrib', 'keywords', 'policy_document_id']
 
     # Show
-    print(df_topic_sents_keywords)
+    # print(df_topic_sents_keywords)
     df_topic_sents_keywords.to_parquet(
         f"../../data/overton/AI_subsample/topics_first-{first}_num-topics-{num_topics}.parquet")
 
