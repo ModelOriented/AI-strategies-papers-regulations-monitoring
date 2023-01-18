@@ -49,12 +49,12 @@ def preprocess_texts(texts: List[str], allowed_postags=['NOUN', 'ADJ', 'VERB', '
         result = [token.lemma_.lower() for sent in doc.sents
                   for token in sent
                   if sent._.language['language'] == 'en' and token.pos_ in allowed_postags
-                  if not token.is_stop] + ngrams
+                  if not token.is_stop if token.lemma_.isalnum()] + ngrams
         texts_out.append(result)
     return texts_out
 
 
-def main(per_paragraph=True, first=100, num_topics=50, lda_chunksize=2000, save_model=True):
+def main(per_paragraph=True, first=500, num_topics=50, lda_chunksize=2000, save_model=True):
     tc = pd.read_parquet("../../data/overton/AI_subsample/text_col.parquet")  # All the filenames finish with ".pdf"
     proc = pd.read_parquet("../../data/overton/AI_subsample/processed.parquet")[
         ["policy_document_id", "overton_policy_document_series"]]
