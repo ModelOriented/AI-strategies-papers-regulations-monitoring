@@ -1,0 +1,4 @@
+outs:
+- md5: edda0cb1d6b4072db8e7fb86530a0cde
+  size: 65571073
+  path: reduced_300_big_cleaned_phrase-bert_eps_0.0_min_clust_size_3.csv

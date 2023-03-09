@@ -21,10 +21,10 @@ def make_chunk_to_meme_id(df_clusters) -> dict:
     return chunk_to_meme_id
 
 
-def get_merged_data(df1,df2):
+def merge_noun_chunks_with_affiliations(df_noun_chunks,df_affiliations):
 
-    memes_df = pd.merge(df2,
-                        df1[['paper_id', 'noun_chunks_cleaned']],
+    memes_df = pd.merge(df_affiliations.drop("noun_chunks_cleaned", axis=1),
+                        df_noun_chunks[['paper_id', 'noun_chunks_cleaned']],
                         on='paper_id',
                         how='left')
     #df2 = df2[df2['institutions'].str.len()!=0]
@@ -33,7 +33,7 @@ def get_merged_data(df1,df2):
     memes_df['outbound_citations'] = memes_df['outbound_citations'].apply(
         lambda ids: [int(id) for id in ids])
 
-    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()]
+    memes_df = memes_df[~memes_df['noun_chunks_cleaned'].isna()] 
 
     return memes_df
 
@@ -68,18 +68,19 @@ def get_meme_statiscics(df_memes, chunk_to_meme):
     return pd.DataFrame(d)
 
 
-def preparing(df_clusters, df_aff,df_nc): 
+def preparing(df_clusters, df_aff, df_nc, conditioned=False): 
 
     print("Mapping chunks to memes...")# map chunks to clusters - meme id
     chunk_to_meme_dct = make_chunk_to_meme_id(df_clusters)
     chunk_to_meme = pd.DataFrame(chunk_to_meme_dct.items(),
                                  columns=['chunk', 'meme_id'])
 
-    df_memes = get_merged_data(df_nc,df_aff)
+    df_memes = merge_noun_chunks_with_affiliations(df_nc,df_aff)
 
     print("Preparing memes...")
+    # get meme id for each chunk
     df_memes['memes'] = df_memes['noun_chunks_cleaned'].apply(
-        lambda chunks: list(set(list(map(chunk_to_meme_dct.get, chunks)))))
+        lambda chunks: list(set(list(map(chunk_to_meme_dct.get, chunks))))) 
     df_memes.index = df_memes['paper_id']
     def get_memes_from_ids(ids):
         memes = []
@@ -97,12 +98,12 @@ def preparing(df_clusters, df_aff,df_nc):
 
     df_meme_stats = get_meme_statiscics(df_memes, chunk_to_meme)
     df_meme_stats.sort_values(by='count', ascending=False, inplace=True)
-    df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
-    ids_to_remove = df_memes_to_remove[:N_TO_REMOVE]['meme_id']
-    print("Removing memes:", list(ids_to_remove))
-    df_memes['memes'] = df_memes['memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
-    df_memes['inbound_memes'] = df_memes['inbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
-    df_memes['outbound_memes'] = df_memes['outbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # df_memes_to_remove = df_meme_stats[df_meme_stats['cluster_size']==1]
+    # ids_to_remove = df_memes_to_remove[:N_TO_REMOVE]['meme_id']
+    # print("Removing memes:", list(ids_to_remove))
+    # df_memes['memes'] = df_memes['memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # df_memes['inbound_memes'] = df_memes['inbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
+    # df_memes['outbound_memes'] = df_memes['outbound_memes'].apply(lambda memes: [id for id in memes if id not in ids_to_remove])
 
 
     # Saving
@@ -110,12 +111,15 @@ def preparing(df_clusters, df_aff,df_nc):
     #      f'data/s2orc/meme_stats/{clusters_file_name}...')
     #df_meme_stats.to_parquet(f"data/s2orc/meme_stats/{clusters_file_name}")
     #print("Saving results...")
-    df_out = df_memes[[
+    columns = [
         'paper_id', 'outbound_citations', 'inbound_citations', 'institutions',
-        'countries', 'types', 'unique_institutions', 'condition',
+        'countries', 'types', 'unique_institutions',
         'noun_chunks_cleaned', 'memes', 'inbound_memes', 'outbound_memes',
         'year'
-    ]]
+    ]
+    if conditioned:
+        columns.append('condition')
+    df_out = df_memes[columns]
     #df_out.to_parquet(f'data/s2orc/results/{clusters_file_name}')
     #print("Saving chunk to meme mapping...")
     #chunk_to_meme.to_parquet(f'data/s2orc/chunk_meme_mappings/{clusters_file_name}')

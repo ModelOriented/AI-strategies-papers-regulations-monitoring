@@ -1,0 +1,4 @@
+outs:
+- md5: 21eb864912d394dd4e55fd1887b09b5c
+  size: 49100321
+  path: reduced_300_big_cleaned_mini_all-MiniLM-L6-v2_eps_0.0_min_clust_size_3.csv
